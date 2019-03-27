@@ -2,13 +2,11 @@ package com.zhongjian.service.message.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zhongjian.common.config.properties.MessagePushProperties;
-import com.zhongjian.common.dto.ResultDTO;
 import com.zhongjian.common.util.CheckSumBuilderUtil;
 import com.zhongjian.common.util.HttpClientUtil;
 import com.zhongjian.common.util.MapUtil;
 import com.zhongjian.dao.dto.message.MessageBodyDTO;
 import com.zhongjian.dao.dto.message.MessageReqDTO;
-import com.zhongjian.dao.dto.message.MessageResDTO;
 import com.zhongjian.service.HmBaseTest;
 import com.zhongjian.service.message.MessagePushService;
 import org.apache.http.HttpResponse;
@@ -78,13 +76,8 @@ public class MessagePushServiceImplTest extends HmBaseTest {
     }
     @Test
     public void test2(){
-        MessageReqDTO messageReqDTO = new MessageReqDTO();
-        messageReqDTO.setFrom(messagePushProperties.getAccid());
-        messageReqDTO.setMsg("你好");
-        messageReqDTO.setOpe(0);
-        messageReqDTO.setTo("j967jc0j9j858725");
-        messageReqDTO.setType(100);
-        ResultDTO<MessageResDTO> messageResDTOResultDTO = messagePushService.messagePush(messageReqDTO);
-        System.out.println(messageResDTOResultDTO.getData());
+            String name ="com.zhongjian.dao.mapper.hm.HmRiderPositionBean";
+        String substring = name.substring(name.indexOf(".") + 2);
+        System.out.println(substring);
     }
 }

@@ -8,7 +8,7 @@
 	<context id="DB2Tables" targetRuntime="MyBatis3">
 
 
-		<!--<plugin type="com.kingcar.mybatis.generator.plugin.namespace.NamespacePojoPlugin"/>-->
+		<!--<plugin type="cn.kingcar.mybatis.generator.plugin.namespace.NamespacePojoPlugin"/>-->
 		<!--<plugin type="cn.kingcar.mybatis.generator.plugin.mapper.MapperXmlExtPlugin"/>-->
 		<!--<plugin type="cn.kingcar.mybatis.generator.plugin.searchByEntity.SearchByEntityCountXmlPlugin"/>-->
 		<!--<plugin type="cn.kingcar.mybatis.generator.plugin.searchByEntity.SearchByEntityXmlPlugin"/>-->

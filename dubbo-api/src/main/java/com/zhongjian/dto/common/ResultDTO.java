@@ -1,4 +1,5 @@
-package com.zhongjian.common.dto;
+package com.zhongjian.dto.common;
+
 
 import lombok.Data;
 

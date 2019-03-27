@@ -1,11 +1,9 @@
 package com.zhongjian.service.message.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.zhongjian.common.config.properties.MessagePushProperties;
 import com.zhongjian.common.constant.FinalDatas;
 import com.zhongjian.common.constant.enums.response.CommonMessageEnum;
-import com.zhongjian.common.dto.ResultDTO;
 import com.zhongjian.common.util.CheckSumBuilderUtil;
 import com.zhongjian.common.util.HttpClientUtil;
 import com.zhongjian.common.util.MapUtil;
@@ -13,6 +11,7 @@ import com.zhongjian.dao.dto.message.MessageBodyDTO;
 import com.zhongjian.dao.dto.message.MessageReqDTO;
 import com.zhongjian.dao.dto.message.MessageResDTO;
 import com.zhongjian.dao.dto.message.MessageResParamDTO;
+import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.service.message.MessagePushService;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;

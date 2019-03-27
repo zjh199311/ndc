@@ -2,7 +2,7 @@ package com.zhongjian.common.util;
 
 
 import com.zhongjian.common.constant.enums.response.CommonMessageEnum;
-import com.zhongjian.common.dto.ResultDTO;
+import com.zhongjian.dto.common.ResultDTO;
 
 /**
  * 响应结果工具类

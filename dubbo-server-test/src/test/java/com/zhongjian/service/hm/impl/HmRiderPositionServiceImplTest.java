@@ -1,11 +1,11 @@
 package com.zhongjian.service.hm.impl;
 
 import com.zhongjian.common.config.properties.MessagePushProperties;
-import com.zhongjian.common.dto.ResultDTO;
 import com.zhongjian.common.util.LogUtil;
-import com.zhongjian.dao.entity.hm.HmRiderPositionBean;
+import com.zhongjian.dto.common.ResultDTO;
+import com.zhongjian.dto.hmRider.HmRiderPositionDTO;
 import com.zhongjian.service.HmBaseTest;
-import com.zhongjian.service.hm.HmRiderPositionService;
+import com.zhongjian.service.hmRider.HmRiderPositionService;
 import org.junit.Test;
 
 import javax.annotation.Resource;
@@ -23,7 +23,7 @@ public class HmRiderPositionServiceImplTest extends HmBaseTest {
 
     @Test
     public void test() {
-        HmRiderPositionBean hmRiderPositionBean = new HmRiderPositionBean();
+        HmRiderPositionDTO hmRiderPositionBean = new HmRiderPositionDTO();
         hmRiderPositionBean.setLatitude("ss");
         hmRiderPositionBean.setRid(1);
         ResultDTO<Boolean> insert = riderPositionService.insert(hmRiderPositionBean);
