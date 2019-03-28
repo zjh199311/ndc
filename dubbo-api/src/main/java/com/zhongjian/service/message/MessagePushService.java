@@ -1,8 +1,8 @@
 package com.zhongjian.service.message;
 
-import com.zhongjian.dao.dto.message.MessageReqDTO;
-import com.zhongjian.dao.dto.message.MessageResDTO;
 import com.zhongjian.dto.common.ResultDTO;
+import com.zhongjian.dto.message.MessageReqDTO;
+import com.zhongjian.dto.message.MessageResDTO;
 
 /**
  * @Author: ldd

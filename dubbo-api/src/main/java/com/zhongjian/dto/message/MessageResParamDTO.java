@@ -1,4 +1,4 @@
-package com.zhongjian.dao.dto.message;
+package com.zhongjian.dto.message;
 
 import lombok.Data;
 

@@ -6,12 +6,13 @@ import com.zhongjian.common.constant.FinalDatas;
 import com.zhongjian.common.constant.enums.response.CommonMessageEnum;
 import com.zhongjian.common.util.CheckSumBuilderUtil;
 import com.zhongjian.common.util.HttpClientUtil;
+import com.zhongjian.common.util.LogUtil;
 import com.zhongjian.common.util.MapUtil;
-import com.zhongjian.dao.dto.message.MessageBodyDTO;
-import com.zhongjian.dao.dto.message.MessageReqDTO;
-import com.zhongjian.dao.dto.message.MessageResDTO;
-import com.zhongjian.dao.dto.message.MessageResParamDTO;
 import com.zhongjian.dto.common.ResultDTO;
+import com.zhongjian.dto.message.MessageBodyDTO;
+import com.zhongjian.dto.message.MessageReqDTO;
+import com.zhongjian.dto.message.MessageResDTO;
+import com.zhongjian.dto.message.MessageResParamDTO;
 import com.zhongjian.service.message.MessagePushService;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -70,6 +71,7 @@ public class MessagePushServiceImpl implements MessagePushService {
             String message = EntityUtils.toString(response.getEntity(), "utf-8");
             MessageResParamDTO messageResParamDTO = JSONObject.parseObject(message, MessageResParamDTO.class);
             if(FinalDatas.NUMBER.equals(messageResParamDTO.getCode())){
+                LogUtil.info("发送成功","状态码:"+messageResParamDTO.getCode());
                 MessageResDTO messageResDTO = JSONObject.parseObject(messageResParamDTO.getData(),MessageResDTO.class);
                 resultDTO.setStatusCode(messageResParamDTO.getCode());
                 if(null!=messageResDTO){
@@ -77,9 +79,16 @@ public class MessagePushServiceImpl implements MessagePushService {
                     resultDTO.setFlag(true);
                     resultDTO.setErrorMessage(CommonMessageEnum.SUCCESS.getMsg());
                 }
+            }else{
+                LogUtil.info("发送失败","");
+                resultDTO.setErrorMessage(CommonMessageEnum.FAIL.getMsg());
+                resultDTO.setErrorMessage(CommonMessageEnum.FAIL.getCode());
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LogUtil.info(e,"出现异常");
+            resultDTO.setErrorMessage(CommonMessageEnum.FAIL.getMsg());
+            resultDTO.setErrorMessage(CommonMessageEnum.FAIL.getCode());
+            return resultDTO;
         }finally{
             try {
                 httpClient.close();
