@@ -11,4 +11,41 @@
         sid=#{sid,jdbcType=INTEGER}
     </select>
 
+    <resultMap id="BaseBasketMap" type="com.zhongjian.dto.hm.result.HmBasketResultDTO">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="gname" property="foodName" jdbcType="VARCHAR"/>
+        <result column="price" property="totalPrice" jdbcType="DECIMAL"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <select id="selectBasketBeanById" parameterType="com.zhongjian.dto.hm.query.HmBasketListQueryDTO"
+            resultMap="BaseBasketMap">
+        SELECT
+            b.id,
+            b.price,
+            b.amount,
+            g.gname
+        FROM
+            hm_basket b
+        LEFT JOIN hm_goods g ON b.gid = g.id
+        WHERE
+            b.uid = #{uid,jdbcType=INTEGER}
+        AND b.sid = #{sid,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteBeanById" parameterType="com.zhongjian.dao.hm.HmBasketParamDTO">
+        DELETE FROM
+        hm_basket
+        <where>
+            <if test="id!=null">
+                id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="uid!=null" >
+                and uid =#{uid,jdbcType=INTEGER}
+            </if>
+            <if test="sid!=null">
+                and sid=#{sid,jdbcType=INTEGER}
+            </if>
+        </where>
+    </delete>
 </mapper>

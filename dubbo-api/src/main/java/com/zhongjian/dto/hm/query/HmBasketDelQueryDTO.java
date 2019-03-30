@@ -1,34 +1,30 @@
-package com.zhongjian.dao.hm;
+package com.zhongjian.dto.hm.query;
 
 import lombok.Data;
 
 import java.io.Serializable;
 
 /**
- * @Author: ldd
+ * @Author: yd
  */
 @Data
-public class HmBasketParamDTO implements Serializable {
+public class HmBasketDelQueryDTO implements Serializable {
 
     private static final long serialVersionUID = 197018972999527001L;
 
     /**
-     * 主键id
+     * basketId
      */
     private Integer id;
 
     /**
-     * 菜品id
+     * 用户token
      */
-    private Integer gid;
+    private String loginToken;
 
     /**
-     * 用户id
-     */
-    private Integer uid;
-
-    /**
-     * 用户id
+     * 商户id
      */
     private Integer sid;
+
 }

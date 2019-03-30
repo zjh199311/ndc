@@ -10,11 +10,13 @@ import lombok.Setter;
 @AllArgsConstructor
 public enum HmBasketEnum {
 
-    AMOUNTISNULL("数量为空","GIDISNULL"),
+    AMOUNT_IS_NULL("数量为空或者数量为0","AMOUNT_IS_NULL"),
 
-    GIDISNULL("商品id为空","GIDISNULL"),
+    GID_IS_NULL("商品id为空","GID_IS_NULL"),
 
-    LOGINTOKENISNULL("登入token为空","LOGINTOKENISNULL"),
+    SID_IS_NULL("商户id为空","SID_IS_NULL"),
+
+    LOGINTOKEN_IS_NULL("登入token为空","LOGINTOKEN_IS_NULL"),
 
 
     ;

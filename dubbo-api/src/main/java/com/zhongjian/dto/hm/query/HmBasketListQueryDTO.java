@@ -3,33 +3,27 @@ package com.zhongjian.dto.hm.query;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
  * @Author: ldd
  */
 @Data
-public class HmBasketQueryDTO implements Serializable {
+public class HmBasketListQueryDTO implements Serializable{
 
     private static final long serialVersionUID = 197018972999527001L;
 
     /**
-     * 菜品id
-     */
-    private Integer gid;
-
-    /**
-     * 用户登入token
+     * 用户login_token
      */
     private String loginToken;
 
     /**
-     * 数量
+     * 商户id
      */
-    private BigDecimal amount;
+    private Integer sid;
 
     /**
-     * 备注
+     * 用户id
      */
-    private String remark;
+    private Integer uid;
 }
