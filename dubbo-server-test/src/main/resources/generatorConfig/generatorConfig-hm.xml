@@ -22,8 +22,8 @@
 
 
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-						connectionURL="jdbc:mysql://120.55.79.124:3306/emarket_test" userId="emarket_test"
-						password="emarket@test@n123">
+						connectionURL="jdbc:mysql://192.168.0.252:3306/ndcdev" userId="root"
+						password="123456">
 		</jdbcConnection>
 
 		<javaTypeResolver>
@@ -41,7 +41,7 @@
 			<property name="enableSubPackages" value="true" />
 		</sqlMapGenerator>
 
-		<table tableName="hm_extension_withdraw" domainObjectName="HmExtensionWithdrawBean"
+		<table tableName="hm_user" domainObjectName="HmUserBean"
 			   enableCountByExample="false" enableUpdateByExample="false"
 			   enableDeleteByExample="false" enableSelectByExample="false"
 			   selectByExampleQueryId="false">

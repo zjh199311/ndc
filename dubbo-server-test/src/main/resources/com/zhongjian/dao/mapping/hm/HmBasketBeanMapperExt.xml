@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.hm.HmBasketBean">
+
+    <select id="findBasketBeanById" parameterType="com.zhongjian.dao.hm.HmBasketParamDTO" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from hm_basket
+        where gid=#{gid,jdbcType=INTEGER} AND
+        uid=#{uid,jdbcType=INTEGER} AND
+        sid=#{sid,jdbcType=INTEGER}
+    </select>
+
+</mapper>
