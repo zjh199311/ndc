@@ -30,18 +30,18 @@
 			<property name="forceBigDecimals" value="false" />
 		</javaTypeResolver>
 
-		<javaModelGenerator targetPackage="com.zhongjian.dao.entity.hm"
+		<javaModelGenerator targetPackage="com.zhongjian.dao.entity.hm.store"
 			targetProject="src/main/java">
 			<property name="enableSubPackages" value="true" />
 			<property name="trimStrings" value="true" />
 		</javaModelGenerator>
 
-		<sqlMapGenerator targetPackage="com.zhongjian.dao.mapping.hm"
+		<sqlMapGenerator targetPackage="com.zhongjian.dao.mapping.hm.store"
 			targetProject="src/main/resources">
 			<property name="enableSubPackages" value="true" />
 		</sqlMapGenerator>
 
-		<table tableName="hm_user" domainObjectName="HmUserBean"
+		<table tableName="hm_store_activity" domainObjectName="HmStoreActivityBean"
 			   enableCountByExample="false" enableUpdateByExample="false"
 			   enableDeleteByExample="false" enableSelectByExample="false"
 			   selectByExampleQueryId="false">

@@ -13,16 +13,16 @@ public class MessagePushProperties implements Serializable {
 
     private static final long serialVersionUID = -8179439680141846273L;
 
-    @Value("${Appkey}")
+    @Value("${yx.Appkey}")
     private String AppKey;
 
-    @Value("${AppSecret}")
+    @Value("${yx.AppSecret}")
     private String AppSecret;
 
-    @Value("${accid}")
+    @Value("${yx.accid}")
     private String accid;
 
-    @Value("${MsgUrl}")
+    @Value("${yx.MsgUrl}")
     private String url;
 
 

@@ -39,7 +39,7 @@ public class HmDataSourceConfiguration {
         final SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
         sessionFactory.setDataSource(masterDataSource);
         sessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
-                .getResources("classpath:com/zhongjian/dao/mapping/hm/*.xml"));
+                .getResources("classpath:com/zhongjian/dao/mapping/hm/*/*.xml"));
         return sessionFactory.getObject();
     }
 }

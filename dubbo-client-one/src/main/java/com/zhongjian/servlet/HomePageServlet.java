@@ -9,6 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.zhongjian.dto.hm.basket.query.HmBasketEditQueryDTO;
+import com.zhongjian.service.hm.basket.HmBasketService;
 import org.apache.log4j.Logger;
 
 import com.zhongjian.common.GsonUtil;
@@ -27,6 +29,8 @@ public class HomePageServlet extends HttpServlet {
 
 	private TestService testService = (TestService) SpringContextHolder.getBean(TestService.class);
 
+	private HmBasketService basketService =(HmBasketService)SpringContextHolder.getBean(HmBasketService.class);
+
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -44,6 +48,13 @@ public class HomePageServlet extends HttpServlet {
 					HashMap<String, Object> respData = null;
 					String result = null;
 					try {
+						HmBasketEditQueryDTO hmBasketEditQueryDTO = new HmBasketEditQueryDTO();
+						hmBasketEditQueryDTO.setGid(1055);
+//        hmBasketEditQueryDTO.setAmount(new BigDecimal(3.5));
+						hmBasketEditQueryDTO.setLoginToken("cb78876213d7d044a6486beba490a4bb");
+						hmBasketEditQueryDTO.setRemark("");
+						basketService.addOrUpdateInfo(hmBasketEditQueryDTO);
+
 						String numberStr = asyncContext.getRequest().getParameter("number");
 						// 耗时操作
 						HashMap<String, Object> resultMap = new HashMap<>();

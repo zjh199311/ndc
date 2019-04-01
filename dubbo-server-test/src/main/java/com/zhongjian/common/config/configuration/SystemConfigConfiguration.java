@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
  */
 
 @Configuration
-//@EnableApolloConfig(value = "application", order = 1)
 public class SystemConfigConfiguration {
 
     @Bean
