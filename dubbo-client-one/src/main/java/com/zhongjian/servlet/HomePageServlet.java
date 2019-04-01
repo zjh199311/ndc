@@ -15,8 +15,11 @@ import com.zhongjian.common.GsonUtil;
 import com.zhongjian.common.ResponseHandle;
 import com.zhongjian.common.SpringContextHolder;
 import com.zhongjian.common.Status;
+import com.zhongjian.dto.hm.query.HmBasketEditQueryDTO;
 import com.zhongjian.executor.ThreadPoolExecutorSingle;
 import com.zhongjian.service.TestService;
+import com.zhongjian.service.hm.HmBasketService;
+
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -27,6 +30,8 @@ public class HomePageServlet extends HttpServlet {
 
 	private TestService testService = (TestService) SpringContextHolder.getBean(TestService.class);
 
+	private HmBasketService hmBasketService = (HmBasketService) SpringContextHolder.getBean(HmBasketService.class);
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -41,6 +46,12 @@ public class HomePageServlet extends HttpServlet {
 			@Override
 			public void onAllDataRead() {
 				ThreadPoolExecutorSingle.executor.execute(() -> {
+					HmBasketEditQueryDTO hmBasketEditQueryDTO = new HmBasketEditQueryDTO();
+	                  hmBasketEditQueryDTO.setGid(1055);
+//	        hmBasketEditQueryDTO.setAmount(new BigDecimal(3.5));
+	                  hmBasketEditQueryDTO.setLoginToken("cb78876213d7d044a6486beba490a4bb");
+	                  hmBasketEditQueryDTO.setRemark("");
+	                  hmBasketService.addOrUpdateInfo(hmBasketEditQueryDTO);
 					HashMap<String, Object> respData = null;
 					String result = null;
 					try {

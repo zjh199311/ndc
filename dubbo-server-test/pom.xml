@@ -15,7 +15,6 @@
         <java.version>1.8</java.version>
         <mysql.version>5.1.39</mysql.version>
         <druid.version>1.0.15</druid.version>
-        <springboot-dubbo.version>2.0.0</springboot-dubbo.version>
         <!-- zookeeper -->
         <zookeeper.version>3.4.9</zookeeper.version>
         <zkclient.version>0.10</zkclient.version>
@@ -61,9 +60,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.alibaba.spring.boot</groupId>
-            <artifactId>dubbo-spring-boot-starter</artifactId>
-            <version>${springboot-dubbo.version}</version>
+            <groupId>io.dubbo.springboot</groupId>
+            <artifactId>spring-boot-starter-dubbo</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <dependency>

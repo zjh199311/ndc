@@ -6,9 +6,9 @@ import com.zhongjian.common.util.CheckSumBuilderUtil;
 import com.zhongjian.common.util.HttpClientUtil;
 import com.zhongjian.common.util.MapUtil;
 import com.zhongjian.dto.common.ResultDTO;
-import com.zhongjian.dto.message.MessageBodyDTO;
-import com.zhongjian.dto.message.MessageReqDTO;
-import com.zhongjian.dto.message.MessageResDTO;
+import com.zhongjian.dto.message.query.MessageBodyDTO;
+import com.zhongjian.dto.message.query.MessageReqDTO;
+import com.zhongjian.dto.message.result.MessageResDTO;
 import com.zhongjian.service.HmBaseTest;
 import com.zhongjian.service.message.MessagePushService;
 import org.apache.http.HttpResponse;
@@ -86,5 +86,10 @@ public class MessagePushServiceImplTest extends HmBaseTest {
         messageReqDTO.setType(100);
         ResultDTO<MessageResDTO> messageResDTOResultDTO = messagePushService.messagePush(messageReqDTO);
         System.out.println(messageResDTOResultDTO.getData());
+    }
+    @Test
+    public void test(){
+        String accid = messagePushProperties.getAccid();
+        System.out.println(accid);
     }
 }
