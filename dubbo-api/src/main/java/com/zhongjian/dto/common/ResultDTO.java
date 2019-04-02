@@ -3,12 +3,16 @@ package com.zhongjian.dto.common;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  *
  * @author: ldd
  */
 @Data
-public class ResultDTO<T> {
+public class ResultDTO<T> implements Serializable{
+
+    private static final long serialVersionUID = 197018972999527001L;
 
     private Boolean flag;
 
