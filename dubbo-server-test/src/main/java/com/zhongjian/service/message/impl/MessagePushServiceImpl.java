@@ -32,6 +32,7 @@ import java.util.List;
  * @Author: ldd
  */
 @Service
+@com.alibaba.dubbo.config.annotation.Service(interfaceClass =MessagePushService.class,retries = 0)
 public class MessagePushServiceImpl implements MessagePushService {
 
     @Resource
