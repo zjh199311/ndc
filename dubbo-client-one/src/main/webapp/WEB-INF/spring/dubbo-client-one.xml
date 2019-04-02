@@ -21,12 +21,13 @@
 
     <!-- consumer's application name, used for tracing dependency relationship (not a matching criterion),
     don't set it same as provider -->
+ <dubbo:application name="dubbo-client-one"/>
 
     <dubbo:consumer check="false" />
     <!-- use multicast registry center to discover service -->
     <dubbo:registry address="zookeeper://192.168.0.252:2181"/>
     <!-- generate proxy for the remote service, then demoService can be used in the same way as the
     local regular interface -->
-    <dubbo:reference id="testService" interface="com.zhongjian.service.TestService" version="1.0.0"/>
+    <dubbo:reference id="hmBasketService" interface="com.zhongjian.service.hm.basket.HmBasketService" version="1.0.0"/> 
     <bean class="com.zhongjian.common.SpringContextHolder"></bean>
 </beans>

@@ -1,4 +1,4 @@
-package com.zhongjian;
+package com.zhongjian.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

@@ -28,8 +28,6 @@ public class HomePageServlet extends HttpServlet {
 
 	private static Logger log = Logger.getLogger(HomePageServlet.class);
 
-	private TestService testService = (TestService) SpringContextHolder.getBean(TestService.class);
-
 	private HmBasketService hmBasketService = (HmBasketService) SpringContextHolder.getBean(HmBasketService.class);
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -46,24 +44,25 @@ public class HomePageServlet extends HttpServlet {
 			@Override
 			public void onAllDataRead() {
 				ThreadPoolExecutorSingle.executor.execute(() -> {
-					HmBasketEditQueryDTO hmBasketEditQueryDTO = new HmBasketEditQueryDTO();
-	                  hmBasketEditQueryDTO.setGid(1055);
-//	        hmBasketEditQueryDTO.setAmount(new BigDecimal(3.5));
-	                  hmBasketEditQueryDTO.setLoginToken("cb78876213d7d044a6486beba490a4bb");
-	                  hmBasketEditQueryDTO.setRemark("");
-	                  hmBasketService.addOrUpdateInfo(hmBasketEditQueryDTO);
 					HashMap<String, Object> respData = null;
 					String result = null;
 					try {
 						String numberStr = asyncContext.getRequest().getParameter("number");
 						// 耗时操作
 						HashMap<String, Object> resultMap = new HashMap<>();
-						resultMap.put("output", testService.testMethod(numberStr));
+						HmBasketEditQueryDTO hmBasketEditQueryDTO = new HmBasketEditQueryDTO();
+		                  hmBasketEditQueryDTO.setGid(1055);
+            		        hmBasketEditQueryDTO.setAmount("3.5");
+		                  hmBasketEditQueryDTO.setLoginToken("cb78876213d7d044a6486beba490a4bb");
+		                  hmBasketEditQueryDTO.setRemark("");
+		                  
+						resultMap.put("output", hmBasketService.addOrUpdateInfo(hmBasketEditQueryDTO));
 						respData = new HashMap<>();
 						respData.put("data", resultMap);
 						respData.put("code", Status.Success.getStatenum());
 						result = GsonUtil.GsonString(respData);
 					} catch (Exception e) {
+						System.out.println(e.getMessage());
 						respData = new HashMap<>();
 						respData.put("code", Status.GeneralError.getStatenum());
 						respData.put("msg","");

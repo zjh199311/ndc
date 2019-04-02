@@ -3,7 +3,6 @@ package com.zhongjian.dto.hm.basket.query;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 /**
  * @Author: ldd

@@ -27,29 +27,37 @@
        http://dubbo.apache.org/schema/dubbo
        http://dubbo.apache.org/schema/dubbo/dubbo.xsd">
 
-   
+   <bean id="propertyConfigurer"
+              class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+              <property name="locations">
+                     <list>
+                            <value>/currentserver.properties</value>
+                     </list>
+              </property>
+      </bean>
     <context:component-scan base-package="com.zhongjian"/>    
     <!-- provider's application name, used for tracing dependency relationship -->
     
-    <dubbo:application name="dubbo-server-one"/>
+    <dubbo:application name="${spring.dubbo.application.name}"/>
     
-    <dubbo:provider token="true" delay="-1" timeout="100000"  retries="0"/>
+    <dubbo:provider token="true" delay="-1" timeout="100000"  retries="-1"/>
     
     <!-- use multicast registry center to export service -->
-    <dubbo:registry protocol="zookeeper" address="192.168.0.252:2181" />
+    <dubbo:registry protocol="zookeeper" address="${spring.dubbo.registry.address}" />
 
     <!-- use dubbo protocol to export service on port 20880 -->
-    <dubbo:protocol host="192.168.0.252" name="dubbo" threadpool="cached" threads="4" port="20880"  />
-    
-    <!-- <bean id="testService" class="com.zhongjian.service.TestServiceImpl"/> -->
+    <dubbo:protocol host="${spring.dubbo.protocol.host}" name="${spring.dubbo.protocol.name}" threadpool="cached" threads="4" port="${spring.dubbo.protocol.port}"  />
     <!-- declare the service interface to be exported -->
-    <dubbo:service interface="com.zhongjian.service.TestService" ref="testService" version="1.0.0"/>  
+    <!-- server start -->
+     <dubbo:service interface="com.zhongjian.service.hm.basket.HmBasketService" ref="hmBasketService" version="1.0.0"/>
+     <!-- server end -->
+
      <!-- 创建数据源 -->
     <bean id="dataSourceId" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"></property>
-        <property name="url" value="jdbc:mysql://192.168.0.252:3306/zjsj?useUnicode=true&amp;characterEncoding=utf-8&amp;serverTimezone=CTT"></property>
-        <property name="username" value="root"></property>
-        <property name="password" value="123456"></property>
+        <property name="url" value="${dbcp2.datasource.url}"></property>
+        <property name="username" value="${dbcp2.datasource.username}"></property>
+        <property name="password" value="${dbcp2.datasource.password}"></property>
     </bean>
     
     <bean id="jdbcTemplateId" class="org.springframework.jdbc.core.JdbcTemplate">
@@ -60,7 +68,11 @@
     <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSourceId"/>
     </bean>
-
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 数据源 -->
+		<property name="dataSource" ref="dataSourceId" />
+		<property name="mapperLocations" value="classpath:com/zhongjian/dao/mapping/hm/*/*.xml" />
+</bean>
     <!--注解方式实现事务-->
     <tx:annotation-driven transaction-manager="txManager"/>
 
