@@ -1,3 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.zhongjian.dao.entity.hm.shopown.HmShopownBean" />
+<mapper namespace="com.zhongjian.dao.entity.hm.shopown.HmShopownBean">
+
+	<resultMap id="hmShopownStatusResult"
+		type="com.zhongjian.dao.entity.hm.shopown.HmShopownBean">
+		<id column="pid" property="pid" jdbcType="INTEGER" />
+		<result column="status" property="status" jdbcType="INTEGER" />
+		<result column="is_appointment" property="isAppointment"
+			jdbcType="INTEGER" />
+	</resultMap>
+
+	<select id="selectHmShopownStatusByPids" resultMap="hmShopownStatusResult"
+		parameterType="java.util.List">
+		select pid,`status`,is_appointment from hm_shopown where pid in
+		<foreach collection="pids" index="index" item="pid" open="("
+			separator="," close=")">
+			#{pid,jdbcType=INTEGER}
+		</foreach>
+	</select>
+
+
+</mapper>
