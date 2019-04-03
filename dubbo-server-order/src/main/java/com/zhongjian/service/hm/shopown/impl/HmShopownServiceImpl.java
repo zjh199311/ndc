@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSONObject;
 import com.zhongjian.common.constant.enums.hm.shopown.HmShopownEnum;
 import com.zhongjian.dao.entity.hm.shopown.HmShopownBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
@@ -16,11 +15,6 @@ import com.zhongjian.service.hm.shopown.HmShopownService;
 @Service("hmShopownService")
 public class HmShopownServiceImpl extends HmBaseService<HmShopownBean, Integer>
         implements HmShopownService {
-
-    @Override
-    public ResultDTO<HmShopownResultDTO> queryList(String loginToken) {
-        return null;
-    }
 
     @Override
     public ResultDTO<Boolean> judgeHmShopownStatus(
@@ -66,5 +60,10 @@ public class HmShopownServiceImpl extends HmBaseService<HmShopownBean, Integer>
         }
         return resultDTO;
     }
+
+	@Override
+	public ResultDTO<HmShopownResultDTO> queryList(String loginToken) {
+		return null;
+	}
 
 }
