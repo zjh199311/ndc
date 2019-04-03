@@ -47,16 +47,16 @@ import org.apache.http.protocol.HttpContext;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-
+//jvm http connetions for single url 
 public class HttpConnectionPoolUtil {
 
 
-    private static final int CONNECT_TIMEOUT = 5;// 设置连接建立的超时时间为10s
+    private static final int CONNECT_TIMEOUT = 10;// 设置连接建立的超时时间为10s
     private static final int SOCKET_TIMEOUT = 10;
-    private static final int MAX_CONN = 200; // 最大连接数
-    private static final int Max_PRE_ROUTE = 100;
-    private static final int MAX_ROUTE = 150;
-    private static CloseableHttpClient httpClient; // 发送请求的客户端单例
+    private static final int MAX_CONN = 50; // 最大连接数
+    private static final int Max_PRE_ROUTE = 25;
+    private static final int MAX_ROUTE = 40;
+    private static  CloseableHttpClient httpClient; // 发送请求的客户端单例
     private static PoolingHttpClientConnectionManager manager; //连接池管理类
     private static ScheduledExecutorService monitorExecutor;
 
@@ -97,7 +97,7 @@ public class HttpConnectionPoolUtil {
                             //关闭异常连接
                             manager.closeExpiredConnections();
                             //关闭5s空闲的连接
-                            manager.closeIdleConnections(5000, TimeUnit.MILLISECONDS);
+                            manager.closeIdleConnections(30000, TimeUnit.MILLISECONDS);
                         }
                     },30000, 30000, TimeUnit.MILLISECONDS);
                 }
