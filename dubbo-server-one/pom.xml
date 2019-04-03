@@ -111,6 +111,29 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>org.mybatis.generator</groupId>
+				<artifactId>mybatis-generator-maven-plugin</artifactId>
+				<version>1.3.2</version>
+				<configuration>
+					<overwrite>true</overwrite>
+					<configurationFile>src/main/resources/generatorConfig/generatorConfig-hm.xml</configurationFile>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>mysql</groupId>
+						<artifactId>mysql-connector-java</artifactId>
+						<version>5.1.39</version>
+					</dependency>
+					<dependency>
+						<groupId>com.sichuan</groupId>
+						<artifactId>insurance</artifactId>
+						<version>1.0</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>
