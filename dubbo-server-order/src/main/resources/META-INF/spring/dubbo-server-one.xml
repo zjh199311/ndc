@@ -50,6 +50,7 @@
     <!-- declare the service interface to be exported -->
     <!-- server start -->
      <dubbo:service interface="com.zhongjian.service.hm.basket.HmBasketService" ref="hmBasketService" version="1.0.0"/>
+     <dubbo:service interface="com.zhongjian.service.hm.shopown.HmShopownService" ref="hmShopownService" version="1.0.0"/>
      <!-- server end -->
 
      <!-- 创建数据源 -->
