@@ -8,13 +8,13 @@ import com.zhongjian.common.constant.enums.hm.shopown.HmShopownEnum;
 import com.zhongjian.dao.entity.hm.shopown.HmShopownBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
 import com.zhongjian.dto.common.ResultDTO;
-import com.zhongjian.dto.hm.shopown.query.HmShopownStatusQueryDTO;
 import com.zhongjian.dto.hm.shopown.result.HmShopownResultDTO;
-import com.zhongjian.service.hm.shopown.HmShopownService;
+import com.zhongjian.dto.order.hm.shopown.query.HmShopownStatusQueryDTO;
+import com.zhongjian.service.order.hm.shopown.OrderHmShopownService;
 
-@Service("hmShopownService")
-public class HmShopownServiceImpl extends HmBaseService<HmShopownBean, Integer>
-        implements HmShopownService {
+@Service("orderHmShopownService")
+public class OrderHmShopownServiceImpl extends HmBaseService<HmShopownBean, Integer>
+        implements OrderHmShopownService {
 
     @Override
     public ResultDTO<Boolean> judgeHmShopownStatus(
@@ -61,9 +61,5 @@ public class HmShopownServiceImpl extends HmBaseService<HmShopownBean, Integer>
         return resultDTO;
     }
 
-	@Override
-	public ResultDTO<HmShopownResultDTO> queryList(String loginToken) {
-		return null;
-	}
 
 }
