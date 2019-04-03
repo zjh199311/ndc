@@ -19,7 +19,6 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
-			<version>4.3.16.RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>com.zhongjian</groupId>
