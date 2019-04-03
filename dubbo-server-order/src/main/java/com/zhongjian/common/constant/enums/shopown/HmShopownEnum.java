@@ -1,4 +1,4 @@
-package com.zhongjian.common.constant.enums.hm.shopown;
+package com.zhongjian.common.constant.enums.shopown;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

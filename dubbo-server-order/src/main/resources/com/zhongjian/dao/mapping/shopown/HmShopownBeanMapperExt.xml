@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.zhongjian.dao.entity.hm.shopown.HmShopownBean">
+<mapper namespace="com.zhongjian.dao.entity.shopown.HmShopownBean">
 
 	<resultMap id="hmShopownStatusResult"
-		type="com.zhongjian.dao.entity.hm.shopown.HmShopownBean">
+		type="com.zhongjian.dao.entity.shopown.HmShopownBean">
 		<id column="pid" property="pid" jdbcType="INTEGER" />
 		<result column="status" property="status" jdbcType="INTEGER" />
 		<result column="is_appointment" property="isAppointment"

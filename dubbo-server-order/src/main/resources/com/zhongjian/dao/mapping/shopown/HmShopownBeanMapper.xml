@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.zhongjian.dao.entity.hm.shopown.HmShopownBean" >
-  <resultMap id="BaseResultMap" type="com.zhongjian.dao.entity.hm.shopown.HmShopownBean" >
+<mapper namespace="com.zhongjian.dao.entity.shopown.HmShopownBean" >
+  <resultMap id="BaseResultMap" type="com.zhongjian.dao.entity.shopown.HmShopownBean" >
     <id column="pid" property="pid" jdbcType="INTEGER" />
     <result column="pic" property="pic" jdbcType="VARCHAR" />
     <result column="phone" property="phone" jdbcType="VARCHAR" />
@@ -64,7 +64,7 @@
     delete from hm_shopown
     where pid = #{pid,jdbcType=INTEGER}
   </delete>
-  <insert id="insert" parameterType="com.zhongjian.dao.entity.hm.shopown.HmShopownBean" >
+  <insert id="insert" parameterType="com.zhongjian.dao.entity.shopown.HmShopownBean" >
     insert into hm_shopown (pid, pic, phone, 
       password, sname, real_name, 
       scope_business, business_license, food_license, 
@@ -96,7 +96,7 @@
       #{vipPromotionReward,jdbcType=DECIMAL}, #{vipPromotionRewardget,jdbcType=DECIMAL}, 
       #{vipPromotionRewardover,jdbcType=DECIMAL}, #{publicOpenid,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.zhongjian.dao.entity.hm.shopown.HmShopownBean" >
+  <insert id="insertSelective" parameterType="com.zhongjian.dao.entity.shopown.HmShopownBean" >
     insert into hm_shopown
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="pid != null" >
@@ -361,7 +361,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.zhongjian.dao.entity.hm.shopown.HmShopownBean" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhongjian.dao.entity.shopown.HmShopownBean" >
     update hm_shopown
     <set >
       <if test="pic != null" >
@@ -493,7 +493,7 @@
     </set>
     where pid = #{pid,jdbcType=INTEGER}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.zhongjian.dao.entity.hm.shopown.HmShopownBean" >
+  <update id="updateByPrimaryKey" parameterType="com.zhongjian.dao.entity.shopown.HmShopownBean" >
     update hm_shopown
     set pic = #{pic,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},
@@ -539,7 +539,7 @@
       public_openid = #{publicOpenid,jdbcType=VARCHAR}
     where pid = #{pid,jdbcType=INTEGER}
   </update>
-  <select id="searchByEntityCount" resultType="java.lang.Integer" parameterType="com.zhongjian.dao.entity.hm.shopown.HmShopownBean" >
+  <select id="searchByEntityCount" resultType="java.lang.Integer" parameterType="com.zhongjian.dao.entity.shopown.HmShopownBean" >
     select
     count(*)
     from hm_shopown
@@ -672,7 +672,7 @@
      </if>
     </where>
   </select>
-  <select id="searchByEntity" resultMap="BaseResultMap" parameterType="com.zhongjian.dao.entity.hm.shopown.HmShopownBean" >
+  <select id="searchByEntity" resultMap="BaseResultMap" parameterType="com.zhongjian.dao.entity.shopown.HmShopownBean" >
     select
     <include refid="Base_Column_List"/>
     from hm_shopown

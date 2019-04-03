@@ -1,4 +1,4 @@
-package com.zhongjian.dao.entity.hm.shopown;
+package com.zhongjian.dao.entity.shopown;
 
 import java.math.BigDecimal;
 

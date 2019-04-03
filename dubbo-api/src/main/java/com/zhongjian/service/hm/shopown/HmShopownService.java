@@ -2,7 +2,7 @@ package com.zhongjian.service.hm.shopown;
 
 import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.hm.shopown.result.HmShopownResultDTO;
-import com.zhongjian.dto.order.hm.shopown.query.HmShopownStatusQueryDTO;
+import com.zhongjian.dto.order.shopown.query.HmShopownStatusQueryDTO;
 
 /**
  * @Author: ldd

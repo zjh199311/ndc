@@ -1,4 +1,4 @@
-package com.zhongjian.dto.order.hm.shopown.query;
+package com.zhongjian.dto.order.shopown.query;
 
 import java.io.Serializable;
 import java.util.List;

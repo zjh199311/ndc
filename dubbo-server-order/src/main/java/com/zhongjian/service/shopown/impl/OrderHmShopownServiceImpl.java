@@ -1,16 +1,15 @@
-package com.zhongjian.service.hm.shopown.impl;
+package com.zhongjian.service.shopown.impl;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.zhongjian.common.constant.enums.hm.shopown.HmShopownEnum;
-import com.zhongjian.dao.entity.hm.shopown.HmShopownBean;
+import com.zhongjian.common.constant.enums.shopown.HmShopownEnum;
+import com.zhongjian.dao.entity.shopown.HmShopownBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
 import com.zhongjian.dto.common.ResultDTO;
-import com.zhongjian.dto.hm.shopown.result.HmShopownResultDTO;
-import com.zhongjian.dto.order.hm.shopown.query.HmShopownStatusQueryDTO;
-import com.zhongjian.service.order.hm.shopown.OrderHmShopownService;
+import com.zhongjian.dto.order.shopown.query.HmShopownStatusQueryDTO;
+import com.zhongjian.service.order.shopown.OrderHmShopownService;
 
 @Service("orderHmShopownService")
 public class OrderHmShopownServiceImpl extends HmBaseService<HmShopownBean, Integer>
