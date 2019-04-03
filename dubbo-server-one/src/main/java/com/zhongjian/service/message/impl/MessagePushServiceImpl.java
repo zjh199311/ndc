@@ -11,25 +11,17 @@ import com.zhongjian.dto.message.result.MessageResDTO;
 import com.zhongjian.dto.message.result.MessageResParamDTO;
 import com.zhongjian.service.message.MessagePushService;
 import com.zhongjian.util.CheckSumBuilderUtil;
-import com.zhongjian.util.HttpClientUtil;
 import com.zhongjian.util.HttpConnectionPoolUtil;
 import com.zhongjian.util.LogUtil;
 import com.zhongjian.util.MapUtil;
 
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * @Author: ldd
@@ -44,15 +36,12 @@ public class MessagePushServiceImpl implements MessagePushService {
     public ResultDTO<MessageResDTO> messagePush(MessageReqDTO messageReqDTO) {
         ResultDTO<MessageResDTO> resultDTO = new ResultDTO<MessageResDTO>();
         resultDTO.setFlag(false);
-
-        CloseableHttpClient httpClient = HttpConnectionPoolUtil.getHttpClient(propUtil.getYxUrl());
-        HttpPost httpPost = new HttpPost(propUtil.getYxUrl());
-
         String appKey = propUtil.getYxAppKey();
         String appSecret = propUtil.getYxAppSecret();
         String nonce = "12345";
         String curTime = String.valueOf((new Date()).getTime() / 1000L);
         String checkSum = CheckSumBuilderUtil.getCheckSum(appSecret, nonce, curTime);//参考 计算CheckSum的java代码
+        HttpPost httpPost = new HttpPost(propUtil.getYxUrl());
         // 设置请求的header
         httpPost.addHeader("AppKey", appKey);
         httpPost.addHeader("Nonce", nonce);
@@ -67,11 +56,8 @@ public class MessagePushServiceImpl implements MessagePushService {
             messageBodyDTO.setMsg(messageReqDTO.getMsg());
             messageReqDTO.setBody(JSONObject.toJSONString(messageBodyDTO));
             HashMap<String, String> map = MapUtil.parseObjectToHashMap(messageReqDTO);
-            List<NameValuePair> nameValuePairs = HttpClientUtil.paramsConverter(map);
-            httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, "utf-8"));
+            String message = HttpConnectionPoolUtil.post(propUtil.getYxUrl(), httpPost,map);
             // 执行请求
-            HttpResponse response = httpClient.execute(httpPost);
-            String message = EntityUtils.toString(response.getEntity(), "utf-8");
             MessageResParamDTO messageResParamDTO = JSONObject.parseObject(message, MessageResParamDTO.class);
             if(FinalDatas.NUMBER.equals(messageResParamDTO.getCode())){
                 LogUtil.info("发送成功","状态码:"+messageResParamDTO.getCode());
@@ -93,11 +79,6 @@ public class MessagePushServiceImpl implements MessagePushService {
             resultDTO.setErrorMessage(CommonMessageEnum.FAIL.getCode());
             return resultDTO;
         }finally{
-            try {
-                httpClient.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
         return resultDTO;
     }

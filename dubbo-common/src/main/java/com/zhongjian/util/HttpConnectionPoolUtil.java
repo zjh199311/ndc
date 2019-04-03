@@ -1,6 +1,7 @@
 package com.zhongjian.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
@@ -16,12 +17,18 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
+import org.apache.http.NameValuePair;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.config.Registry;
@@ -35,7 +42,11 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 public class HttpConnectionPoolUtil {
 
@@ -160,7 +171,76 @@ public class HttpConnectionPoolUtil {
         return client;
     }
 
+    /**
+     * 设置post请求的参数
+     * @param httpPost
+     * @param params
+     */
+    private static void setPostParams(HttpPost httpPost, Map<String, String> params){
+        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        Set<String> keys = params.keySet();
+        for (String key: keys){
+            nvps.add(new BasicNameValuePair(key, params.get(key)));
+        }
+        try {
+            httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
 
+    public static String post(String url, Map<String, String> params){
+        HttpPost httpPost = new HttpPost(url);
+        setRequestConfig(httpPost);
+        setPostParams(httpPost, params);
+        CloseableHttpResponse response = null;
+        InputStream in = null;
+        String result = null;
+        try {
+            response = getHttpClient(url).execute(httpPost, HttpClientContext.create());
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                in = entity.getContent();
+                 result = IOUtils.toString(in, "utf-8");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try{
+                if (in != null) in.close();
+                if (response != null) response.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public static String post(String url, HttpPost httpPost,Map<String, String> params){
+        setRequestConfig(httpPost);
+        setPostParams(httpPost, params);
+        CloseableHttpResponse response = null;
+        InputStream in = null;
+        String result =  null;
+        try {
+            response = getHttpClient(url).execute(httpPost, HttpClientContext.create());
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                in = entity.getContent();
+                result = IOUtils.toString(in, "utf-8");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try{
+                if (in != null) in.close();
+                if (response != null) response.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
     /**
      * 关闭连接池
      */
