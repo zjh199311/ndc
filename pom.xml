@@ -26,7 +26,7 @@
         <module>dubbo-api</module>
         <module>dubbo-common</module>
         <module>dubbo-client-one</module>
-        <module>dubbo-server-test</module>
+         <module>dubbo-server-order</module>
     </modules>
   
     <build>
