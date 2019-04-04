@@ -1,7 +1,9 @@
 package com.zhongjian.dto.common;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -10,6 +12,8 @@ import java.io.Serializable;
  * @author: ldd
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ResultDTO<T> implements Serializable{
 
     private static final long serialVersionUID = 197018972999527001L;

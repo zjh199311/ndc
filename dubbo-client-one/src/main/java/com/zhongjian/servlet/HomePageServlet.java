@@ -4,6 +4,7 @@ import javax.servlet.AsyncContext;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,7 +19,6 @@ import com.zhongjian.common.ResponseHandle;
 import com.zhongjian.common.SpringContextHolder;
 import com.zhongjian.common.Status;
 import com.zhongjian.executor.ThreadPoolExecutorSingle;
-import com.zhongjian.service.TestService;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -36,18 +36,18 @@ public class HomePageServlet extends HttpServlet {
 		AsyncContext asyncContext = request.startAsync();
 		ServletInputStream inputStream = request.getInputStream();
 		inputStream.setReadListener(new ReadListener() {
-
 			@Override
 			public void onDataAvailable() throws IOException {
 			}
-
 			@Override
 			public void onAllDataRead() {
 				ThreadPoolExecutorSingle.executor.execute(() -> {
 					HashMap<String, Object> respData = null;
 					String result = null;
 					try {
-						String numberStr = asyncContext.getRequest().getParameter("number");
+						String numberStr = request.getParameter("test");
+						System.out.println(numberStr);
+						System.out.println(request.getAttribute("uid"));
 						// 耗时操作
 						HashMap<String, Object> resultMap = new HashMap<>();
 						HmBasketEditQueryDTO hmBasketEditQueryDTO = new HmBasketEditQueryDTO();

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
  * 
  * 
  */
-@Component
 public class SpringContextHolder implements ApplicationContextAware, DisposableBean {
 
 	private static Logger log = Logger.getLogger(SpringContextHolder.class);
