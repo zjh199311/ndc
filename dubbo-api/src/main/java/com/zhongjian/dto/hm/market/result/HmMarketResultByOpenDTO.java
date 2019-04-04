@@ -36,6 +36,11 @@ public class HmMarketResultByOpenDTO {
     private String rule;
 
     /**
+     * 店铺类型2.预约中 1.打烊 0开张
+     */
+    private Integer type;
+
+    /**
      * 状态
      */
     private String status;
