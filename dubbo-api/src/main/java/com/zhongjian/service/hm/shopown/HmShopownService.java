@@ -1,6 +1,7 @@
 package com.zhongjian.service.hm.shopown;
 
 import com.zhongjian.dto.common.ResultDTO;
+import com.zhongjian.dto.hm.market.result.HmMarketResultListDTO;
 import com.zhongjian.dto.hm.shopown.result.HmShopownResultDTO;
 
 /**
@@ -11,7 +12,7 @@ public interface HmShopownService {
     /**
      * 购物车显示列表
      */
-    ResultDTO<HmShopownResultDTO> queryList(String loginToken);
+    ResultDTO<HmMarketResultListDTO> queryList(String loginToken);
 
 
 }
