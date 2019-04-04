@@ -1,5 +1,6 @@
 package com.zhongjian.service.hm.basket.impl;
 
+import com.alibaba.dubbo.common.utils.StringUtils;
 import com.zhongjian.common.constant.enums.hm.basket.HmBasketEnum;
 import com.zhongjian.common.constant.enums.response.CommonMessageEnum;
 import com.zhongjian.dao.entity.hm.basket.HmBasketBean;
@@ -15,19 +16,20 @@ import com.zhongjian.dto.hm.basket.query.HmBasketListQueryDTO;
 import com.zhongjian.dto.hm.basket.result.HmBasketResultDTO;
 import com.zhongjian.service.hm.basket.HmBasketService;
 import com.zhongjian.util.LogUtil;
-
-import org.apache.commons.lang3.StringUtils;
+import com.zhongjian.util.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 
 /**
  * @Author: ldd
  */
-@Service("hmBasketService")
+@Service
+@com.alibaba.dubbo.config.annotation.Service(interfaceClass = HmBasketService.class, retries = 0)
 public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> implements HmBasketService {
 
     private HmDAO<HmGoodsBean, Integer> hmGoodsBeanDAO;
@@ -56,7 +58,7 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
             resultDTO.setStatusCode(CommonMessageEnum.PARAM_LOST.getCode());
             return resultDTO;
         }
-        if (null == hmBasketEditQueryDTO.getAmount() || BigDecimal.ZERO.equals(hmBasketEditQueryDTO.getAmount())) {
+        if (null == hmBasketEditQueryDTO.getAmount() || BigDecimal.ZERO.equals(new BigDecimal(hmBasketEditQueryDTO.getAmount()))) {
             resultDTO.setErrorMessage(HmBasketEnum.AMOUNT_IS_NULL.getMsg());
             resultDTO.setStatusCode(HmBasketEnum.AMOUNT_IS_NULL.getCode());
             return resultDTO;
@@ -88,7 +90,7 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
         //这边判断要是查询出来为空则为新增要是有数据则为更改
         HmBasketBean hmBasketBean = new HmBasketBean();
         BeanUtils.copyProperties(queryDTO, hmBasketBean);
-        if (StringUtils.isBlank(hmBasketEditQueryDTO.getRemark())) {
+        if (StringUtil.isBlank(hmBasketEditQueryDTO.getRemark())) {
             hmBasketBean.setRemark("");
         } else {
             hmBasketBean.setRemark(hmBasketEditQueryDTO.getRemark());
@@ -154,6 +156,18 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
         hmBasketParamDTO.setUid(uid);
 
         List<HmBasketResultDTO> selectBasketBeanById = this.dao.executeListMethod(hmBasketParamDTO, "selectBasketBeanById", HmBasketResultDTO.class);
+        StringBuffer stringBuffer;
+        DecimalFormat decimalFormat = new DecimalFormat("0.##");
+        for (HmBasketResultDTO hmBasketResultDTO : selectBasketBeanById) {
+            stringBuffer = new StringBuffer();
+            //数量
+            String amount = hmBasketResultDTO.getAmount();
+            //decimalFormat格式转换
+            stringBuffer.append(decimalFormat.format(Double.parseDouble(amount))).append("斤");
+            hmBasketResultDTO.setAmount(stringBuffer.toString());
+            hmBasketResultDTO.setTotalPrice(hmBasketResultDTO.getTotalPrice() + "元");
+        }
+
         resultDTO.setData(selectBasketBeanById);
         resultDTO.setFlag(true);
         resultDTO.setErrorMessage(CommonMessageEnum.SUCCESS.getMsg());
@@ -272,7 +286,7 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
         queryDTO.setUid(uid);
         HmBasketBean findBasketBeanById = this.dao.executeSelectOneMethod(queryDTO, "findBasketBeanById", HmBasketBean.class);
         //如果是页面上的减号判断如果传来的值为0则是删除操作.
-        if (BigDecimal.ZERO.equals(hmBasketEditQueryDTO.getAmount())) {
+        if (BigDecimal.ZERO.equals(new BigDecimal(hmBasketEditQueryDTO.getAmount()))) {
 
             HmBasketDelQueryDTO hmBasketDelQueryDTO = new HmBasketDelQueryDTO();
             hmBasketDelQueryDTO.setId(findBasketBeanById.getId());
@@ -284,7 +298,7 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
             HmBasketBean hmBasketBean = new HmBasketBean();
             BeanUtils.copyProperties(queryDTO, hmBasketBean);
             hmBasketBean.setId(findBasketBeanById.getId());
-            if (StringUtils.isBlank(hmBasketEditQueryDTO.getRemark())) {
+            if (StringUtil.isBlank(hmBasketEditQueryDTO.getRemark())) {
                 hmBasketBean.setRemark("");
             } else {
                 hmBasketBean.setRemark(hmBasketEditQueryDTO.getRemark());

@@ -1,3 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.zhongjian.dao.entity.hm.market.HmMarketActivityBean" />
+<mapper namespace="com.zhongjian.dao.entity.hm.market.HmMarketActivityBean">
+    <select id="findActitityById" parameterType="java.lang.Integer"
+            resultType="com.zhongjian.dto.hm.marketActivity.result.HmMarketActivityResultDTO">
+       SELECT
+            rule,
+            type,
+            status
+        FROM
+            hm_market_activity
+        WHERE
+            marketid=#{martketId,jdbcType=INTEGER}
+            and status = 1
+    </select>
+</mapper>

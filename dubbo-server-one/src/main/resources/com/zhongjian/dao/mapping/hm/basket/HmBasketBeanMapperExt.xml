@@ -14,8 +14,8 @@
     <resultMap id="BaseBasketMap" type="com.zhongjian.dto.hm.basket.result.HmBasketResultDTO">
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="gname" property="foodName" jdbcType="VARCHAR"/>
-        <result column="price" property="totalPrice" jdbcType="DECIMAL"/>
-        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="price" property="totalPrice" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="VARCHAR"/>
     </resultMap>
 
     <select id="selectBasketBeanById" parameterType="com.zhongjian.dto.hm.basket.query.HmBasketListQueryDTO"
@@ -30,7 +30,7 @@
         LEFT JOIN hm_goods g ON b.gid = g.id
         WHERE
             b.uid = #{uid,jdbcType=INTEGER}
-        AND b.sid = #{sid,jdbcType=INTEGER}
+        AND g.pid = #{sid,jdbcType=INTEGER}
     </select>
 
     <delete id="deleteBeanById" parameterType="com.zhongjian.dao.hm.HmBasketParamDTO">
@@ -40,7 +40,7 @@
             <if test="id!=null">
                 id = #{id,jdbcType=INTEGER}
             </if>
-            <if test="uid!=null" >
+            <if test="uid!=null">
                 and uid =#{uid,jdbcType=INTEGER}
             </if>
             <if test="sid!=null">
@@ -48,4 +48,35 @@
             </if>
         </where>
     </delete>
+
+    <resultMap id="BaseBasketInfoMap" type="com.zhongjian.dto.hm.basket.result.HmBasketResultDTO">
+        <result column="amount" property="amount" jdbcType="VARCHAR"/>
+        <result column="gid" property="gid" jdbcType="INTEGER"/>
+        <result column="price" property="totalPrice" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="unitPrice" property="unitPrice" jdbcType="VARCHAR"/>
+        <result column="unit" property="unit" jdbcType="VARCHAR"/>
+        <result column="gname" property="foodName" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <select id="findBasketById" parameterType="com.zhongjian.dto.hm.basket.query.HmBasketListQueryDTO"
+            resultMap="BaseBasketInfoMap">
+       SELECT
+            b.amount,
+            b.gid,
+            b.price,
+            b.remark,
+            b.unitPrice,
+            g.unit,
+            g.gname
+        FROM
+            hm_basket b
+        LEFT JOIN hm_goods g ON b.gid = g.id
+        where
+          g.pid =#{sid,jdbcType=INTEGER}
+         and b.uid =#{uid,jdbcType=INTEGER}
+    </select>
+
+
 </mapper>
