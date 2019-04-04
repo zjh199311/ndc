@@ -27,4 +27,6 @@ public class HmBasketDelQueryDTO implements Serializable {
      */
     private Integer sid;
 
+
+
 }

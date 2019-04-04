@@ -20,54 +20,40 @@ public class HmBasketResultDTO implements Serializable {
     private Integer id;
 
     /**
-     * 商品名称
+     * 商品数量
      */
-    private String foodName;
-
+    private String amount;
     /**
      * 商品总价
      */
     private String totalPrice;
 
     /**
-     * 商品数量
+     * 商品名称
      */
-    private String amount;
+    private String foodName;
+
+    //------------------------
 
     /**
-     * 商户名称
+     * 商品原价
      */
-    private String shopName;
+    private String unitPrice;
 
     /**
-     * 优惠活动
-     */
-    private String activities;
-
-    /**
-     * 备注
+     * 商品描述
      */
     private String remark;
 
     /**
-     * 优惠数值
+     * 商品单位
      */
-    private String reduce;
+    private String unit;
 
     /**
-     * 满减额度
+     * 商品id
      */
-    private String full;
-
-    /**
-     * '类型0满减1折扣'
-     */
-    private Integer type;
-
-    /**
-     * 商户图片
-     */
-    private String picture;
+    private Integer gid;
 
 
 }

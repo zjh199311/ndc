@@ -11,7 +11,7 @@ import java.util.List;
  * @Author: ldd
  */
 @Data
-public class HmShopownResultDTO implements Serializable {
+public class HmShopownResultByCloseDTO implements Serializable{
 
     private static final long serialVersionUID = 197018972999527001L;
 
@@ -69,5 +69,4 @@ public class HmShopownResultDTO implements Serializable {
      * 备注组合
      */
     private List<String> remarkList;
-
 }

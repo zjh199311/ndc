@@ -2,16 +2,13 @@ package com.zhongjian.dto.hm.shopown.result;
 
 import com.zhongjian.dto.hm.basket.result.HmBasketResultDTO;
 import com.zhongjian.dto.hm.storeActivity.result.HmStoreActivityResultDTO;
-import lombok.Data;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * @Author: ldd
  */
-@Data
-public class HmShopownResultDTO implements Serializable {
+public class HmShopownResultByOpenDTO {
 
     private static final long serialVersionUID = 197018972999527001L;
 
@@ -69,5 +66,4 @@ public class HmShopownResultDTO implements Serializable {
      * 备注组合
      */
     private List<String> remarkList;
-
 }
