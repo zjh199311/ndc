@@ -30,4 +30,8 @@
     local regular interface -->
     <dubbo:reference id="hmBasketService" interface="com.zhongjian.service.hm.basket.HmBasketService" version="1.0.0"/> 
     <bean class="com.zhongjian.common.SpringContextHolder"></bean>
+    <bean id="propComponent"  init-method="readProperties" class="com.zhongjian.component.PropComponent"></bean>
+    <bean class="com.zhongjian.component.PropUtil" init-method="setProp">
+     <property name="propComponent" ref="propComponent"/>  
+    </bean>
 </beans>
