@@ -28,8 +28,7 @@ import java.util.List;
 /**
  * @Author: ldd
  */
-@Service
-@com.alibaba.dubbo.config.annotation.Service(interfaceClass = HmBasketService.class, retries = 0)
+@Service("hmBasketService")
 public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> implements HmBasketService {
 
     private HmDAO<HmGoodsBean, Integer> hmGoodsBeanDAO;

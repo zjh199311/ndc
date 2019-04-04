@@ -33,8 +33,7 @@ import java.util.List;
 /**
  * @Author: ldd
  */
-@Service
-@com.alibaba.dubbo.config.annotation.Service(interfaceClass = HmShopownService.class, retries = 0)
+@Service("hmShopownService")
 public class HmShopownServiceImpl extends HmBaseService<HmMarketBean, Integer> implements HmShopownService {
 
     private HmDAO<HmUserBean, Integer> hmDAO;
