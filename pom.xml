@@ -25,7 +25,7 @@
         <module>dubbo-server-cart</module>
         <module>dubbo-api</module>
         <module>dubbo-common</module>
-        <module>dubbo-client-one</module>
+        <module>dubbo-client-cart</module>
          <module>dubbo-server-order</module>
          <module>dubbo-server-pay</module>
     </modules>
