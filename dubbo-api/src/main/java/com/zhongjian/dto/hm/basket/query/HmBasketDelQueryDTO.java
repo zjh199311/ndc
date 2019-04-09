@@ -18,7 +18,7 @@ public class HmBasketDelQueryDTO implements Serializable {
     private Integer id;
 
     /**
-     * 用户token
+     * 用户uid
      */
     private Integer uid;
 
