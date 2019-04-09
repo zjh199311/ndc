@@ -34,7 +34,13 @@ public enum CommonMessageEnum {
 
     SID_IS_NULL("商户id为空", "SID_IS_NULL"),
 
-    UID_IS_NULL("用户id为空", "UID_IS_NULL"),;
+    UID_IS_NULL("用户id为空", "UID_IS_NULL"),
+    
+    //订单
+    PID_IS_NULL("商户id为空","PID_IS_NULL"),
+
+    STATUS_IS_NULL("效验状态为空","STATUS_IS_NULL"),
+    ;
     private @Getter
     String msg;
     private @Getter

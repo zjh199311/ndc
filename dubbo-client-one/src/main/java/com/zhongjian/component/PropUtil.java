@@ -1,6 +1,6 @@
 package com.zhongjian.component;
 
-
+import com.zhongjian.commoncomponent.PropComponent;
 
 public class PropUtil {
 

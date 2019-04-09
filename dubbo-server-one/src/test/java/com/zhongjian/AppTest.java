@@ -22,8 +22,8 @@ public class AppTest {
 
     @Test
     public void test() {
-        ResultDTO<HmMarketResultListDTO> resultDTOResultDTO = shopownService.queryList("ac954d3bdee77aff2b0c4a809037673a");
-        System.out.println(JSONObject.toJSONString(resultDTOResultDTO.getData()));
+//        ResultDTO<HmMarketResultListDTO> resultDTOResultDTO = shopownService.queryList("ac954d3bdee77aff2b0c4a809037673a");
+//        System.out.println(JSONObject.toJSONString(resultDTOResultDTO.getData()));
     }
 
 

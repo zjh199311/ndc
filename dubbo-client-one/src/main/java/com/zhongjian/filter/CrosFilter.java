@@ -16,8 +16,6 @@ import com.zhongjian.common.SpringContextHolder;
 import com.zhongjian.component.PropUtil;
 import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultUtil;
-import com.zhongjian.service.hm.basket.HmBasketService;
-import com.zhongjian.service.user.UserService;
 import com.zhongjian.util.CheckSumBuilderUtil;
 
 /**

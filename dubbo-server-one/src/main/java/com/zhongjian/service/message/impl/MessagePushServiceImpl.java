@@ -2,8 +2,8 @@ package com.zhongjian.service.message.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zhongjian.common.constant.FinalDatas;
-import com.zhongjian.common.constant.enums.response.CommonMessageEnum;
-import com.zhongjian.component.PropUtil;
+import com.zhongjian.commoncomponent.PropUtil;
+import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.message.query.MessageBodyDTO;
 import com.zhongjian.dto.message.query.MessageReqDTO;

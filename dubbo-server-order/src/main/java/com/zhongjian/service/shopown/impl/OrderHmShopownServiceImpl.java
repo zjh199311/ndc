@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.zhongjian.common.constant.enums.shopown.HmShopownEnum;
 import com.zhongjian.dao.entity.shopown.HmShopownBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
+import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.order.shopown.query.HmShopownStatusQueryDTO;
 import com.zhongjian.service.order.shopown.OrderHmShopownService;
@@ -22,13 +22,13 @@ public class OrderHmShopownServiceImpl extends HmBaseService<HmShopownBean, Inte
         resultDTO.setFlag(false);
         if (null == hmShopownStatusQueryDTO.getPids()
                 || 0 == hmShopownStatusQueryDTO.getPids().size()) {
-            resultDTO.setErrorMessage(HmShopownEnum.PID_IS_NULL.getMsg());
-            resultDTO.setStatusCode(HmShopownEnum.PID_IS_NULL.getCode());
+            resultDTO.setErrorMessage(CommonMessageEnum.PID_IS_NULL.getMsg());
+            resultDTO.setStatusCode(CommonMessageEnum.PID_IS_NULL.getCode());
             return resultDTO;
         }
         if (null == hmShopownStatusQueryDTO.getStatus()) {
-            resultDTO.setErrorMessage(HmShopownEnum.STATUS_IS_NULL.getMsg());
-            resultDTO.setStatusCode(HmShopownEnum.STATUS_IS_NULL.getCode());
+            resultDTO.setErrorMessage(CommonMessageEnum.STATUS_IS_NULL.getMsg());
+            resultDTO.setStatusCode(CommonMessageEnum.STATUS_IS_NULL.getCode());
             return resultDTO;
         }
         List<HmShopownBean> hmShopownBeans = this.dao.executeListMethod(

@@ -53,7 +53,7 @@ public class HomePageServlet extends HttpServlet {
 						HmBasketEditQueryDTO hmBasketEditQueryDTO = new HmBasketEditQueryDTO();
 		                  hmBasketEditQueryDTO.setGid(1055);
             		        hmBasketEditQueryDTO.setAmount("3.5");
-		                  hmBasketEditQueryDTO.setLoginToken("cb78876213d7d044a6486beba490a4bb");
+		                  hmBasketEditQueryDTO.setUid(0);
 		                  hmBasketEditQueryDTO.setRemark("");
 		                  
 						resultMap.put("output", hmBasketService.addOrUpdateInfo(hmBasketEditQueryDTO));

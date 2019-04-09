@@ -1,5 +1,6 @@
-package com.zhongjian.component;
+package com.zhongjian.commoncomponent;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map.Entry;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Component;
 
+
 @Component
 public class PropComponent {
 
@@ -18,7 +20,8 @@ public class PropComponent {
 	@PostConstruct
 	public void readProperties() throws IOException {
 		 Properties properties = new Properties();
-	        properties.load(PropComponent.class.getResourceAsStream("/currentserver.properties"));
+		 FileInputStream in = new FileInputStream("serverconfig.properties");
+	        properties.load(in);
 	        Set<Entry<Object,Object>> entrySet = properties.entrySet();
 	        for (Entry<Object, Object> entry : entrySet) {
 	        	map.put((String)entry.getKey(), entry.getValue());

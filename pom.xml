@@ -22,11 +22,12 @@
         </dependency>
     </dependencies>
     <modules>
-        <module>dubbo-server-one</module>
+        <module>dubbo-server-cart</module>
         <module>dubbo-api</module>
         <module>dubbo-common</module>
         <module>dubbo-client-one</module>
          <module>dubbo-server-order</module>
+         <module>dubbo-server-pay</module>
     </modules>
     <!--jar versions manage  -->
   <dependencyManagement>  

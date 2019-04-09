@@ -31,7 +31,7 @@
               class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
               <property name="locations">
                      <list>
-                            <value>/currentserver.properties</value>
+                            <value>serverconfig.properties</value>
                      </list>
               </property>
       </bean>
@@ -49,8 +49,7 @@
     <dubbo:protocol host="${spring.dubbo.protocol.host}" name="${spring.dubbo.protocol.name}" threadpool="cached" threads="4" port="${spring.dubbo.protocol.port}"  />
     <!-- declare the service interface to be exported -->
     <!-- server start -->
-     <dubbo:service interface="com.zhongjian.service.hm.basket.HmBasketService" ref="hmBasketService" version="1.0.0"/>
-     <dubbo:service interface="com.zhongjian.service.hm.shopown.HmShopownService" ref="hmShopownService" version="1.0.0"/>
+     <dubbo:service interface="com.zhongjian.service.order.shopown.OrderHmShopownService" ref="orderHmShopownService" version="1.0.0"/>
      <!-- server end -->
 
      <!-- 创建数据源 -->
@@ -72,7 +71,7 @@
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<!-- 数据源 -->
 		<property name="dataSource" ref="dataSourceId" />
-		<property name="mapperLocations" value="classpath:com/zhongjian/dao/mapping/hm/*/*.xml" />
+		<property name="mapperLocations" value="classpath:com/zhongjian/dao/**/*.xml" />
 </bean>
     <!--注解方式实现事务-->
     <tx:annotation-driven transaction-manager="txManager"/>
