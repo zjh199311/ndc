@@ -4,9 +4,6 @@ import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.hm.basket.query.HmBasketDelQueryDTO;
 import com.zhongjian.dto.hm.basket.query.HmBasketEditQueryDTO;
 import com.zhongjian.dto.hm.basket.query.HmBasketListQueryDTO;
-import com.zhongjian.dto.hm.basket.result.HmBasketResultDTO;
-
-import java.util.List;
 
 /**
  * @Author: ldd

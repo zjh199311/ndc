@@ -190,38 +190,43 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
         }
         //根据前端传入的商品id去查询pid,
         HmGoodsBean hmGoodsBean = this.hmGoodsBeanDAO.selectByPrimaryKey(hmBasketEditQueryDTO.getGid());
-        HmBasketParamDTO queryDTO = new HmBasketParamDTO();
-        queryDTO.setGid(hmBasketEditQueryDTO.getGid());
-        queryDTO.setSid(hmGoodsBean.getPid());
-        queryDTO.setUid(hmBasketEditQueryDTO.getUid());
-        HmBasketBean findBasketBeanById = this.dao.executeSelectOneMethod(queryDTO, "findBasketBeanById", HmBasketBean.class);
-        //如果是页面上的减号判断如果传来的值为0则是删除操作.
-        if (BigDecimal.ZERO.equals(new BigDecimal(hmBasketEditQueryDTO.getAmount()))) {
-
-            HmBasketDelQueryDTO hmBasketDelQueryDTO = new HmBasketDelQueryDTO();
-            hmBasketDelQueryDTO.setId(findBasketBeanById.getId());
-            hmBasketDelQueryDTO.setUid(hmBasketEditQueryDTO.getUid());
-            ResultDTO<Object> dto = deleteInfoById(hmBasketDelQueryDTO);
-            return dto;
+        if (null == hmGoodsBean) {
+            LogUtil.info("根据商品id找不到商品信息", "hmGoodsBean" + hmGoodsBean);
+            return ResultUtil.getFail(CommonMessageEnum.DATA_IS_EMPTY);
         } else {
-            //否则就是编辑操作重新该单并替换原有的订单
-            HmBasketBean hmBasketBean = new HmBasketBean();
-            BeanUtils.copyProperties(queryDTO, hmBasketBean);
-            hmBasketBean.setId(findBasketBeanById.getId());
-            if (StringUtil.isBlank(hmBasketEditQueryDTO.getRemark())) {
-                hmBasketBean.setRemark("");
+            HmBasketParamDTO queryDTO = new HmBasketParamDTO();
+            queryDTO.setGid(hmBasketEditQueryDTO.getGid());
+            queryDTO.setSid(hmGoodsBean.getPid());
+            queryDTO.setUid(hmBasketEditQueryDTO.getUid());
+            HmBasketBean findBasketBeanById = this.dao.executeSelectOneMethod(queryDTO, "findBasketBeanById", HmBasketBean.class);
+            //如果是页面上的减号判断如果传来的值为0则是删除操作.
+            if (BigDecimal.ZERO.equals(new BigDecimal(hmBasketEditQueryDTO.getAmount()))) {
+
+                HmBasketDelQueryDTO hmBasketDelQueryDTO = new HmBasketDelQueryDTO();
+                hmBasketDelQueryDTO.setId(findBasketBeanById.getId());
+                hmBasketDelQueryDTO.setUid(hmBasketEditQueryDTO.getUid());
+                ResultDTO<Object> dto = deleteInfoById(hmBasketDelQueryDTO);
+                return dto;
             } else {
-                hmBasketBean.setRemark(hmBasketEditQueryDTO.getRemark());
+                //否则就是编辑操作重新该单并替换原有的订单
+                HmBasketBean hmBasketBean = new HmBasketBean();
+                BeanUtils.copyProperties(queryDTO, hmBasketBean);
+                hmBasketBean.setId(findBasketBeanById.getId());
+                if (StringUtil.isBlank(hmBasketEditQueryDTO.getRemark())) {
+                    hmBasketBean.setRemark("");
+                } else {
+                    hmBasketBean.setRemark(hmBasketEditQueryDTO.getRemark());
+                }
+                hmBasketBean.setUnitprice(hmGoodsBean.getPrice());
+                hmBasketBean.setAmount(new BigDecimal(hmBasketEditQueryDTO.getAmount()));
+                //总价
+                BigDecimal totalprice = hmGoodsBean.getPrice().multiply(new BigDecimal(hmBasketEditQueryDTO.getAmount()));
+                hmBasketBean.setPrice(totalprice);
+                //获取时间用unix时间戳
+                Long unixTime = System.currentTimeMillis() / 1000;
+                hmBasketBean.setCtime(unixTime.intValue());
+                this.dao.updateByPrimaryKeySelective(hmBasketBean);
             }
-            hmBasketBean.setUnitprice(hmGoodsBean.getPrice());
-            hmBasketBean.setAmount(new BigDecimal(hmBasketEditQueryDTO.getAmount()));
-            //总价
-            BigDecimal totalprice = hmGoodsBean.getPrice().multiply(new BigDecimal(hmBasketEditQueryDTO.getAmount()));
-            hmBasketBean.setPrice(totalprice);
-            //获取时间用unix时间戳
-            Long unixTime = System.currentTimeMillis() / 1000;
-            hmBasketBean.setCtime(unixTime.intValue());
-            this.dao.updateByPrimaryKeySelective(hmBasketBean);
         }
         return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
     }

@@ -18,7 +18,7 @@ public class HmBasketEditQueryDTO implements Serializable {
     private Integer gid;
 
     /**
-     * 用户登入token
+     * 用户登入uid
      */
     private Integer uid;
 
