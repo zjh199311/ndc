@@ -11,7 +11,7 @@ public interface HmShopownService {
     /**
      * 购物车显示列表
      */
-    ResultDTO<HmMarketResultListDTO> queryList(String loginToken);
+    ResultDTO<Object> queryList(Integer uid);
 
 
 }

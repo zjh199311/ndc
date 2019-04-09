@@ -1,15 +1,14 @@
 package com.zhongjian.service.hm.basket.impl;
 
-import com.alibaba.dubbo.common.utils.StringUtils;
-import com.zhongjian.common.constant.enums.hm.basket.HmBasketEnum;
-import com.zhongjian.common.constant.enums.response.CommonMessageEnum;
 import com.zhongjian.dao.entity.hm.basket.HmBasketBean;
 import com.zhongjian.dao.entity.hm.goods.HmGoodsBean;
 import com.zhongjian.dao.entity.hm.user.HmUserBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
 import com.zhongjian.dao.framework.inf.HmDAO;
 import com.zhongjian.dao.hm.HmBasketParamDTO;
+import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultDTO;
+import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.dto.hm.basket.query.HmBasketDelQueryDTO;
 import com.zhongjian.dto.hm.basket.query.HmBasketEditQueryDTO;
 import com.zhongjian.dto.hm.basket.query.HmBasketListQueryDTO;
@@ -48,43 +47,30 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
     }
 
     @Override
-    public ResultDTO<Boolean> addOrUpdateInfo(HmBasketEditQueryDTO hmBasketEditQueryDTO) {
-        ResultDTO<Boolean> resultDTO = new ResultDTO<Boolean>();
-        resultDTO.setFlag(false);
+    public ResultDTO<Object> addOrUpdateInfo(HmBasketEditQueryDTO hmBasketEditQueryDTO) {
         //参数校验
         if (null == hmBasketEditQueryDTO) {
-            resultDTO.setErrorMessage(CommonMessageEnum.PARAM_LOST.getMsg());
-            resultDTO.setStatusCode(CommonMessageEnum.PARAM_LOST.getCode());
-            return resultDTO;
+            return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
         }
         if (null == hmBasketEditQueryDTO.getAmount() || BigDecimal.ZERO.equals(new BigDecimal(hmBasketEditQueryDTO.getAmount()))) {
-            resultDTO.setErrorMessage(HmBasketEnum.AMOUNT_IS_NULL.getMsg());
-            resultDTO.setStatusCode(HmBasketEnum.AMOUNT_IS_NULL.getCode());
-            return resultDTO;
+            return ResultUtil.getFail(CommonMessageEnum.AMOUNT_IS_NULL);
         }
         if (null == hmBasketEditQueryDTO.getGid()) {
-            resultDTO.setErrorMessage(HmBasketEnum.GID_IS_NULL.getMsg());
-            resultDTO.setStatusCode(HmBasketEnum.GID_IS_NULL.getCode());
-            return resultDTO;
+            return ResultUtil.getFail(CommonMessageEnum.GID_IS_NULL);
         }
-        if (StringUtils.isBlank(hmBasketEditQueryDTO.getLoginToken())) {
-            resultDTO.setErrorMessage(HmBasketEnum.LOGINTOKEN_IS_NULL.getMsg());
-            resultDTO.setStatusCode(HmBasketEnum.LOGINTOKEN_IS_NULL.getCode());
-            return resultDTO;
+        if (null == hmBasketEditQueryDTO.getUid()) {
+            return ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL);
         }
 
         //根据前端传入的商品id去查询pid,
         HmGoodsBean hmGoodsBean = this.hmGoodsBeanDAO.selectByPrimaryKey(hmBasketEditQueryDTO.getGid());
         //总价
         BigDecimal multiply = hmGoodsBean.getPrice().multiply(new BigDecimal(hmBasketEditQueryDTO.getAmount()));
-        //获取uid
-        Integer uid = this.hmUserBeanHmDAO.executeSelectOneMethod(hmBasketEditQueryDTO.getLoginToken(), "findUidByLoginToken", Integer.class);
-        LogUtil.info("获取uid", "uid:" + uid);
         //根据gid,pid,uid查询购物车信息.
         HmBasketParamDTO queryDTO = new HmBasketParamDTO();
         queryDTO.setGid(hmBasketEditQueryDTO.getGid());
         queryDTO.setSid(hmGoodsBean.getPid());
-        queryDTO.setUid(uid);
+        queryDTO.setUid(hmBasketEditQueryDTO.getUid());
         HmBasketBean findBasketBeanById = this.dao.executeSelectOneMethod(queryDTO, "findBasketBeanById", HmBasketBean.class);
         //这边判断要是查询出来为空则为新增要是有数据则为更改
         HmBasketBean hmBasketBean = new HmBasketBean();
@@ -97,13 +83,12 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
         //获取时间用unix时间戳
         Long unixTime = System.currentTimeMillis() / 1000;
         hmBasketBean.setCtime(unixTime.intValue());
-        int i;
         if (null == findBasketBeanById) {
             hmBasketBean.setAmount(new BigDecimal(hmBasketEditQueryDTO.getAmount()));
             hmBasketBean.setUnitprice(hmGoodsBean.getPrice());
             //计算总价保留两个小数点
             hmBasketBean.setPrice(BigDecimal.valueOf(multiply.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
-            i = this.dao.insertSelective(hmBasketBean);
+            this.dao.insertSelective(hmBasketBean);
         } else {
             hmBasketBean.setId(findBasketBeanById.getId());
             //获取原本的总价.
@@ -112,47 +97,28 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
             hmBasketBean.setPrice(BigDecimal.valueOf(multiply.add(unitprice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
             hmBasketBean.setAmount(findBasketBeanById.getAmount().add(new BigDecimal(hmBasketEditQueryDTO.getAmount())));
             hmBasketBean.setUnitprice(hmGoodsBean.getPrice());
-            i = this.dao.updateByPrimaryKeySelective(hmBasketBean);
+            this.dao.updateByPrimaryKeySelective(hmBasketBean);
         }
-        if (i > 0) {
-            resultDTO.setFlag(true);
-            resultDTO.setErrorMessage(CommonMessageEnum.SUCCESS.getMsg());
-            resultDTO.setStatusCode(CommonMessageEnum.SUCCESS.getCode());
-        } else {
-            resultDTO.setErrorMessage(CommonMessageEnum.FAIL.getMsg());
-            resultDTO.setStatusCode(CommonMessageEnum.FAIL.getCode());
-        }
-        return resultDTO;
+        return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
     }
 
     @Override
-    public ResultDTO<List<HmBasketResultDTO>> queryList(HmBasketListQueryDTO hmBasketListQueryDTO) {
-        ResultDTO<List<HmBasketResultDTO>> resultDTO = new ResultDTO<List<HmBasketResultDTO>>();
-        resultDTO.setFlag(false);
+    public ResultDTO<Object> queryList(HmBasketListQueryDTO hmBasketListQueryDTO) {
         if (null == hmBasketListQueryDTO) {
-            resultDTO.setErrorMessage(CommonMessageEnum.PARAM_LOST.getMsg());
-            resultDTO.setStatusCode(CommonMessageEnum.PARAM_LOST.getCode());
-            return resultDTO;
+            return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
         }
 
-        if (StringUtils.isBlank(hmBasketListQueryDTO.getLoginToken())) {
-            resultDTO.setErrorMessage(HmBasketEnum.LOGINTOKEN_IS_NULL.getMsg());
-            resultDTO.setStatusCode(HmBasketEnum.LOGINTOKEN_IS_NULL.getCode());
-            return resultDTO;
+        if (null == hmBasketListQueryDTO.getUid()) {
+            return ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL);
         }
 
         if (null == hmBasketListQueryDTO.getSid()) {
-            resultDTO.setErrorMessage(HmBasketEnum.SID_IS_NULL.getMsg());
-            resultDTO.setStatusCode(HmBasketEnum.SID_IS_NULL.getCode());
-            return resultDTO;
+            return ResultUtil.getFail(CommonMessageEnum.SID_IS_NULL);
         }
 
-        //获取uid
-        Integer uid = this.hmUserBeanHmDAO.executeSelectOneMethod(hmBasketListQueryDTO.getLoginToken(), "findUidByLoginToken", Integer.class);
-        LogUtil.info("获取uid", "uid:" + uid);
         HmBasketParamDTO hmBasketParamDTO = new HmBasketParamDTO();
         hmBasketParamDTO.setSid(hmBasketListQueryDTO.getSid());
-        hmBasketParamDTO.setUid(uid);
+        hmBasketParamDTO.setUid(hmBasketListQueryDTO.getUid());
 
         List<HmBasketResultDTO> selectBasketBeanById = this.dao.executeListMethod(hmBasketParamDTO, "selectBasketBeanById", HmBasketResultDTO.class);
         StringBuffer stringBuffer;
@@ -166,131 +132,76 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
             hmBasketResultDTO.setAmount(stringBuffer.toString());
             hmBasketResultDTO.setTotalPrice(hmBasketResultDTO.getTotalPrice() + "元");
         }
-
-        resultDTO.setData(selectBasketBeanById);
-        resultDTO.setFlag(true);
-        resultDTO.setErrorMessage(CommonMessageEnum.SUCCESS.getMsg());
-        resultDTO.setStatusCode(CommonMessageEnum.SUCCESS.getCode());
-
-        return resultDTO;
+        return ResultUtil.getSuccess(selectBasketBeanById);
     }
 
     @Override
-    public ResultDTO<Boolean> deleteInfoById(HmBasketDelQueryDTO hmBasketDelQueryDTO) {
-        ResultDTO<Boolean> resultDTO = new ResultDTO<Boolean>();
+    public ResultDTO<Object> deleteInfoById(HmBasketDelQueryDTO hmBasketDelQueryDTO) {
 
         if (null == hmBasketDelQueryDTO) {
-            resultDTO.setErrorMessage(CommonMessageEnum.PARAM_LOST.getMsg());
-            resultDTO.setStatusCode(CommonMessageEnum.PARAM_LOST.getCode());
-            return resultDTO;
+            return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
         }
         if (null == hmBasketDelQueryDTO.getId()) {
-            resultDTO.setErrorMessage(CommonMessageEnum.PRI_ID_IS_EMPT.getMsg());
-            resultDTO.setStatusCode(CommonMessageEnum.PRI_ID_IS_EMPT.getCode());
-            return resultDTO;
+            return ResultUtil.getFail(CommonMessageEnum.PRI_ID_IS_EMPT);
         }
-        if (StringUtils.isBlank(hmBasketDelQueryDTO.getLoginToken())) {
-            resultDTO.setErrorMessage(HmBasketEnum.LOGINTOKEN_IS_NULL.getMsg());
-            resultDTO.setStatusCode(HmBasketEnum.LOGINTOKEN_IS_NULL.getCode());
-            return resultDTO;
+        if (null == hmBasketDelQueryDTO.getUid()) {
+            return ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL);
         }
-        //获取uid
-        Integer uid = this.hmUserBeanHmDAO.executeSelectOneMethod(hmBasketDelQueryDTO.getLoginToken(), "findUidByLoginToken", Integer.class);
-        LogUtil.info("获取uid", "uid:" + uid);
         HmBasketParamDTO hmBasketParamDTO = new HmBasketParamDTO();
         hmBasketParamDTO.setId(hmBasketDelQueryDTO.getId());
-        hmBasketParamDTO.setUid(uid);
-        int i = this.dao.executeDeleteMethod(hmBasketParamDTO, "deleteBeanById");
-        if (i > 0) {
-            resultDTO.setFlag(true);
-            resultDTO.setErrorMessage(CommonMessageEnum.SUCCESS.getMsg());
-            resultDTO.setStatusCode(CommonMessageEnum.SUCCESS.getCode());
-        } else {
-            resultDTO.setErrorMessage(CommonMessageEnum.FAIL.getMsg());
-            resultDTO.setStatusCode(CommonMessageEnum.FAIL.getCode());
-        }
-        return resultDTO;
+        hmBasketParamDTO.setUid(hmBasketDelQueryDTO.getUid());
+        this.dao.executeDeleteMethod(hmBasketParamDTO, "deleteBeanById");
+
+        return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
     }
 
     @Override
-    public ResultDTO<Boolean> deleteAllInfoById(HmBasketDelQueryDTO hmBasketDelQueryDTO) {
-        ResultDTO<Boolean> resultDTO = new ResultDTO<Boolean>();
-        resultDTO.setFlag(false);
+    public ResultDTO<Object> deleteAllInfoById(HmBasketDelQueryDTO hmBasketDelQueryDTO) {
         if (null == hmBasketDelQueryDTO) {
-            resultDTO.setErrorMessage(CommonMessageEnum.PARAM_LOST.getMsg());
-            resultDTO.setStatusCode(CommonMessageEnum.PARAM_LOST.getCode());
-            return resultDTO;
+            return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
         }
         if (null == hmBasketDelQueryDTO.getSid()) {
-            resultDTO.setErrorMessage(HmBasketEnum.SID_IS_NULL.getMsg());
-            resultDTO.setStatusCode(HmBasketEnum.SID_IS_NULL.getCode());
-            return resultDTO;
+            return ResultUtil.getFail(CommonMessageEnum.SID_IS_NULL);
         }
-        if (StringUtils.isBlank(hmBasketDelQueryDTO.getLoginToken())) {
-            resultDTO.setErrorMessage(HmBasketEnum.LOGINTOKEN_IS_NULL.getMsg());
-            resultDTO.setStatusCode(HmBasketEnum.LOGINTOKEN_IS_NULL.getCode());
-            return resultDTO;
+        if (null == hmBasketDelQueryDTO.getUid()) {
+            return ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL);
         }
-        //获取uid
-        Integer uid = this.hmUserBeanHmDAO.executeSelectOneMethod(hmBasketDelQueryDTO.getLoginToken(), "findUidByLoginToken", Integer.class);
-        LogUtil.info("获取uid", "uid:" + uid);
         HmBasketParamDTO hmBasketParamDTO = new HmBasketParamDTO();
         hmBasketParamDTO.setSid(hmBasketDelQueryDTO.getSid());
-        hmBasketParamDTO.setUid(uid);
-        int i = this.dao.executeDeleteMethod(hmBasketParamDTO, "deleteBeanById");
-        if (i > 0) {
-            resultDTO.setFlag(true);
-            resultDTO.setErrorMessage(CommonMessageEnum.SUCCESS.getMsg());
-            resultDTO.setStatusCode(CommonMessageEnum.SUCCESS.getCode());
-        } else {
-            resultDTO.setErrorMessage(CommonMessageEnum.FAIL.getMsg());
-            resultDTO.setStatusCode(CommonMessageEnum.FAIL.getCode());
-        }
-        return resultDTO;
+        hmBasketParamDTO.setUid(hmBasketDelQueryDTO.getUid());
+        this.dao.executeDeleteMethod(hmBasketParamDTO, "deleteBeanById");
+
+        return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
     }
 
     @Override
-    public ResultDTO<Boolean> editInfo(HmBasketEditQueryDTO hmBasketEditQueryDTO) {
-        ResultDTO<Boolean> resultDTO = new ResultDTO<Boolean>();
-        resultDTO.setFlag(false);
-
+    public ResultDTO<Object> editInfo(HmBasketEditQueryDTO hmBasketEditQueryDTO) {
         if (null == hmBasketEditQueryDTO) {
-            resultDTO.setErrorMessage(CommonMessageEnum.PARAM_LOST.getMsg());
-            resultDTO.setStatusCode(CommonMessageEnum.PARAM_LOST.getCode());
-            return resultDTO;
+            return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
         }
         if (null == hmBasketEditQueryDTO.getAmount()) {
-            resultDTO.setErrorMessage(HmBasketEnum.AMOUNT_IS_NULL.getMsg());
-            resultDTO.setStatusCode(HmBasketEnum.AMOUNT_IS_NULL.getCode());
-            return resultDTO;
+            return ResultUtil.getFail(CommonMessageEnum.AMOUNT_IS_NULL);
         }
         if (null == hmBasketEditQueryDTO.getGid()) {
-            resultDTO.setErrorMessage(HmBasketEnum.GID_IS_NULL.getMsg());
-            resultDTO.setStatusCode(HmBasketEnum.GID_IS_NULL.getCode());
-            return resultDTO;
+            return ResultUtil.getFail(CommonMessageEnum.GID_IS_NULL);
         }
-        if (StringUtils.isBlank(hmBasketEditQueryDTO.getLoginToken())) {
-            resultDTO.setErrorMessage(HmBasketEnum.LOGINTOKEN_IS_NULL.getMsg());
-            resultDTO.setStatusCode(HmBasketEnum.LOGINTOKEN_IS_NULL.getCode());
-            return resultDTO;
+        if (null == hmBasketEditQueryDTO.getUid()) {
+            return ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL);
         }
         //根据前端传入的商品id去查询pid,
         HmGoodsBean hmGoodsBean = this.hmGoodsBeanDAO.selectByPrimaryKey(hmBasketEditQueryDTO.getGid());
-        //获取uid
-        Integer uid = this.hmUserBeanHmDAO.executeSelectOneMethod(hmBasketEditQueryDTO.getLoginToken(), "findUidByLoginToken", Integer.class);
-        LogUtil.info("获取uid", "uid:" + uid);
         HmBasketParamDTO queryDTO = new HmBasketParamDTO();
         queryDTO.setGid(hmBasketEditQueryDTO.getGid());
         queryDTO.setSid(hmGoodsBean.getPid());
-        queryDTO.setUid(uid);
+        queryDTO.setUid(hmBasketEditQueryDTO.getUid());
         HmBasketBean findBasketBeanById = this.dao.executeSelectOneMethod(queryDTO, "findBasketBeanById", HmBasketBean.class);
         //如果是页面上的减号判断如果传来的值为0则是删除操作.
         if (BigDecimal.ZERO.equals(new BigDecimal(hmBasketEditQueryDTO.getAmount()))) {
 
             HmBasketDelQueryDTO hmBasketDelQueryDTO = new HmBasketDelQueryDTO();
             hmBasketDelQueryDTO.setId(findBasketBeanById.getId());
-            hmBasketDelQueryDTO.setLoginToken(hmBasketEditQueryDTO.getLoginToken());
-            ResultDTO<Boolean> dto = deleteInfoById(hmBasketDelQueryDTO);
+            hmBasketDelQueryDTO.setUid(hmBasketEditQueryDTO.getUid());
+            ResultDTO<Object> dto = deleteInfoById(hmBasketDelQueryDTO);
             return dto;
         } else {
             //否则就是编辑操作重新该单并替换原有的订单
@@ -310,16 +221,8 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
             //获取时间用unix时间戳
             Long unixTime = System.currentTimeMillis() / 1000;
             hmBasketBean.setCtime(unixTime.intValue());
-            int i = this.dao.updateByPrimaryKeySelective(hmBasketBean);
-            if (i > 0) {
-                resultDTO.setFlag(true);
-                resultDTO.setErrorMessage(CommonMessageEnum.SUCCESS.getMsg());
-                resultDTO.setStatusCode(CommonMessageEnum.SUCCESS.getCode());
-            } else {
-                resultDTO.setErrorMessage(CommonMessageEnum.FAIL.getMsg());
-                resultDTO.setStatusCode(CommonMessageEnum.FAIL.getCode());
-            }
+            this.dao.updateByPrimaryKeySelective(hmBasketBean);
         }
-        return resultDTO;
+        return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
     }
 }

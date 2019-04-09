@@ -19,27 +19,27 @@ public interface HmBasketService {
      * @param hmBasketEditQueryDTO
      * @return
      */
-    ResultDTO<Boolean> addOrUpdateInfo(HmBasketEditQueryDTO hmBasketEditQueryDTO);
+    ResultDTO<Object> addOrUpdateInfo(HmBasketEditQueryDTO hmBasketEditQueryDTO);
 
     /**
      * 商户在商家里面的购物车详情页
      */
-    ResultDTO<List<HmBasketResultDTO>> queryList(HmBasketListQueryDTO hmBasketListQueryDTO);
+    ResultDTO<Object> queryList(HmBasketListQueryDTO hmBasketListQueryDTO);
 
     /**
      * 根据主键id和用户id删除订单
      */
-    ResultDTO<Boolean> deleteInfoById(HmBasketDelQueryDTO hmBasketDelQueryDTO);
+    ResultDTO<Object> deleteInfoById(HmBasketDelQueryDTO hmBasketDelQueryDTO);
 
     /**
      * 清空该用户在该商家下所有购物订单
      */
-    ResultDTO<Boolean> deleteAllInfoById(HmBasketDelQueryDTO hmBasketDelQueryDTO);
+    ResultDTO<Object> deleteAllInfoById(HmBasketDelQueryDTO hmBasketDelQueryDTO);
 
     /**
      * 编辑功能(商户购物车里面的编辑,以及购物车的加减)
      */
-    ResultDTO<Boolean> editInfo(HmBasketEditQueryDTO hmBasketEditQueryDTO);
+    ResultDTO<Object> editInfo(HmBasketEditQueryDTO hmBasketEditQueryDTO);
 
 
 }

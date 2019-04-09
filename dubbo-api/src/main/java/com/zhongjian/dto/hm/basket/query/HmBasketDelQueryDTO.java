@@ -20,13 +20,12 @@ public class HmBasketDelQueryDTO implements Serializable {
     /**
      * 用户token
      */
-    private String loginToken;
+    private Integer uid;
 
     /**
      * 商户id
      */
     private Integer sid;
-
 
 
 }
