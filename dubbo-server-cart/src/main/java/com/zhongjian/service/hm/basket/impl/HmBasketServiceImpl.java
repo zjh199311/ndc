@@ -18,10 +18,12 @@ import com.zhongjian.util.LogUtil;
 import com.zhongjian.util.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -115,12 +117,7 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
         if (null == hmBasketListQueryDTO.getSid()) {
             return ResultUtil.getFail(CommonMessageEnum.SID_IS_NULL);
         }
-
-        HmBasketParamDTO hmBasketParamDTO = new HmBasketParamDTO();
-        hmBasketParamDTO.setSid(hmBasketListQueryDTO.getSid());
-        hmBasketParamDTO.setUid(hmBasketListQueryDTO.getUid());
-
-        List<HmBasketResultDTO> selectBasketBeanById = this.dao.executeListMethod(hmBasketParamDTO, "selectBasketBeanById", HmBasketResultDTO.class);
+        List<HmBasketResultDTO> selectBasketBeanById = this.dao.executeListMethod(hmBasketListQueryDTO, "selectBasketBeanById", HmBasketResultDTO.class);
         StringBuffer stringBuffer;
         DecimalFormat decimalFormat = new DecimalFormat("0.##");
         for (HmBasketResultDTO hmBasketResultDTO : selectBasketBeanById) {
@@ -147,10 +144,7 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
         if (null == hmBasketDelQueryDTO.getUid()) {
             return ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL);
         }
-        HmBasketParamDTO hmBasketParamDTO = new HmBasketParamDTO();
-        hmBasketParamDTO.setId(hmBasketDelQueryDTO.getId());
-        hmBasketParamDTO.setUid(hmBasketDelQueryDTO.getUid());
-        this.dao.executeDeleteMethod(hmBasketParamDTO, "deleteBeanById");
+        this.dao.executeDeleteMethod(hmBasketDelQueryDTO, "deleteBeanById");
 
         return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
     }
@@ -228,6 +222,19 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
                 this.dao.updateByPrimaryKeySelective(hmBasketBean);
             }
         }
+        return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
+    }
+
+    @Override
+    public ResultDTO<Object> deleteAllByPid(HmBasketDelQueryDTO hmBasketDelQueryDTO) {
+        if (null == hmBasketDelQueryDTO.getUid()) {
+            return ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL);
+        }
+        if (null == hmBasketDelQueryDTO.getSids() || hmBasketDelQueryDTO.getSids().length < 0) {
+            return ResultUtil.getFail(CommonMessageEnum.SID_IS_NULL);
+        }
+        this.dao.executeDeleteMethod(hmBasketDelQueryDTO,"deleteInfoBySids");
+
         return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
     }
 }
