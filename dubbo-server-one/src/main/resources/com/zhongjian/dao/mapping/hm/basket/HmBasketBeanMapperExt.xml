@@ -33,7 +33,7 @@
         AND g.pid = #{sid,jdbcType=INTEGER}
     </select>
 
-    <delete id="deleteBeanById" parameterType="com.zhongjian.dao.hm.HmBasketParamDTO">
+    <delete id="deleteBeanById" parameterType="com.zhongjian.dto.hm.basket.query.HmBasketDelQueryDTO">
         DELETE FROM
         hm_basket
         <where>
@@ -77,6 +77,18 @@
           g.pid =#{sid,jdbcType=INTEGER}
          and b.uid =#{uid,jdbcType=INTEGER}
     </select>
+
+    <delete id="deleteInfoBySids" parameterType="com.zhongjian.dto.hm.basket.query.HmBasketDelQueryDTO">
+        DELETE FROM
+        hm_basket
+        where
+        uid =#{uid,jdbcType=INTEGER}
+        and sid IN
+        <foreach collection="sids" item="item" index="no" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
 
 
 </mapper>

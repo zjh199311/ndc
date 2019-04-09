@@ -39,4 +39,10 @@ public interface HmBasketService {
     ResultDTO<Object> editInfo(HmBasketEditQueryDTO hmBasketEditQueryDTO);
 
 
+    /**
+     * 付款后删除用户在菜场下对应的所有商户
+     */
+    ResultDTO<Object> deleteAllByPid(HmBasketDelQueryDTO hmBasketDelQueryDTO);
+
+
 }

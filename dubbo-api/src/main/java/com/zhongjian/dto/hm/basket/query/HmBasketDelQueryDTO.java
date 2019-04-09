@@ -27,5 +27,10 @@ public class HmBasketDelQueryDTO implements Serializable {
      */
     private Integer sid;
 
+    /**
+     * 多个商户id
+     */
+    private int[] sids;
+
 
 }
