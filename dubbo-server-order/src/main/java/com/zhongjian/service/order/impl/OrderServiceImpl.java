@@ -22,6 +22,10 @@ public class OrderServiceImpl extends HmBaseService<HmShopownBean, Integer>
         PreviewOrderResultDTO orderResultDTO = new PreviewOrderResultDTO();
         resultDTO.setFlag(false);
         // 根据isAppointment 判断是否为预约单。 是，配送时间为第二天8.48分。 否 配送时间为当前实际+48分
+        if (isAppointment == 1) {
+        	
+			orderResultDTO.setDeliveryTime("");
+		}
         orderResultDTO.setDeliveryTime("配送时间");
 
         // 获取默认收货地址 取到就存。没取到就不存

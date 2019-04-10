@@ -7,6 +7,9 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.alibaba.fastjson.JSONObject;
+import com.zhongjian.commoncomponent.PropUtil;
+import com.zhongjian.service.pay.GenerateSignatureService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,27 +20,22 @@ import com.zhongjian.dto.order.shopown.query.HmShopownStatusQueryDTO;
 import com.zhongjian.service.order.shopown.OrderHmShopownService;
 import com.zhongjian.service.pay.GenerateSignatureService;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration({"/META-INF/spring/dubbo-server.xml"})
+public class AppTest {
 
-@RunWith(SpringJUnit4ClassRunner.class)  
-@ContextConfiguration({"/META-INF/spring/dubbo-server-one.xml"})
-public class AppTest {  
-    
-	@Autowired
-	private GenerateSignatureService genereSignatatureService;
+
     @Resource
-    private OrderHmShopownService service;
-    @Test  
-    public void getListTest() throws ParseException{
-        try {
-            HmShopownStatusQueryDTO dto = new HmShopownStatusQueryDTO();
-            List<Integer> pids = new ArrayList<Integer>();
-            pids.add(103);
-            dto.setPids(pids);
-            dto.setStatus(1);
-            System.out.println(service.judgeHmShopownStatus(dto));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        
-    }  
+    private GenerateSignatureService generateSignatureService;
+
+    @Resource
+    private PropUtil propUtil;
+
+
+    @Test
+    public void test() {
+        Object ro = generateSignatureService.getWxAppSignature("RO", "", "192.168.0.106").getData();
+        System.out.println(JSONObject.toJSONString(ro));
+    }
+
 }

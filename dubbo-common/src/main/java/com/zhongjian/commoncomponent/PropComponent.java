@@ -20,9 +20,9 @@ public class PropComponent {
 	@PostConstruct
 	public void readProperties() throws IOException {
 		 Properties properties = new Properties();
-		 FileInputStream in = new FileInputStream("serverconfig.properties");
-		 properties.load(in);
-//	        properties.load(PropComponent.class.getClassLoader().getResourceAsStream("serverconfig.properties"));
+//		 FileInputStream in = new FileInputStream("serverconfig.properties");
+//		 properties.load(in);
+	        properties.load(PropComponent.class.getClassLoader().getResourceAsStream("serverconfig.properties"));
 	        Set<Entry<Object,Object>> entrySet = properties.entrySet();
 	        for (Entry<Object, Object> entry : entrySet) {
 	        	map.put((String)entry.getKey(), entry.getValue());
