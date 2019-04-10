@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.dubbo.config.annotation.Service;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
@@ -15,6 +16,7 @@ import com.alipay.api.request.AlipayTradeAppPayRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.zhongjian.commoncomponent.PropUtil;
 
+@Service
 public class GenerateSignatureServiceImpl implements GenerateSignatureService{
 
 	@Autowired
@@ -38,13 +40,15 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService{
 		/****** 2.商品参数封装开始 *****/ // 手机端用
 		// 商户订单号，商户网站订单系统中唯一订单号，必填
 		orderMap.put("out_trade_no", out_trade_no);
+		
 		orderMap.put("subject", orderTypeString);
 		// 付款金额，必填
 		orderMap.put("total_amount", totalAmount);
+		orderMap.put("body", "本次订单花费" + totalAmount + "元");
 		// 超时时间 可空
 		orderMap.put("timeout_express", "15m");
 		// 销售产品码 必填
-		orderMap.put("product_code", "QUICK_WAP_PAY");
+		orderMap.put("product_code", "QUICK_MSECURITY_PAY");
 		// 实例化客户端
 		AlipayClient client = new DefaultAlipayClient(propUtil.getAliUrl(), propUtil.getAliAppId(),
 				propUtil.getAliRSAPrivateKey(), propUtil.getAliFormat(), propUtil.getAliCharset(), propUtil.getAliPayPublicKey(),

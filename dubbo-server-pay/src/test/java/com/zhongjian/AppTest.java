@@ -9,17 +9,21 @@ import javax.annotation.Resource;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.zhongjian.dto.order.shopown.query.HmShopownStatusQueryDTO;
 import com.zhongjian.service.order.shopown.OrderHmShopownService;
+import com.zhongjian.service.pay.GenerateSignatureService;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)  
 @ContextConfiguration({"/META-INF/spring/dubbo-server-one.xml"})
 public class AppTest {  
     
+	@Autowired
+	private GenerateSignatureService genereSignatatureService;
     @Resource
     private OrderHmShopownService service;
     @Test  
