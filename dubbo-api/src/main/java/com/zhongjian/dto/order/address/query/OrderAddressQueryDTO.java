@@ -1,7 +1,6 @@
 package com.zhongjian.dto.order.address.query;
 
 import lombok.Data;
-import sun.plugin2.message.Serializer;
 
 import java.io.Serializable;
 
