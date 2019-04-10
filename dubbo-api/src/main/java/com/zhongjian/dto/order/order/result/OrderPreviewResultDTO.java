@@ -1,15 +1,14 @@
-package com.zhongjian.dto.order.reult;
+package com.zhongjian.dto.order.order.result;
 
 import java.io.Serializable;
 import java.util.List;
 
-import com.zhongjian.dto.order.address.result.PreviewOrderAddressResultDTO;
-import com.zhongjian.dto.order.shopown.result.PreviewOrderShopownResultDTO;
+import com.zhongjian.dto.order.address.result.OrderPreviewAddressResultDTO;
 
 import lombok.Data;
 
 @Data
-public class PreviewOrderResultDTO implements Serializable {
+public class OrderPreviewResultDTO implements Serializable {
 
     /**
      * 
@@ -24,12 +23,12 @@ public class PreviewOrderResultDTO implements Serializable {
     /**
      * 收货地址
      */
-    private PreviewOrderAddressResultDTO addressResultDTO;
+    private OrderPreviewAddressResultDTO addressResultDTO;
     
     /**
      * 店铺订单详情
      */
-    private List<PreviewOrderShopownResultDTO> shopownResultDTOs;
+    private List<OrderPreviewShopownResultDTO> shopownResultDTOs;
     
     /**
      * 所选的活动类型  0 未选择活动  1 积分  2 优惠券  3 菜场满减

@@ -1,4 +1,4 @@
-package com.zhongjian.dto.order.shopown.query;
+package com.zhongjian.dto.order.order.query;
 
 import java.io.Serializable;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class HmShopownStatusQueryDTO implements Serializable {
+public class OrderStatusQueryDTO implements Serializable {
     /**
      * 
      */

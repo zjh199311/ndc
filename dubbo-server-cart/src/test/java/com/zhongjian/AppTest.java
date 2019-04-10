@@ -3,6 +3,7 @@ package com.zhongjian;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zhongjian.commoncomponent.PropUtil;
+import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.hm.basket.query.HmBasketDelQueryDTO;
 import com.zhongjian.dto.hm.basket.query.HmBasketEditQueryDTO;
 import com.zhongjian.dto.hm.basket.query.HmBasketListQueryDTO;
@@ -40,8 +41,8 @@ public class AppTest {
         HmBasketListQueryDTO hmBasketListQueryDTO = new HmBasketListQueryDTO();
         hmBasketListQueryDTO.setUid(1);
         hmBasketListQueryDTO.setSid(229);
-
-        System.out.println(JSONObject.toJSONString(hmBasketService.queryList(hmBasketListQueryDTO)));
+        ResultDTO<Object> objectResultDTO = hmBasketService.queryList(hmBasketListQueryDTO);
+        System.out.println(JSONObject.toJSONString(objectResultDTO));
 
     }
 
