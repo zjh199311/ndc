@@ -12,7 +12,7 @@ public interface OrderService {
 	
 	//0 "16:20"  1 "04-11 08:48"
 	String previewOrderTime(Integer isAppointment);
-
+    //0
 	Map<String,String> previewOrderAddress(Integer id,Integer uid);
 	
 }
