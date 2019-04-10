@@ -7,20 +7,15 @@ import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.request.AlipayTradeAppPayRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.zhongjian.commoncomponent.PropUtil;
-import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.util.LogUtil;
 import com.zhongjian.util.PayCommonUtil;
-import org.jdom.JDOMException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 import java.net.URLEncoder;
-import java.text.CollationElementIterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedMap;
@@ -53,10 +48,12 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
         orderMap.put("subject", orderTypeString);
         // 付款金额，必填
         orderMap.put("total_amount", totalAmount);
+     // 商品描述，可空
+        orderMap.put("body", "本次订单花费" + totalAmount + "元");
         // 超时时间 可空
         orderMap.put("timeout_express", "15m");
         // 销售产品码 必填
-        orderMap.put("product_code", "QUICK_WAP_PAY");
+        orderMap.put("product_code", "QUICK_MSECURITY_PAY");
         // 实例化客户端
         AlipayClient client = new DefaultAlipayClient(propUtil.getAliUrl(), propUtil.getAliAppId(),
                 propUtil.getAliRSAPrivateKey(), propUtil.getAliFormat(), propUtil.getAliCharset(), propUtil.getAliPayPublicKey(),
@@ -73,7 +70,6 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
         model.setTimeoutExpress(orderMap.get("timeout_express")); // 交易超时时间
         model.setTotalAmount(orderMap.get("total_amount")); // 支付金额
         model.setProductCode(orderMap.get("product_code")); // 销售产品码
-        model.setSellerId(propUtil.getAliBusinessId()); // 商家id
         ali_request.setBizModel(model);
         ali_request.setNotifyUrl(propUtil.getAliNotifyUrl()); // 回调地址
         AlipayTradeAppPayResponse response = null;
@@ -103,11 +99,9 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
         }
         SortedMap<String, Object> stringObjectSortedMap = null;
         try {
-            stringObjectSortedMap = PayCommonUtil.wxPublicPay(out_trade_no, totalAmount, spbillCreateIp, propUtil.getWxAppAppId(), propUtil.getWxAppKey(), propUtil.getWxAppMchId(), propUtil.getWxAppNotifyUrl(), propUtil.getWxAppUrl());
-        } catch (JDOMException e) {
-            LogUtil.info("获取签名异常", "e:" + e.getMessage());
-            e.getMessage();
-        } catch (IOException e) {
+            stringObjectSortedMap = PayCommonUtil.wxPublicPay(out_trade_no, totalAmount, spbillCreateIp, propUtil.getWxAppAppId(), 
+            		propUtil.getWxAppKey(), propUtil.getWxAppMchId(), propUtil.getWxAppNotifyUrl(), propUtil.getWxAppUrl());
+        }  catch (Exception e) {
             LogUtil.info("获取签名异常", "e:" + e.getMessage());
             e.getMessage();
         }

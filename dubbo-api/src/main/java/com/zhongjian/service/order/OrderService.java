@@ -5,8 +5,6 @@ import com.zhongjian.dto.order.address.query.OrderAddressQueryDTO;
 import com.zhongjian.dto.order.address.result.OrderAddressResultDTO;
 import com.zhongjian.dto.order.order.query.OrderStatusQueryDTO;
 
-import java.util.Map;
-
 public interface OrderService {
 
     //type 0选用积分 extra=null 1选用优惠券 extra = couponId
