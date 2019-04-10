@@ -4,6 +4,7 @@ import javax.annotation.PostConstruct;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 
@@ -30,9 +31,15 @@ public class PropUtil {
 		setAliCharset((String)propComponent.getMap().get("pay.ali.charset"));
 		setAliFormat((String)propComponent.getMap().get("pay.ali.format"));
 		setAliSignType((String)propComponent.getMap().get("pay.ali.signtype"));
+
+		setWxAppUrl((String)propComponent.getMap().get("pay.wxApp.url"));
+		setWxAppAppId((String)propComponent.getMap().get("pay.wxApp.appId"));
+		setWxAppMchId((String)propComponent.getMap().get("pay.wxApp.mchId"));
+		setWxAppNotifyUrl((String)propComponent.getMap().get("pay.wxApp.notifyUrl"));
+		setWxAppKey((String)propComponent.getMap().get("pay.wxApp.key"));
 	}
-	
-    private String yxUrl;  
+
+    private String yxUrl;
     private String yxAppKey;
     private String yxAppSecret;
     private String yxAccid;
@@ -47,6 +54,10 @@ public class PropUtil {
     private String aliFormat;
     private String aliSignType;
 
+	private String wxAppUrl;
+	private String wxAppNotifyUrl;
+	private String wxAppAppId;
+	private String wxAppMchId;
+	private String wxAppKey;
 
-    
 }

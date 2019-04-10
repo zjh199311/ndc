@@ -14,9 +14,11 @@ import com.zhongjian.dto.hm.basket.query.HmBasketEditQueryDTO;
 import com.zhongjian.dto.hm.basket.query.HmBasketListQueryDTO;
 import com.zhongjian.dto.hm.basket.result.HmBasketResultDTO;
 import com.zhongjian.service.hm.basket.HmBasketService;
+import com.zhongjian.service.pay.GenerateSignatureService;
 import com.zhongjian.util.LogUtil;
 import com.zhongjian.util.StringUtil;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -35,6 +37,7 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
     private HmDAO<HmGoodsBean, Integer> hmGoodsBeanDAO;
 
     private HmDAO<HmUserBean, Integer> hmUserBeanHmDAO;
+
 
     @Resource
     private void setHmGoodsBeanDAO(HmDAO<HmGoodsBean, Integer> hmGoodsBeanDAO) {
