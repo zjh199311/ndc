@@ -2,11 +2,13 @@ package com.zhongjian.commoncomponent;
 
 import javax.annotation.PostConstruct;
 
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
 @Component
+@Data
 public class PropUtil {
 
 	@Autowired
@@ -45,84 +47,6 @@ public class PropUtil {
     private String aliFormat;
     private String aliSignType;
 
-	public String getYxUrl() {
-		return yxUrl;
-	}
-	public void setYxUrl(String yxUrl) {
-		this.yxUrl = yxUrl;
-	}
-	public String getYxAppKey() {
-		return yxAppKey;
-	}
-	public void setYxAppKey(String yxAppKey) {
-		this.yxAppKey = yxAppKey;
-	}
-	public String getYxAppSecret() {
-		return yxAppSecret;
-	}
-	public void setYxAppSecret(String yxAppSecret) {
-		this.yxAppSecret = yxAppSecret;
-	}
-	public String getYxAccid() {
-		return yxAccid;
-	}  
-	public void setYxAccid(String yxAccid) {
-		this.yxAccid = yxAccid;
-	}
-	public String getAliAppId() {
-		return aliAppId;
-	}
-	public void setAliAppId(String aliAppId) {
-		this.aliAppId = aliAppId;
-	}
-	public String getAliBusinessId() {
-		return aliBusinessId;
-	}
-	public void setAliBusinessId(String aliBusinessId) {
-		this.aliBusinessId = aliBusinessId;
-	}
-	public String getAliRSAPrivateKey() {
-		return aliRSAPrivateKey;
-	}
-	public void setAliRSAPrivateKey(String aliRSAPrivateKey) {
-		this.aliRSAPrivateKey = aliRSAPrivateKey;
-	}
-	public String getAliPayPublicKey() {
-		return aliPayPublicKey;
-	}
-	public void setAliPayPublicKey(String aliPayPublicKey) {
-		this.aliPayPublicKey = aliPayPublicKey;
-	}
-	public String getAliNotifyUrl() {
-		return aliNotifyUrl;
-	}
-	public void setAliNotifyUrl(String aliNotifyUrl) {
-		this.aliNotifyUrl = aliNotifyUrl;
-	}
-	public String getAliUrl() {
-		return aliUrl;
-	}
-	public void setAliUrl(String aliUrl) {
-		this.aliUrl = aliUrl;
-	}
-	public String getAliCharset() {
-		return aliCharset;
-	}
-	public void setAliCharset(String aliCharset) {
-		this.aliCharset = aliCharset;
-	}
-	public String getAliFormat() {
-		return aliFormat;
-	}
-	public void setAliFormat(String aliFormat) {
-		this.aliFormat = aliFormat;
-	}
-	public String getAliSignType() {
-		return aliSignType;
-	}
-	public void setAliSignType(String aliSignType) {
-		this.aliSignType = aliSignType;
-	}
-    
+
     
 }
