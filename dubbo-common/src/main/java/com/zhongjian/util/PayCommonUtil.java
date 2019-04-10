@@ -11,12 +11,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
 
 import javax.net.ssl.SSLContext;
+import javax.xml.parsers.DocumentBuilder;
+
 import java.io.*;
 import java.math.BigDecimal;
 import java.net.ConnectException;
@@ -25,7 +23,8 @@ import java.net.URL;
 import java.security.KeyStore;
 import java.text.DecimalFormat;
 import java.util.*;
-
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 /**
  * @Author: ldd
  */
@@ -50,16 +49,17 @@ public class PayCommonUtil {
      * @param totalAmount 支付金额
      * @return -
      */
-    public static SortedMap<String, Object> wxPublicPay(String trade_no, String totalAmount, String spbillCreateId,String wxAppAppId,String wxAppKey,String wxAppMchId,String wxAppNotifyUrl,String wxAppUrl) throws JDOMException, IOException {
+    public static SortedMap<String, Object> wxPublicPay(String trade_no, String totalAmount, String spbillCreateId,String wxAppAppId,String wxAppKey,String wxAppMchId,String wxAppNotifyUrl,String wxAppUrl) throws Exception {
         Map<String, String> map = weixinAppPrePay(trade_no, totalAmount, spbillCreateId,wxAppAppId,wxAppMchId,wxAppNotifyUrl,wxAppUrl,wxAppKey);
         SortedMap<String, Object> finalpackage = new TreeMap<>();
-        finalpackage.put("appId", wxAppAppId);
+        finalpackage.put("appid", wxAppAppId);
+        finalpackage.put("partnerid", wxAppMchId);
+        finalpackage.put("prepayid", map.get("prepay_id"));
         finalpackage.put("timeStamp", System.currentTimeMillis() / 1000);
         finalpackage.put("nonceStr", getRandomString(32));
-        finalpackage.put("package", "prepay_id=" + map.get("prepay_id"));
-        finalpackage.put("signType", "MD5");
+        finalpackage.put("package", "Sign=WXPay");
         String sign = PayCommonUtil.createSign("UTF-8", finalpackage,wxAppKey);
-        finalpackage.put("paySign", sign);
+        finalpackage.put("sign", sign);
         return finalpackage;
     }
 
@@ -69,7 +69,8 @@ public class PayCommonUtil {
      * @param spbillCreateId
      * @return
      */
-    public static Map<String, String> weixinAppPrePay(String outTradeNo, String totalAmount, String spbillCreateId,String wxAppAppId,String wxAppMchId,String wxAppNotifyUrl,String wxAppUrl,String wxAppKey) throws JDOMException, IOException {
+    public static Map<String, String> weixinAppPrePay(String outTradeNo, String totalAmount, String spbillCreateId,
+    		String wxAppAppId,String wxAppMchId,String wxAppNotifyUrl,String wxAppUrl,String wxAppKey) throws  Exception {
         SortedMap<String, Object> parameterMap = new TreeMap<String, Object>();
         //应用ID
         parameterMap.put("appid", wxAppAppId);
@@ -99,7 +100,7 @@ public class PayCommonUtil {
                 wxAppUrl, "POST",
                 requestXML);
         Map<String, String> map = null;
-        map = PayCommonUtil.doXMLParse(result);
+        map = PayCommonUtil.xmlToMap(result);
         return map;
     }
 
@@ -184,128 +185,40 @@ public class PayCommonUtil {
         return sign;
     }
 
-    //退款的请求方法
-    public static String httpsRequest2(String requestUrl, String requestMethod, String outputStr) throws Exception {
-        KeyStore keyStore = KeyStore.getInstance("PKCS12");
-        StringBuilder res = new StringBuilder("");
-        FileInputStream instream = new FileInputStream(new File("/home/apiclient_cert.p12"));
+    /**
+     * XML格式字符串转换为Map
+     *
+     * @param strXML XML字符串
+     * @return XML数据转换后的Map
+     * @throws Exception
+     */
+    public static Map<String, String> xmlToMap(String strXML) throws Exception {
         try {
-            keyStore.load(instream, "".toCharArray());
-        } finally {
-            instream.close();
-        }
-
-        // Trust own CA and all self-signed certs
-        SSLContext sslcontext = SSLContexts.custom()
-                .loadKeyMaterial(keyStore, "1313329201".toCharArray())
-                .build();
-        // Allow TLSv1 protocol only
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(
-                sslcontext,
-                new String[]{"TLSv1"},
-                null,
-                SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
-        CloseableHttpClient httpclient = HttpClients.custom()
-                .setSSLSocketFactory(sslsf)
-                .build();
-        try {
-
-            HttpPost httpost = new HttpPost("https://api.mch.weixin.qq.com/secapi/pay/refund");
-            httpost.addHeader("Connection", "keep-alive");
-            httpost.addHeader("Accept", "*/*");
-            httpost.addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-            httpost.addHeader("Host", "api.mch.weixin.qq.com");
-            httpost.addHeader("X-Requested-With", "XMLHttpRequest");
-            httpost.addHeader("Cache-Control", "max-age=0");
-            httpost.addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0) ");
-            StringEntity entity2 = new StringEntity(outputStr, Consts.UTF_8);
-            httpost.setEntity(entity2);
-            System.out.println("executing request" + httpost.getRequestLine());
-
-            CloseableHttpResponse response = httpclient.execute(httpost);
-
+            Map<String, String> data = new HashMap<String, String>();
+            DocumentBuilder documentBuilder = WXPayXmlUtil.newDocumentBuilder();
+            InputStream stream = new ByteArrayInputStream(strXML.getBytes("UTF-8"));
+            org.w3c.dom.Document doc = documentBuilder.parse(stream);
+            doc.getDocumentElement().normalize();
+            NodeList nodeList = doc.getDocumentElement().getChildNodes();
+            for (int idx = 0; idx < nodeList.getLength(); ++idx) {
+                Node node = nodeList.item(idx);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    org.w3c.dom.Element element = (org.w3c.dom.Element) node;
+                    data.put(element.getNodeName(), element.getTextContent());
+                }
+            }
             try {
-                HttpEntity entity = response.getEntity();
-
-                System.out.println("----------------------------------------");
-                System.out.println(response.getStatusLine());
-                if (entity != null) {
-                    System.out.println("Response content length: " + entity.getContentLength());
-                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(entity.getContent()));
-                    String text = null;
-                    res.append(text);
-                    while ((text = bufferedReader.readLine()) != null) {
-                        res.append(text);
-                        System.out.println(text);
-                    }
-
-                }
-                EntityUtils.consume(entity);
-            } finally {
-                response.close();
+                stream.close();
+            } catch (Exception ex) {
+                // do nothing
             }
-        } finally {
-            httpclient.close();
+            return data;
+        } catch (Exception ex) {
+            throw ex;
         }
-        return res.toString();
 
     }
 
-    //xml解析
-    public static Map doXMLParse(String strxml) throws JDOMException, IOException {
-        strxml = strxml.replaceFirst("encoding=\".*\"", "encoding=\"UTF-8\"");
-
-        if (null == strxml || "".equals(strxml)) {
-            return null;
-        }
-
-        Map m = new HashMap();
-
-        InputStream in = new ByteArrayInputStream(strxml.getBytes("UTF-8"));
-        SAXBuilder builder = new SAXBuilder();
-        Document doc = builder.build(in);
-        Element root = doc.getRootElement();
-        List list = root.getChildren();
-        Iterator it = list.iterator();
-        while (it.hasNext()) {
-            Element e = (Element) it.next();
-            String k = e.getName();
-            String v = "";
-            List children = e.getChildren();
-            if (children.isEmpty()) {
-                v = e.getTextNormalize();
-            } else {
-                v = getChildrenText(children);
-            }
-
-            m.put(k, v);
-        }
-
-        //关闭流
-        in.close();
-
-        return m;
-    }
-
-    public static String getChildrenText(List children) {
-        StringBuffer sb = new StringBuffer();
-        if (!children.isEmpty()) {
-            Iterator it = children.iterator();
-            while (it.hasNext()) {
-                Element e = (Element) it.next();
-                String name = e.getName();
-                String value = e.getTextNormalize();
-                List list = e.getChildren();
-                sb.append("<" + name + ">");
-                if (!list.isEmpty()) {
-                    sb.append(getChildrenText(list));
-                }
-                sb.append(value);
-                sb.append("</" + name + ">");
-            }
-        }
-
-        return sb.toString();
-    }
+    
 
 }
