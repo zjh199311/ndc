@@ -1,11 +1,11 @@
-package com.zhongjian.dto.order.shopown.result;
+package com.zhongjian.dto.order.order.result;
 
 import java.io.Serializable;
 
 import lombok.Data;
 
 @Data
-public class PreviewOrderShopownResultDTO implements Serializable {
+public class OrderPreviewShopownResultDTO implements Serializable {
     /**
      * 
      */
