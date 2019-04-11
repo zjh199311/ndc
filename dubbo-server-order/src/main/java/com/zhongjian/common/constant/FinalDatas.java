@@ -9,6 +9,8 @@ public class FinalDatas {
 
     public static final String NUMBER = "200";
 
+    public static final String twelve ="12";
+
     public static final Integer ZERO = 0;
 
     public static final Integer ONE = 1;

@@ -1,30 +1,17 @@
 package com.zhongjian.util;
 
 
-import org.apache.http.Consts;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContexts;
-import org.apache.http.util.EntityUtils;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import javax.net.ssl.SSLContext;
 import javax.xml.parsers.DocumentBuilder;
-
 import java.io.*;
 import java.math.BigDecimal;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.KeyStore;
 import java.text.DecimalFormat;
 import java.util.*;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 /**
  * @Author: ldd
  */
