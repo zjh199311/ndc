@@ -48,7 +48,7 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
         orderMap.put("subject", orderTypeString);
         // 付款金额，必填
         orderMap.put("total_amount", totalAmount);
-     // 商品描述，可空
+        // 商品描述，可空
         orderMap.put("body", "本次订单花费" + totalAmount + "元");
         // 超时时间 可空
         orderMap.put("timeout_express", "15m");
@@ -86,22 +86,19 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
     @Override
     public ResultDTO<Object> getWxAppSignature(String business, String orderId, String spbillCreateIp) {
         String out_trade_no = "";
-        String orderTypeString = "";
         String totalAmount = "";
-        String paySign = "";
         //普通订单
         if (business.equals("RO")) {
-//            Map<String, String> result = getOutRradeNoAndAmount(orderId);
-//            out_trade_no = result.get("out_trade_no");
-//            totalAmount = result.get("totalAmount");
+            Map<String, String> result = getOutRradeNoAndAmount(orderId);
+            out_trade_no = result.get("out_trade_no");
+            totalAmount = result.get("totalAmount");
         } else {
             return null;
         }
         SortedMap<String, Object> stringObjectSortedMap = null;
         try {
-            stringObjectSortedMap = PayCommonUtil.wxPublicPay(out_trade_no, totalAmount, spbillCreateIp, propUtil.getWxAppAppId(), 
-            		propUtil.getWxAppKey(), propUtil.getWxAppMchId(), propUtil.getWxAppNotifyUrl(), propUtil.getWxAppUrl());
-        }  catch (Exception e) {
+            stringObjectSortedMap = PayCommonUtil.wxPublicPay(out_trade_no, totalAmount, spbillCreateIp, propUtil.getWxAppAppId(), propUtil.getWxAppKey(), propUtil.getWxAppMchId(), propUtil.getWxAppNotifyUrl(), propUtil.getWxAppUrl(),"倪的菜商品订单支付");
+        } catch (Exception e) {
             LogUtil.info("获取签名异常", "e:" + e.getMessage());
             e.getMessage();
         }

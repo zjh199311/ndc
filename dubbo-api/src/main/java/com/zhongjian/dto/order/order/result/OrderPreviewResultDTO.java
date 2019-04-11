@@ -16,16 +16,6 @@ public class OrderPreviewResultDTO implements Serializable {
     private static final long serialVersionUID = 258410785951927885L;
     
     /**
-     * 配送时间
-     */
-    private String deliveryTime;
-    
-    /**
-     * 收货地址
-     */
-    private OrderPreviewAddressResultDTO addressResultDTO;
-    
-    /**
      * 店铺订单详情
      */
     private List<OrderPreviewShopownResultDTO> shopownResultDTOs;

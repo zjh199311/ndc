@@ -1,30 +1,17 @@
 package com.zhongjian.util;
 
 
-import org.apache.http.Consts;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContexts;
-import org.apache.http.util.EntityUtils;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-import javax.net.ssl.SSLContext;
 import javax.xml.parsers.DocumentBuilder;
-
 import java.io.*;
 import java.math.BigDecimal;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.KeyStore;
 import java.text.DecimalFormat;
 import java.util.*;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 /**
  * @Author: ldd
  */
@@ -49,8 +36,8 @@ public class PayCommonUtil {
      * @param totalAmount 支付金额
      * @return -
      */
-    public static SortedMap<String, Object> wxPublicPay(String trade_no, String totalAmount, String spbillCreateId,String wxAppAppId,String wxAppKey,String wxAppMchId,String wxAppNotifyUrl,String wxAppUrl) throws Exception {
-        Map<String, String> map = weixinAppPrePay(trade_no, totalAmount, spbillCreateId,wxAppAppId,wxAppMchId,wxAppNotifyUrl,wxAppUrl,wxAppKey);
+    public static SortedMap<String, Object> wxPublicPay(String trade_no, String totalAmount, String spbillCreateId,String wxAppAppId,String wxAppKey,String wxAppMchId,String wxAppNotifyUrl,String wxAppUrl,String body) throws Exception {
+        Map<String, String> map = weixinAppPrePay(trade_no, totalAmount, spbillCreateId,wxAppAppId,wxAppMchId,wxAppNotifyUrl,wxAppUrl,wxAppKey,body);
         SortedMap<String, Object> finalpackage = new TreeMap<>();
         finalpackage.put("appid", wxAppAppId);
         finalpackage.put("partnerid", wxAppMchId);
@@ -70,7 +57,7 @@ public class PayCommonUtil {
      * @return
      */
     public static Map<String, String> weixinAppPrePay(String outTradeNo, String totalAmount, String spbillCreateId,
-    		String wxAppAppId,String wxAppMchId,String wxAppNotifyUrl,String wxAppUrl,String wxAppKey) throws  Exception {
+    		String wxAppAppId,String wxAppMchId,String wxAppNotifyUrl,String wxAppUrl,String wxAppKey,String body) throws  Exception {
         SortedMap<String, Object> parameterMap = new TreeMap<String, Object>();
         //应用ID
         parameterMap.put("appid", wxAppAppId);
@@ -79,7 +66,7 @@ public class PayCommonUtil {
         //随机字符串
         parameterMap.put("nonce_str", PayCommonUtil.getRandomString(32));
         //商品描述
-        parameterMap.put("body", "倪的菜商品订单支付");
+        parameterMap.put("body", body);
         //商户订单号
         parameterMap.put("out_trade_no", outTradeNo);
         BigDecimal total = new BigDecimal(totalAmount).multiply(new BigDecimal(100));

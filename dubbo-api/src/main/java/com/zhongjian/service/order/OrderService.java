@@ -8,7 +8,7 @@ import com.zhongjian.dto.order.order.query.OrderStatusQueryDTO;
 public interface OrderService {
 
     //type 0选用积分 extra=null 1选用优惠券 extra = couponId
-    ResultDTO<Object> previewOrder(Integer uid, Integer sids[], Integer isAppointment, String type, String extra, String isSelfMention);
+    ResultDTO<Object> previewOrder(Integer uid, Integer sids[] , String type, String extra, String isSelfMention);
 
     /**
      * 判断所有商铺是不是指定状态
