@@ -14,16 +14,17 @@
     </resultMap>
 
     <select id="findMarketByUid" parameterType="java.lang.Integer" resultMap="BaseMarket">
-    SELECT
-    DISTINCT
-        (m.id),
-        m.ename
-    FROM
-        hm_market m
-    LEFT JOIN hm_shopown s ON m.id = s.marketid
-    LEFT JOIN hm_goods g ON g.pid = s.pid
-    LEFT JOIN hm_basket b ON b.gid = g.id
-    where b.uid=#{uid.jdbcType=INTEGER}
+        SELECT
+        DISTINCT
+            (m.id),
+            m.ename
+        FROM
+            hm_market m
+        LEFT JOIN hm_shopown s ON m.id = s.marketid
+        LEFT JOIN hm_goods g ON g.pid = s.pid
+        LEFT JOIN hm_basket b ON b.gid = g.id
+        where b.uid=#{uid.jdbcType=INTEGER}
+        and m.is_delete=1
 
     </select>
 </mapper>
