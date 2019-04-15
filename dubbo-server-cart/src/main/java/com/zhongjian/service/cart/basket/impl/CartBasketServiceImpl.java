@@ -73,34 +73,12 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
                 return ResultUtil.getFail(CommonMessageEnum.AMOUNT_IS_NULL);
             }
         }
-        //这边为用户添加食品时为其他状态.  这边逻辑与以下无关. 这边入参为(当食品为其他时.gid入参为0,和备注以及价格)
-        if (FinalDatas.ZERO == hmBasketEditQueryDTO.getGid()) {
-            CartBasketBean cartBasketBean = new CartBasketBean();
-            cartBasketBean.setGid(hmBasketEditQueryDTO.getGid());
-            cartBasketBean.setPrice(new BigDecimal(hmBasketEditQueryDTO.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
-            cartBasketBean.setSid(hmBasketEditQueryDTO.getSid());
-            cartBasketBean.setUid(hmBasketEditQueryDTO.getUid());
-            //获取时间用unix时间戳
-            Long unixTime = System.currentTimeMillis() / 1000;
-            cartBasketBean.setCtime(unixTime.intValue());
-            cartBasketBean.setAmount(new BigDecimal(1));
-            if (StringUtil.isBlank(hmBasketEditQueryDTO.getRemark())) {
-                cartBasketBean.setRemark("");
-            } else {
-                cartBasketBean.setRemark(hmBasketEditQueryDTO.getRemark());
-            }
-            this.dao.insertSelective(cartBasketBean);
-            return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
-        }
-        //-------------------------------------------------------------------------
         //根据前端传入的商品id去查询pid,
         CartGoodsBean cartGoodsBean = this.hmGoodsBeanDAO.selectByPrimaryKey(hmBasketEditQueryDTO.getGid());
-        //总价
-        BigDecimal multiply = cartGoodsBean.getPrice().multiply(new BigDecimal(hmBasketEditQueryDTO.getAmount()));
         //根据gid,pid,uid查询购物车信息.
         CartParamDTO queryDTO = new CartParamDTO();
         queryDTO.setGid(hmBasketEditQueryDTO.getGid());
-        queryDTO.setSid(cartGoodsBean.getPid());
+        queryDTO.setSid(hmBasketEditQueryDTO.getSid());
         queryDTO.setUid(hmBasketEditQueryDTO.getUid());
         CartBasketBean findBasketBeanById = this.dao.executeSelectOneMethod(queryDTO, "findBasketBeanById", CartBasketBean.class);
         //这边判断要是查询出来为空则为新增要是有数据则为更改
@@ -115,20 +93,38 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         Long unixTime = System.currentTimeMillis() / 1000;
         cartBasketBean.setCtime(unixTime.intValue());
         if (null == findBasketBeanById) {
-            cartBasketBean.setAmount(new BigDecimal(hmBasketEditQueryDTO.getAmount()));
-            cartBasketBean.setUnitprice(cartGoodsBean.getPrice());
-            //计算总价保留两个小数点
-            cartBasketBean.setPrice(multiply.setScale(2, BigDecimal.ROUND_HALF_UP));
+            if (FinalDatas.ZERO == hmBasketEditQueryDTO.getGid()) {
+                cartBasketBean.setPrice(new BigDecimal(hmBasketEditQueryDTO.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                cartBasketBean.setAmount(new BigDecimal(1));
+                cartBasketBean.setUnitprice(cartBasketBean.getPrice());
+                cartBasketBean.setRemark(hmBasketEditQueryDTO.getRemark());
+            } else {
+                cartBasketBean.setAmount(new BigDecimal(hmBasketEditQueryDTO.getAmount()));
+                cartBasketBean.setUnitprice(cartGoodsBean.getPrice());
+                //计算总价保留两个小数点
+                //总价
+                BigDecimal multiply = cartGoodsBean.getPrice().multiply(new BigDecimal(hmBasketEditQueryDTO.getAmount()));
+                cartBasketBean.setPrice(multiply.setScale(2, BigDecimal.ROUND_HALF_UP));
+            }
             this.dao.insertSelective(cartBasketBean);
         } else {
-            cartBasketBean.setId(findBasketBeanById.getId());
-            //计算新的总价(去good里面获取价格重新计算)
-            BigDecimal add = findBasketBeanById.getAmount().add(new BigDecimal(hmBasketEditQueryDTO.getAmount()));
-            BigDecimal multiply1 = add.multiply(cartGoodsBean.getPrice());
-            cartBasketBean.setPrice(multiply1.setScale(2, BigDecimal.ROUND_HALF_UP));
-            cartBasketBean.setAmount(findBasketBeanById.getAmount().add(new BigDecimal(hmBasketEditQueryDTO.getAmount())));
-            cartBasketBean.setUnitprice(cartGoodsBean.getPrice());
+            if (FinalDatas.ZERO == hmBasketEditQueryDTO.getGid()) {
+                cartBasketBean.setId(findBasketBeanById.getId());
+                cartBasketBean.setCtime(unixTime.intValue());
+                cartBasketBean.setPrice(new BigDecimal(hmBasketEditQueryDTO.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                cartBasketBean.setRemark(hmBasketEditQueryDTO.getRemark());
+                cartBasketBean.setUnitprice(cartBasketBean.getPrice());
+            }else{
+                cartBasketBean.setId(findBasketBeanById.getId());
+                //计算新的总价(去good里面获取价格重新计算)
+                BigDecimal add = findBasketBeanById.getAmount().add(new BigDecimal(hmBasketEditQueryDTO.getAmount()));
+                BigDecimal multiply1 = add.multiply(cartGoodsBean.getPrice());
+                cartBasketBean.setPrice(multiply1.setScale(2, BigDecimal.ROUND_HALF_UP));
+                cartBasketBean.setAmount(findBasketBeanById.getAmount().add(new BigDecimal(hmBasketEditQueryDTO.getAmount())));
+                cartBasketBean.setUnitprice(cartGoodsBean.getPrice());
+            }
             this.dao.updateByPrimaryKeySelective(cartBasketBean);
+
         }
         return ResultUtil.getSuccess(null);
     }
