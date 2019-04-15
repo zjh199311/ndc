@@ -4,6 +4,7 @@ import com.alibaba.dubbo.common.utils.StringUtils;
 import com.zhongjian.common.constant.FinalDatas;
 import com.zhongjian.dao.cart.CartParamDTO;
 import com.zhongjian.dao.entity.cart.basket.CartBasketBean;
+import com.zhongjian.dao.entity.cart.goods.CartGoodsBean;
 import com.zhongjian.dao.entity.cart.market.CartMarketBean;
 import com.zhongjian.dao.entity.cart.rider.CartRiderOrderBean;
 import com.zhongjian.dao.entity.cart.store.CartStoreActivityBean;
@@ -46,6 +47,8 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
 
     private HmDAO<CartRiderOrderBean, Integer> cartRiderOrderDAO;
 
+    private HmDAO<CartGoodsBean, Integer> cartGoodsBeanHmDAO;
+
     @Resource
     private void setHmStoreActivityHmDAO(HmDAO<CartStoreActivityBean, Integer> hmStoreActivityHmDAO) {
         this.hmStoreActivityHmDAO = hmStoreActivityHmDAO;
@@ -68,6 +71,12 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
     private void setCartRiderOrderDAO(HmDAO<CartRiderOrderBean, Integer> cartRiderOrderDAO) {
         this.cartRiderOrderDAO = cartRiderOrderDAO;
         this.cartRiderOrderDAO.setPerfix(CartRiderOrderBean.class.getName());
+    }
+
+    @Resource
+    private void setCartGoodsBeanHmDAO(HmDAO<CartGoodsBean, Integer> cartGoodsBeanHmDAO) {
+        this.cartGoodsBeanHmDAO = cartGoodsBeanHmDAO;
+        this.cartGoodsBeanHmDAO.setPerfix(CartGoodsBean.class.getName());
     }
 
     @Override
@@ -182,6 +191,24 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                 //将所有打烊的总价相加.
                 List<BigDecimal> listByClose = new ArrayList<>();
                 for (HmBasketResultDTO hmBasketResultDTO : findBasketById) {
+
+                    //根据食品id得到食品信息
+                    CartGoodsBean cartGoodsBean = this.cartGoodsBeanHmDAO.selectByPrimaryKey(hmBasketResultDTO.getGid());
+                    if (null == cartGoodsBean) {
+                        LogUtil.info("根据食品id得不到食品信息", "cartGoodsBean:" + cartGoodsBean);
+                    }else{
+                        stringbuider = new StringBuilder();
+                        stringbuider.append(hmBasketResultDTO.getUnitPrice()).append("元/").append(cartGoodsBean.getUnit());
+                        hmBasketResultDTO.setUnitPrice(stringbuider.toString());
+                    }
+                    hmBasketResultDTO.setAmount(decimalFormat.format(Double.parseDouble(hmBasketResultDTO.getAmount())));
+                    hmBasketResultDTO.setTotalPrice(decimalFormat.format(Double.parseDouble(hmBasketResultDTO.getTotalPrice())));
+                    if (FinalDatas.ZERO == hmBasketResultDTO.getGid()) {
+                        hmBasketResultDTO.setFoodName("其他");
+                        hmBasketResultDTO.setStatus(1);
+                    }else{
+                        hmBasketResultDTO.setFoodName(cartGoodsBean.getGname());
+                    }
                     //判断要是没有remark备注就不需要拼接组装;
                     if (!StringUtils.isBlank(hmBasketResultDTO.getRemark())) {
                         //拼接备注信息:[名字]+备注信息
@@ -196,11 +223,6 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                     } else if (FinalDatas.TWO.toString().equals(shopownResultDTO.getStatus())) {
                         listByAdvence.add(new BigDecimal(hmBasketResultDTO.getTotalPrice()));
                     }
-                    stringbuider = new StringBuilder();
-                    stringbuider.append(hmBasketResultDTO.getUnitPrice()).append("元/").append(hmBasketResultDTO.getUnit());
-                    hmBasketResultDTO.setUnitPrice(stringbuider.toString());
-                    hmBasketResultDTO.setAmount(decimalFormat.format(Double.parseDouble(hmBasketResultDTO.getAmount())));
-                    hmBasketResultDTO.setTotalPrice(decimalFormat.format(Double.parseDouble(hmBasketResultDTO.getTotalPrice())));
                 }
                 //备注信息
                 shopownResultDTO.setRemarkList(remarkList);
@@ -321,23 +343,70 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                 hmMarketResultByAdvenceDTO.setRule(stringbuider.toString());
                                 hmMarketResultByAdvenceDTO.setStatus(hmMarketActivityResult.getStatus());
                             }
-                            //如果条件成立.  则用户在商户购买的产品没有优惠.那么直接判断总价在菜场是否有优惠
-                            if (BigDecimal.ZERO.compareTo(priceByAdvence) > -1) {
-                                //判断是否有菜场折扣
-                                if (FinalDatas.ONE == hmMarketActivityResult.getType()) {
-                                    totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence.multiply(new BigDecimal(hmMarketActivityResult.getRule())));
-                                } else if (numberByAdvence.compareTo(new BigDecimal(split[0])) == 1) {
-                                    totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence.subtract(new BigDecimal(split[1])));
+                            //如果用户首单已经优惠.则不在计算
+                            if (FinalDatas.ZERO == findCountByUid) {
+                                //在判断该商家是否在菜场下有优惠. 要是有优惠则根据总价来判断是否满足优惠要是不满足则根据下一个商家的总价加来判断
+                                //满足则优惠不满足就不优惠.
+                                if (FinalDatas.ZERO.toString().equals(shopownResultDTO.getUnFavorable())) {
+                                    //1是菜场打折.0是满减
+                                    if (FinalDatas.ONE == hmMarketActivityResult.getType()) {
+                                        //如果有商户优惠则计算总价是否存在菜场的优惠中.如果有则乘于菜场优惠折扣
+                                        if (BigDecimal.ZERO.compareTo(priceByAdvence) < 0) {
+                                            if (flagByAdvence) {
+                                                if (numberByAdvence.compareTo(new BigDecimal(hmMarketActivityResult.getUpLimit())) > 0) {
+                                                    BigDecimal multiply = numberByAdvence.multiply(new BigDecimal(hmMarketActivityResult.getRule()));
+                                                    //打折下来的值
+                                                    BigDecimal subtract = numberByAdvence.subtract(multiply);
+                                                    priceByAdvence = priceByAdvence.subtract(subtract);
+                                                    totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence);
+                                                    flagByAdvence = false;
+                                                }
+                                            } else {
+                                                totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence);
+                                            }
+                                        } else {
+                                            if (numberByAdvence.compareTo(new BigDecimal(split[0])) > 0) {
+                                                if (flagByAdvence) {
+                                                    BigDecimal subtract = priceByAdvence.subtract(new BigDecimal(split[1]));
+                                                    totalDisPriceByAdvence = totalDisPriceByAdvence.add(subtract);
+                                                    flagByAdvence = false;
+                                                } else {
+                                                    totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence);
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        //如果有商户优惠则计算总价是否存在菜场的优惠中.如果有则减去菜场优惠价格.
+                                        if (BigDecimal.ZERO.compareTo(priceByAdvence) < 0) {
+                                            if (numberByAdvence.compareTo(new BigDecimal(split[0])) > 0) {
+                                                if (flagByAdvence) {
+                                                    totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence.subtract(new BigDecimal(split[1])));
+                                                    flagByAdvence = false;
+                                                }
+                                            } else {
+                                                totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence);
+                                            }
+                                        } else {
+                                            if (numberByAdvence.compareTo(new BigDecimal(split[0])) > 0) {
+                                                if (flagByAdvence) {
+                                                    totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence.subtract(new BigDecimal(split[1])));
+                                                    flagByAdvence = false;
+                                                } else {
+                                                    totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence);
+                                                }
+                                            }
+                                        }
+                                    }
                                 } else {
-                                    totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence);
+                                    if (BigDecimal.ZERO.compareTo(priceByAdvence) == 0) {
+                                        totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence);
+                                    } else {
+                                        totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence);
+                                    }
                                 }
-                                //如果有优惠.那么就用优惠价去判断是否满足菜场的活动价格
                             } else {
-                                //折扣的优惠
-                                if (FinalDatas.ONE == hmMarketActivityResult.getType()) {
-                                    totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence.multiply(new BigDecimal(hmMarketActivityResult.getRule())));
-                                } else if (priceByAdvence.compareTo(new BigDecimal(split[0])) == 1) {
-                                    totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence.subtract(new BigDecimal(split[1])));
+                                if (BigDecimal.ZERO.compareTo(priceByAdvence) == 0) {
+                                    totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence);
                                 } else {
                                     totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence);
                                 }
@@ -346,7 +415,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                         }
                     } else {
                         //这边则没有菜场活动价. 那么在看看是否有商家活动价.如果没有则直接给总价.
-                        if (BigDecimal.ZERO.compareTo(priceByAdvence) > -1) {
+                        if (BigDecimal.ZERO.compareTo(priceByAdvence) == 0) {
                             totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence);
                         } else {
                             totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence);
@@ -391,22 +460,70 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                 hmMarketResultByOpenDTO.setRule(stringbuider.toString());
                                 hmMarketResultByOpenDTO.setStatus(hmMarketActivityResult.getStatus());
                             }
-                            //如果条件成立.  则用户在商户购买的产品没有优惠.那么直接判断总价在菜场是否有优惠
-                            if (BigDecimal.ZERO.compareTo(priceByOpen) > -1) {
-                                if (FinalDatas.ONE == hmMarketActivityResult.getType()) {
-                                    totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen.multiply(new BigDecimal(hmMarketActivityResult.getRule())));
-                                } else if (numberByOpen.compareTo(new BigDecimal(split[0])) == 1) {
-                                    totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen.subtract(new BigDecimal(split[1])));
+                            //如果用户首单已经优惠.则不在计算
+                            if (FinalDatas.ZERO == findCountByUid) {
+                                //在判断该商家是否在菜场下有优惠. 要是有优惠则根据总价来判断是否满足优惠要是不满足则根据下一个商家的总价加来判断
+                                //满足则优惠不满足就不优惠.
+                                if (FinalDatas.ZERO.toString().equals(shopownResultDTO.getUnFavorable())) {
+                                    //1是菜场打折.0是满减
+                                    if (FinalDatas.ONE == hmMarketActivityResult.getType()) {
+                                        //如果有商户优惠则计算总价是否存在菜场的优惠中.如果有则乘于菜场优惠折扣
+                                        if (BigDecimal.ZERO.compareTo(priceByOpen) < 0) {
+                                            if (flagByOpen) {
+                                                if (numberByOpen.compareTo(new BigDecimal(hmMarketActivityResult.getUpLimit())) > 0) {
+                                                    BigDecimal multiply = numberByOpen.multiply(new BigDecimal(hmMarketActivityResult.getRule()));
+                                                    //打折下来的值
+                                                    BigDecimal subtract = numberByOpen.subtract(multiply);
+                                                    priceByOpen = priceByOpen.subtract(subtract);
+                                                    totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen);
+                                                    flagByOpen = false;
+                                                }
+                                            } else {
+                                                totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen);
+                                            }
+                                        } else {
+                                            if (numberByOpen.compareTo(new BigDecimal(split[0])) > 0) {
+                                                if (flagByOpen) {
+                                                    BigDecimal subtract = priceByOpen.subtract(new BigDecimal(split[1]));
+                                                    totalDisPriceByOpen = totalDisPriceByOpen.add(subtract);
+                                                    flagByOpen = false;
+                                                } else {
+                                                    totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen);
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        //如果有商户优惠则计算总价是否存在菜场的优惠中.如果有则减去菜场优惠价格.
+                                        if (BigDecimal.ZERO.compareTo(priceByOpen) < 0) {
+                                            if (numberByOpen.compareTo(new BigDecimal(split[0])) > 0) {
+                                                if (flagByOpen) {
+                                                    totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen.subtract(new BigDecimal(split[1])));
+                                                    flagByOpen = false;
+                                                }
+                                            } else {
+                                                totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen);
+                                            }
+                                        } else {
+                                            if (numberByOpen.compareTo(new BigDecimal(split[0])) > 0) {
+                                                if (flagByOpen) {
+                                                    totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen.subtract(new BigDecimal(split[1])));
+                                                    flagByOpen = false;
+                                                } else {
+                                                    totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen);
+                                                }
+                                            }
+                                        }
+                                    }
                                 } else {
-                                    totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen);
+                                    if (BigDecimal.ZERO.compareTo(priceByOpen) == 0) {
+                                        totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen);
+                                    } else {
+                                        totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen);
+                                    }
                                 }
-                                //如果有优惠.那么就用优惠价去判断是否满足菜场的活动价格
                             } else {
-                                //折扣的优惠
-                                if (FinalDatas.ONE == hmMarketActivityResult.getType()) {
-                                    totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen.multiply(new BigDecimal(hmMarketActivityResult.getRule())));
-                                } else if (priceByOpen.compareTo(new BigDecimal(split[0])) == 1) {
-                                    totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen.subtract(new BigDecimal(split[1])));
+                                if (BigDecimal.ZERO.compareTo(priceByOpen) == 0) {
+                                    totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen);
                                 } else {
                                     totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen);
                                 }
@@ -415,7 +532,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                         }
                     } else {
                         //这边则没有菜场活动价. 那么在看看是否有商家活动价.如果没有则直接给总价.
-                        if (BigDecimal.ZERO.compareTo(priceByOpen) > -1) {
+                        if (BigDecimal.ZERO.compareTo(priceByOpen) == 0) {
                             totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen);
                         } else {
                             totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen);
@@ -541,16 +658,16 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                     }
                 }
             }
-//            //开张
-//            if (null != hmMarketResultByOpenDTO.getMartketId()) {
-//                hmMarketResultByOpenDTOList.add(hmMarketResultByOpenDTO);
-//                hmMarketResultListDTO.setHmMarketResultByOpen(hmMarketResultByOpenDTOList);
-//            }
-//            if (null != hmMarketResultByAdvenceDTO.getMartketId()) {
-//                //预约
-//                hmMarketResultByAdvenceDTOList.add(hmMarketResultByAdvenceDTO);
-//                hmMarketResultListDTO.setHmMarketResultByAdvance(hmMarketResultByAdvenceDTOList);
-//            }
+            //开张
+            if (null != hmMarketResultByOpenDTO.getMartketId()) {
+                hmMarketResultByOpenDTOList.add(hmMarketResultByOpenDTO);
+                hmMarketResultListDTO.setHmMarketResultByOpen(hmMarketResultByOpenDTOList);
+            }
+            if (null != hmMarketResultByAdvenceDTO.getMartketId()) {
+                //预约
+                hmMarketResultByAdvenceDTOList.add(hmMarketResultByAdvenceDTO);
+                hmMarketResultListDTO.setHmMarketResultByAdvance(hmMarketResultByAdvenceDTOList);
+            }
             //打烊
             if (null != hmMarketResultByCloseDTO.getMartketId()) {
                 hmMarketResultByCloseDTOList.add(hmMarketResultByCloseDTO);

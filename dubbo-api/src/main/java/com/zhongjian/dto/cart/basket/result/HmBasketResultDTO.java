@@ -63,5 +63,11 @@ public class HmBasketResultDTO implements Serializable {
      */
     private Integer gid;
 
+    /**
+     * 要是食品为其他的话. 给一个标识status
+     */
+
+    private Integer status;
+
 
 }

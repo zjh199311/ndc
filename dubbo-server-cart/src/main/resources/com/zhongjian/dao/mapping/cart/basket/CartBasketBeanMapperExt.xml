@@ -42,27 +42,22 @@
         <result column="price" property="totalPrice" jdbcType="VARCHAR"/>
         <result column="remark" property="remark" jdbcType="VARCHAR"/>
         <result column="unitPrice" property="unitPrice" jdbcType="VARCHAR"/>
-        <result column="unit" property="unit" jdbcType="VARCHAR"/>
-        <result column="gname" property="foodName" jdbcType="VARCHAR"/>
     </resultMap>
 
 
     <select id="findBasketById" parameterType="com.zhongjian.dto.cart.basket.query.HmBasketListQueryDTO"
             resultMap="BaseBasketInfoMap">
        SELECT
-            b.amount,
-            b.gid,
-            b.price,
-            b.remark,
-            b.unitPrice,
-            g.unit,
-            g.gname
+            amount,
+            gid,
+            price,
+            remark,
+            unitPrice
         FROM
-            hm_basket b
-        LEFT JOIN hm_goods g ON b.gid = g.id
+            hm_basket
         where
-          g.pid =#{sid,jdbcType=INTEGER}
-         and b.uid =#{uid,jdbcType=INTEGER}
+          sid =#{sid,jdbcType=INTEGER}
+         and uid =#{uid,jdbcType=INTEGER}
     </select>
 
     <delete id="deleteInfoBySids" parameterType="com.zhongjian.dto.cart.basket.query.HmBasketDelQueryDTO">
