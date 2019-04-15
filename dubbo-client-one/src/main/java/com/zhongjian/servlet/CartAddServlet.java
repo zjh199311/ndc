@@ -26,9 +26,6 @@ import java.io.IOException;
 @WebServlet(value = "/cart/add", asyncSupported = true)
 public class CartAddServlet extends HttpServlet {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	private static Logger log = Logger.getLogger(CartAddServlet.class);
