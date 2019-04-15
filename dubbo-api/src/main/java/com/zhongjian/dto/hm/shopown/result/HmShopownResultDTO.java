@@ -25,6 +25,11 @@ public class HmShopownResultDTO implements Serializable {
     private String picture;
 
     /**
+     *0优惠1不优惠
+     */
+    private String unFavorable;
+
+    /**
      * 商户名称
      */
     private String shopName;

@@ -26,4 +26,9 @@ public class HmMarketActivityResultDTO implements Serializable{
      * 状态
      */
     private String status;
+
+    /**
+     * 最大限额
+     */
+    private Integer upLimit;
 }

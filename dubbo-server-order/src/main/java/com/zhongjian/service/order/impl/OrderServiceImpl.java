@@ -1,8 +1,8 @@
 package com.zhongjian.service.order.impl;
 
 import com.zhongjian.common.constant.FinalDatas;
-import com.zhongjian.dao.entity.hm.address.HmAddressBean;
-import com.zhongjian.dao.entity.hm.shopown.HmShopownBean;
+import com.zhongjian.dao.entity.order.address.OrderAddressBean;
+import com.zhongjian.dao.entity.order.shopown.OrderShopownBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
 import com.zhongjian.dao.framework.inf.HmDAO;
 import com.zhongjian.dao.jdbctemplate.OrderDao;
@@ -36,17 +36,17 @@ import java.util.Map;
 import java.util.Random;
 
 @Service("orderService")
-public class OrderServiceImpl extends HmBaseService<HmShopownBean, Integer> implements OrderService {
+public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> implements OrderService {
 
-	private HmDAO<HmAddressBean, Integer> hmAddressDAO;
+	private HmDAO<OrderAddressBean, Integer> hmAddressDAO;
 
 	@Autowired
 	private OrderDao orderDao;
 
 	@Resource
-	public void setHmAddressDAO(HmDAO<HmAddressBean, Integer> hmAddressDAO) {
+	public void setHmAddressDAO(HmDAO<OrderAddressBean, Integer> hmAddressDAO) {
 		this.hmAddressDAO = hmAddressDAO;
-		this.hmAddressDAO.setPerfix(HmAddressBean.class.getName());
+		this.hmAddressDAO.setPerfix(OrderAddressBean.class.getName());
 	}
 
 	@Override
@@ -415,25 +415,25 @@ public class OrderServiceImpl extends HmBaseService<HmShopownBean, Integer> impl
 		if (null == orderStatusQueryDTO.getStatus()) {
 			return ResultUtil.getFail(CommonMessageEnum.STATUS_IS_NULL);
 		}
-		List<HmShopownBean> hmShopownBeans = this.dao.executeListMethod(orderStatusQueryDTO,
-				"selectHmShopownStatusByPids", HmShopownBean.class);
+		List<OrderShopownBean> orderShopownBeans = this.dao.executeListMethod(orderStatusQueryDTO,
+				"selectHmShopownStatusByPids", OrderShopownBean.class);
 		// 默认返回状态匹配
 		resultDTO.setFlag(true);
 		resultDTO.setData(true);
-		for (HmShopownBean hmShopownBean : hmShopownBeans) {
+		for (OrderShopownBean orderShopownBean : orderShopownBeans) {
 			// 如果商户状态与传入状态不匹配，返回false
-			if (!orderStatusQueryDTO.getStatus().equals(hmShopownBean.getStatus())) {
+			if (!orderStatusQueryDTO.getStatus().equals(orderShopownBean.getStatus())) {
 				resultDTO.setData(false);
 				break;
 			}
 			// 如果店铺状态为预约中，但是该店铺没有开启预约 返回false
-			if (2 == hmShopownBean.getStatus() && 0 == hmShopownBean.getIsAppointment()) {
+			if (2 == orderShopownBean.getStatus() && 0 == orderShopownBean.getIsAppointment()) {
 				resultDTO.setData(false);
 				break;
 			}
 			// 如果店铺状态为打烊或开张并且店铺为开启预约。返回false
-			if ((1 == hmShopownBean.getStatus() || 0 == hmShopownBean.getStatus())
-					&& 1 == hmShopownBean.getIsAppointment()) {
+			if ((1 == orderShopownBean.getStatus() || 0 == orderShopownBean.getStatus())
+					&& 1 == orderShopownBean.getIsAppointment()) {
 				resultDTO.setData(false);
 				break;
 			}

@@ -71,7 +71,7 @@
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<!-- 数据源 -->
 		<property name="dataSource" ref="dataSourceId" />
-		<property name="mapperLocations" value="classpath:com/zhongjian/dao/mapping/hm/*/*.xml" />
+		<property name="mapperLocations" value="classpath:com/zhongjian/dao/mapping/order/*/*.xml" />
 </bean>
     <!--注解方式实现事务-->
     <tx:annotation-driven transaction-manager="txManager"/>

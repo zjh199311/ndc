@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.cart.rider.CartRiderBillBean" >
+  <resultMap id="BaseResultMap" type="com.zhongjian.dao.entity.cart.rider.CartRiderBillBean" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="rid" property="rid" jdbcType="INTEGER" />
+    <result column="roid" property="roid" jdbcType="INTEGER" />
+    <result column="oid" property="oid" jdbcType="INTEGER" />
+    <result column="rider_sn" property="riderSn" jdbcType="VARCHAR" />
+    <result column="income" property="income" jdbcType="DECIMAL" />
+    <result column="ctime" property="ctime" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, rid, roid, oid, rider_sn, income, ctime
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hm_rider_bill
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hm_rider_bill
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhongjian.dao.entity.cart.rider.CartRiderBillBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_rider_bill (rid, roid, oid, 
+      rider_sn, income, ctime
+      )
+    values (#{rid,jdbcType=INTEGER}, #{roid,jdbcType=INTEGER}, #{oid,jdbcType=INTEGER}, 
+      #{riderSn,jdbcType=VARCHAR}, #{income,jdbcType=DECIMAL}, #{ctime,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhongjian.dao.entity.cart.rider.CartRiderBillBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_rider_bill
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="rid != null" >
+        rid,
+      </if>
+      <if test="roid != null" >
+        roid,
+      </if>
+      <if test="oid != null" >
+        oid,
+      </if>
+      <if test="riderSn != null" >
+        rider_sn,
+      </if>
+      <if test="income != null" >
+        income,
+      </if>
+      <if test="ctime != null" >
+        ctime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="rid != null" >
+        #{rid,jdbcType=INTEGER},
+      </if>
+      <if test="roid != null" >
+        #{roid,jdbcType=INTEGER},
+      </if>
+      <if test="oid != null" >
+        #{oid,jdbcType=INTEGER},
+      </if>
+      <if test="riderSn != null" >
+        #{riderSn,jdbcType=VARCHAR},
+      </if>
+      <if test="income != null" >
+        #{income,jdbcType=DECIMAL},
+      </if>
+      <if test="ctime != null" >
+        #{ctime,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhongjian.dao.entity.cart.rider.CartRiderBillBean" >
+    update hm_rider_bill
+    <set >
+      <if test="rid != null" >
+        rid = #{rid,jdbcType=INTEGER},
+      </if>
+      <if test="roid != null" >
+        roid = #{roid,jdbcType=INTEGER},
+      </if>
+      <if test="oid != null" >
+        oid = #{oid,jdbcType=INTEGER},
+      </if>
+      <if test="riderSn != null" >
+        rider_sn = #{riderSn,jdbcType=VARCHAR},
+      </if>
+      <if test="income != null" >
+        income = #{income,jdbcType=DECIMAL},
+      </if>
+      <if test="ctime != null" >
+        ctime = #{ctime,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhongjian.dao.entity.cart.rider.CartRiderBillBean" >
+    update hm_rider_bill
+    set rid = #{rid,jdbcType=INTEGER},
+      roid = #{roid,jdbcType=INTEGER},
+      oid = #{oid,jdbcType=INTEGER},
+      rider_sn = #{riderSn,jdbcType=VARCHAR},
+      income = #{income,jdbcType=DECIMAL},
+      ctime = #{ctime,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="searchByEntityCount" resultType="java.lang.Integer" parameterType="com.zhongjian.dao.entity.cart.rider.CartRiderBillBean" >
+    select
+    count(*)
+    from hm_rider_bill
+    <where>
+     <if test="rid != null">
+      rid=#{rid,jdbcType=INTEGER}
+     </if>
+     <if test="roid != null">
+      AND roid=#{roid,jdbcType=INTEGER}
+     </if>
+     <if test="oid != null">
+      AND oid=#{oid,jdbcType=INTEGER}
+     </if>
+     <if test="riderSn != null">
+      AND rider_sn=#{riderSn,jdbcType=VARCHAR}
+     </if>
+     <if test="income != null">
+      AND income=#{income,jdbcType=DECIMAL}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+    </where>
+  </select>
+  <select id="searchByEntity" resultMap="BaseResultMap" parameterType="com.zhongjian.dao.entity.cart.rider.CartRiderBillBean" >
+    select
+    <include refid="Base_Column_List"/>
+    from hm_rider_bill
+    <where>
+     <if test="rid != null">
+      rid=#{rid,jdbcType=INTEGER}
+     </if>
+     <if test="roid != null">
+      AND roid=#{roid,jdbcType=INTEGER}
+     </if>
+     <if test="oid != null">
+      AND oid=#{oid,jdbcType=INTEGER}
+     </if>
+     <if test="riderSn != null">
+      AND rider_sn=#{riderSn,jdbcType=VARCHAR}
+     </if>
+     <if test="income != null">
+      AND income=#{income,jdbcType=DECIMAL}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+    </where>
+  </select>
+</mapper>

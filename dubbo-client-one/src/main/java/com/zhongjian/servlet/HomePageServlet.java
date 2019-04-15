@@ -4,14 +4,13 @@ import javax.servlet.AsyncContext;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.zhongjian.dto.hm.basket.query.HmBasketEditQueryDTO;
-import com.zhongjian.service.hm.basket.HmBasketService;
+import com.zhongjian.service.cart.basket.CartBasketService;
 import org.apache.log4j.Logger;
 
 import com.zhongjian.common.GsonUtil;
@@ -28,7 +27,7 @@ public class HomePageServlet extends HttpServlet {
 
 	private static Logger log = Logger.getLogger(HomePageServlet.class);
 
-	private HmBasketService hmBasketService = (HmBasketService) SpringContextHolder.getBean(HmBasketService.class);
+	private CartBasketService hmBasketService = (CartBasketService) SpringContextHolder.getBean(CartBasketService.class);
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {

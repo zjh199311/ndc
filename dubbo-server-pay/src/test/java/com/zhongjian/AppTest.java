@@ -1,22 +1,15 @@
 package com.zhongjian;
 
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import com.alibaba.fastjson.JSONObject;
 import com.zhongjian.commoncomponent.PropUtil;
 import com.zhongjian.service.pay.GenerateSignatureService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.zhongjian.service.pay.GenerateSignatureService;
+import javax.annotation.Resource;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({"/META-INF/spring/dubbo-server.xml"})

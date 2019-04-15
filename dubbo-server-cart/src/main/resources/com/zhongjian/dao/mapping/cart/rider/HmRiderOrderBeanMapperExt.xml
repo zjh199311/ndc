@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.cart.rider.CartRiderOrderBean" >
+
+<select id="findCountByUid" resultType="java.lang.Integer"  parameterType="com.zhongjian.dao.cart.CartParamDTO">
+        SELECT
+	      count(1)
+        FROM
+            hm_rider_order
+        WHERE
+            uid = #{uid,jdbcType=INTEGER}
+        AND ctime > #{ctime,jdbcType=INTEGER}
+        AND pay_status IN (0, 1)
+</select>
+</mapper>

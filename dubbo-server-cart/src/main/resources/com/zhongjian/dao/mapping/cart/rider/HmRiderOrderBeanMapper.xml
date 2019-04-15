@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.cart.rider.CartRiderOrderBean" >
+  <resultMap id="BaseResultMap" type="com.zhongjian.dao.entity.cart.rider.CartRiderOrderBean" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="rider_sn" property="riderSn" jdbcType="VARCHAR" />
+    <result column="order_sn" property="orderSn" jdbcType="VARCHAR" />
+    <result column="rider_status" property="riderStatus" jdbcType="TINYINT" />
+    <result column="pay_status" property="payStatus" jdbcType="TINYINT" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="rid" property="rid" jdbcType="INTEGER" />
+    <result column="marketid" property="marketid" jdbcType="INTEGER" />
+    <result column="rider_pay" property="riderPay" jdbcType="DECIMAL" />
+    <result column="address_id" property="addressId" jdbcType="INTEGER" />
+    <result column="couponid" property="couponid" jdbcType="INTEGER" />
+    <result column="type_pay" property="typePay" jdbcType="VARCHAR" />
+    <result column="totalPrice" property="totalprice" jdbcType="DOUBLE" />
+    <result column="pay_time" property="payTime" jdbcType="INTEGER" />
+    <result column="service_time" property="serviceTime" jdbcType="INTEGER" />
+    <result column="order_time" property="orderTime" jdbcType="INTEGER" />
+    <result column="finish_time" property="finishTime" jdbcType="INTEGER" />
+    <result column="ctime" property="ctime" jdbcType="INTEGER" />
+    <result column="integral" property="integral" jdbcType="INTEGER" />
+    <result column="is_appointment" property="isAppointment" jdbcType="SMALLINT" />
+    <result column="end_time" property="endTime" jdbcType="INTEGER" />
+    <result column="original_price" property="originalPrice" jdbcType="DECIMAL" />
+    <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR" />
+    <result column="coupon_price" property="couponPrice" jdbcType="DECIMAL" />
+    <result column="market_activity_price" property="marketActivityPrice" jdbcType="DECIMAL" />
+    <result column="store_activity_price" property="storeActivityPrice" jdbcType="DECIMAL" />
+    <result column="vip_relief" property="vipRelief" jdbcType="DECIMAL" />
+    <result column="error_price" property="errorPrice" jdbcType="DECIMAL" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="test" property="test" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, rider_sn, order_sn, rider_status, pay_status, uid, rid, marketid, rider_pay, 
+    address_id, couponid, type_pay, totalPrice, pay_time, service_time, order_time, finish_time, 
+    ctime, integral, is_appointment, end_time, original_price, out_trade_no, coupon_price, 
+    market_activity_price, store_activity_price, vip_relief, error_price, remark, test
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hm_rider_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hm_rider_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhongjian.dao.entity.cart.rider.CartRiderOrderBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_rider_order (rider_sn, order_sn, rider_status, 
+      pay_status, uid, rid, 
+      marketid, rider_pay, address_id, 
+      couponid, type_pay, totalPrice, 
+      pay_time, service_time, order_time, 
+      finish_time, ctime, integral, 
+      is_appointment, end_time, original_price, 
+      out_trade_no, coupon_price, market_activity_price, 
+      store_activity_price, vip_relief, error_price, 
+      remark, test)
+    values (#{riderSn,jdbcType=VARCHAR}, #{orderSn,jdbcType=VARCHAR}, #{riderStatus,jdbcType=TINYINT}, 
+      #{payStatus,jdbcType=TINYINT}, #{uid,jdbcType=INTEGER}, #{rid,jdbcType=INTEGER}, 
+      #{marketid,jdbcType=INTEGER}, #{riderPay,jdbcType=DECIMAL}, #{addressId,jdbcType=INTEGER}, 
+      #{couponid,jdbcType=INTEGER}, #{typePay,jdbcType=VARCHAR}, #{totalprice,jdbcType=DOUBLE}, 
+      #{payTime,jdbcType=INTEGER}, #{serviceTime,jdbcType=INTEGER}, #{orderTime,jdbcType=INTEGER}, 
+      #{finishTime,jdbcType=INTEGER}, #{ctime,jdbcType=INTEGER}, #{integral,jdbcType=INTEGER}, 
+      #{isAppointment,jdbcType=SMALLINT}, #{endTime,jdbcType=INTEGER}, #{originalPrice,jdbcType=DECIMAL}, 
+      #{outTradeNo,jdbcType=VARCHAR}, #{couponPrice,jdbcType=DECIMAL}, #{marketActivityPrice,jdbcType=DECIMAL}, 
+      #{storeActivityPrice,jdbcType=DECIMAL}, #{vipRelief,jdbcType=DECIMAL}, #{errorPrice,jdbcType=DECIMAL}, 
+      #{remark,jdbcType=VARCHAR}, #{test,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhongjian.dao.entity.cart.rider.CartRiderOrderBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_rider_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="riderSn != null" >
+        rider_sn,
+      </if>
+      <if test="orderSn != null" >
+        order_sn,
+      </if>
+      <if test="riderStatus != null" >
+        rider_status,
+      </if>
+      <if test="payStatus != null" >
+        pay_status,
+      </if>
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="rid != null" >
+        rid,
+      </if>
+      <if test="marketid != null" >
+        marketid,
+      </if>
+      <if test="riderPay != null" >
+        rider_pay,
+      </if>
+      <if test="addressId != null" >
+        address_id,
+      </if>
+      <if test="couponid != null" >
+        couponid,
+      </if>
+      <if test="typePay != null" >
+        type_pay,
+      </if>
+      <if test="totalprice != null" >
+        totalPrice,
+      </if>
+      <if test="payTime != null" >
+        pay_time,
+      </if>
+      <if test="serviceTime != null" >
+        service_time,
+      </if>
+      <if test="orderTime != null" >
+        order_time,
+      </if>
+      <if test="finishTime != null" >
+        finish_time,
+      </if>
+      <if test="ctime != null" >
+        ctime,
+      </if>
+      <if test="integral != null" >
+        integral,
+      </if>
+      <if test="isAppointment != null" >
+        is_appointment,
+      </if>
+      <if test="endTime != null" >
+        end_time,
+      </if>
+      <if test="originalPrice != null" >
+        original_price,
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no,
+      </if>
+      <if test="couponPrice != null" >
+        coupon_price,
+      </if>
+      <if test="marketActivityPrice != null" >
+        market_activity_price,
+      </if>
+      <if test="storeActivityPrice != null" >
+        store_activity_price,
+      </if>
+      <if test="vipRelief != null" >
+        vip_relief,
+      </if>
+      <if test="errorPrice != null" >
+        error_price,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="test != null" >
+        test,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="riderSn != null" >
+        #{riderSn,jdbcType=VARCHAR},
+      </if>
+      <if test="orderSn != null" >
+        #{orderSn,jdbcType=VARCHAR},
+      </if>
+      <if test="riderStatus != null" >
+        #{riderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="payStatus != null" >
+        #{payStatus,jdbcType=TINYINT},
+      </if>
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="rid != null" >
+        #{rid,jdbcType=INTEGER},
+      </if>
+      <if test="marketid != null" >
+        #{marketid,jdbcType=INTEGER},
+      </if>
+      <if test="riderPay != null" >
+        #{riderPay,jdbcType=DECIMAL},
+      </if>
+      <if test="addressId != null" >
+        #{addressId,jdbcType=INTEGER},
+      </if>
+      <if test="couponid != null" >
+        #{couponid,jdbcType=INTEGER},
+      </if>
+      <if test="typePay != null" >
+        #{typePay,jdbcType=VARCHAR},
+      </if>
+      <if test="totalprice != null" >
+        #{totalprice,jdbcType=DOUBLE},
+      </if>
+      <if test="payTime != null" >
+        #{payTime,jdbcType=INTEGER},
+      </if>
+      <if test="serviceTime != null" >
+        #{serviceTime,jdbcType=INTEGER},
+      </if>
+      <if test="orderTime != null" >
+        #{orderTime,jdbcType=INTEGER},
+      </if>
+      <if test="finishTime != null" >
+        #{finishTime,jdbcType=INTEGER},
+      </if>
+      <if test="ctime != null" >
+        #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="integral != null" >
+        #{integral,jdbcType=INTEGER},
+      </if>
+      <if test="isAppointment != null" >
+        #{isAppointment,jdbcType=SMALLINT},
+      </if>
+      <if test="endTime != null" >
+        #{endTime,jdbcType=INTEGER},
+      </if>
+      <if test="originalPrice != null" >
+        #{originalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="outTradeNo != null" >
+        #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="couponPrice != null" >
+        #{couponPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="marketActivityPrice != null" >
+        #{marketActivityPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="storeActivityPrice != null" >
+        #{storeActivityPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="vipRelief != null" >
+        #{vipRelief,jdbcType=DECIMAL},
+      </if>
+      <if test="errorPrice != null" >
+        #{errorPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="test != null" >
+        #{test,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhongjian.dao.entity.cart.rider.CartRiderOrderBean" >
+    update hm_rider_order
+    <set >
+      <if test="riderSn != null" >
+        rider_sn = #{riderSn,jdbcType=VARCHAR},
+      </if>
+      <if test="orderSn != null" >
+        order_sn = #{orderSn,jdbcType=VARCHAR},
+      </if>
+      <if test="riderStatus != null" >
+        rider_status = #{riderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="payStatus != null" >
+        pay_status = #{payStatus,jdbcType=TINYINT},
+      </if>
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="rid != null" >
+        rid = #{rid,jdbcType=INTEGER},
+      </if>
+      <if test="marketid != null" >
+        marketid = #{marketid,jdbcType=INTEGER},
+      </if>
+      <if test="riderPay != null" >
+        rider_pay = #{riderPay,jdbcType=DECIMAL},
+      </if>
+      <if test="addressId != null" >
+        address_id = #{addressId,jdbcType=INTEGER},
+      </if>
+      <if test="couponid != null" >
+        couponid = #{couponid,jdbcType=INTEGER},
+      </if>
+      <if test="typePay != null" >
+        type_pay = #{typePay,jdbcType=VARCHAR},
+      </if>
+      <if test="totalprice != null" >
+        totalPrice = #{totalprice,jdbcType=DOUBLE},
+      </if>
+      <if test="payTime != null" >
+        pay_time = #{payTime,jdbcType=INTEGER},
+      </if>
+      <if test="serviceTime != null" >
+        service_time = #{serviceTime,jdbcType=INTEGER},
+      </if>
+      <if test="orderTime != null" >
+        order_time = #{orderTime,jdbcType=INTEGER},
+      </if>
+      <if test="finishTime != null" >
+        finish_time = #{finishTime,jdbcType=INTEGER},
+      </if>
+      <if test="ctime != null" >
+        ctime = #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="integral != null" >
+        integral = #{integral,jdbcType=INTEGER},
+      </if>
+      <if test="isAppointment != null" >
+        is_appointment = #{isAppointment,jdbcType=SMALLINT},
+      </if>
+      <if test="endTime != null" >
+        end_time = #{endTime,jdbcType=INTEGER},
+      </if>
+      <if test="originalPrice != null" >
+        original_price = #{originalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="outTradeNo != null" >
+        out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      </if>
+      <if test="couponPrice != null" >
+        coupon_price = #{couponPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="marketActivityPrice != null" >
+        market_activity_price = #{marketActivityPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="storeActivityPrice != null" >
+        store_activity_price = #{storeActivityPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="vipRelief != null" >
+        vip_relief = #{vipRelief,jdbcType=DECIMAL},
+      </if>
+      <if test="errorPrice != null" >
+        error_price = #{errorPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="test != null" >
+        test = #{test,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhongjian.dao.entity.cart.rider.CartRiderOrderBean" >
+    update hm_rider_order
+    set rider_sn = #{riderSn,jdbcType=VARCHAR},
+      order_sn = #{orderSn,jdbcType=VARCHAR},
+      rider_status = #{riderStatus,jdbcType=TINYINT},
+      pay_status = #{payStatus,jdbcType=TINYINT},
+      uid = #{uid,jdbcType=INTEGER},
+      rid = #{rid,jdbcType=INTEGER},
+      marketid = #{marketid,jdbcType=INTEGER},
+      rider_pay = #{riderPay,jdbcType=DECIMAL},
+      address_id = #{addressId,jdbcType=INTEGER},
+      couponid = #{couponid,jdbcType=INTEGER},
+      type_pay = #{typePay,jdbcType=VARCHAR},
+      totalPrice = #{totalprice,jdbcType=DOUBLE},
+      pay_time = #{payTime,jdbcType=INTEGER},
+      service_time = #{serviceTime,jdbcType=INTEGER},
+      order_time = #{orderTime,jdbcType=INTEGER},
+      finish_time = #{finishTime,jdbcType=INTEGER},
+      ctime = #{ctime,jdbcType=INTEGER},
+      integral = #{integral,jdbcType=INTEGER},
+      is_appointment = #{isAppointment,jdbcType=SMALLINT},
+      end_time = #{endTime,jdbcType=INTEGER},
+      original_price = #{originalPrice,jdbcType=DECIMAL},
+      out_trade_no = #{outTradeNo,jdbcType=VARCHAR},
+      coupon_price = #{couponPrice,jdbcType=DECIMAL},
+      market_activity_price = #{marketActivityPrice,jdbcType=DECIMAL},
+      store_activity_price = #{storeActivityPrice,jdbcType=DECIMAL},
+      vip_relief = #{vipRelief,jdbcType=DECIMAL},
+      error_price = #{errorPrice,jdbcType=DECIMAL},
+      remark = #{remark,jdbcType=VARCHAR},
+      test = #{test,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="searchByEntityCount" resultType="java.lang.Integer" parameterType="com.zhongjian.dao.entity.cart.rider.CartRiderOrderBean" >
+    select
+    count(*)
+    from hm_rider_order
+    <where>
+     <if test="riderSn != null">
+      rider_sn=#{riderSn,jdbcType=VARCHAR}
+     </if>
+     <if test="orderSn != null">
+      AND order_sn=#{orderSn,jdbcType=VARCHAR}
+     </if>
+     <if test="riderStatus != null">
+      AND rider_status=#{riderStatus,jdbcType=TINYINT}
+     </if>
+     <if test="payStatus != null">
+      AND pay_status=#{payStatus,jdbcType=TINYINT}
+     </if>
+     <if test="uid != null">
+      AND uid=#{uid,jdbcType=INTEGER}
+     </if>
+     <if test="rid != null">
+      AND rid=#{rid,jdbcType=INTEGER}
+     </if>
+     <if test="marketid != null">
+      AND marketid=#{marketid,jdbcType=INTEGER}
+     </if>
+     <if test="riderPay != null">
+      AND rider_pay=#{riderPay,jdbcType=DECIMAL}
+     </if>
+     <if test="addressId != null">
+      AND address_id=#{addressId,jdbcType=INTEGER}
+     </if>
+     <if test="couponid != null">
+      AND couponid=#{couponid,jdbcType=INTEGER}
+     </if>
+     <if test="typePay != null">
+      AND type_pay=#{typePay,jdbcType=VARCHAR}
+     </if>
+     <if test="totalprice != null">
+      AND totalPrice=#{totalprice,jdbcType=DOUBLE}
+     </if>
+     <if test="payTime != null">
+      AND pay_time=#{payTime,jdbcType=INTEGER}
+     </if>
+     <if test="serviceTime != null">
+      AND service_time=#{serviceTime,jdbcType=INTEGER}
+     </if>
+     <if test="orderTime != null">
+      AND order_time=#{orderTime,jdbcType=INTEGER}
+     </if>
+     <if test="finishTime != null">
+      AND finish_time=#{finishTime,jdbcType=INTEGER}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+     <if test="integral != null">
+      AND integral=#{integral,jdbcType=INTEGER}
+     </if>
+     <if test="isAppointment != null">
+      AND is_appointment=#{isAppointment,jdbcType=SMALLINT}
+     </if>
+     <if test="endTime != null">
+      AND end_time=#{endTime,jdbcType=INTEGER}
+     </if>
+     <if test="originalPrice != null">
+      AND original_price=#{originalPrice,jdbcType=DECIMAL}
+     </if>
+     <if test="outTradeNo != null">
+      AND out_trade_no=#{outTradeNo,jdbcType=VARCHAR}
+     </if>
+     <if test="couponPrice != null">
+      AND coupon_price=#{couponPrice,jdbcType=DECIMAL}
+     </if>
+     <if test="marketActivityPrice != null">
+      AND market_activity_price=#{marketActivityPrice,jdbcType=DECIMAL}
+     </if>
+     <if test="storeActivityPrice != null">
+      AND store_activity_price=#{storeActivityPrice,jdbcType=DECIMAL}
+     </if>
+     <if test="vipRelief != null">
+      AND vip_relief=#{vipRelief,jdbcType=DECIMAL}
+     </if>
+     <if test="errorPrice != null">
+      AND error_price=#{errorPrice,jdbcType=DECIMAL}
+     </if>
+     <if test="remark != null">
+      AND remark=#{remark,jdbcType=VARCHAR}
+     </if>
+     <if test="test != null">
+      AND test=#{test,jdbcType=INTEGER}
+     </if>
+    </where>
+  </select>
+  <select id="searchByEntity" resultMap="BaseResultMap" parameterType="com.zhongjian.dao.entity.cart.rider.CartRiderOrderBean" >
+    select
+    <include refid="Base_Column_List"/>
+    from hm_rider_order
+    <where>
+     <if test="riderSn != null">
+      rider_sn=#{riderSn,jdbcType=VARCHAR}
+     </if>
+     <if test="orderSn != null">
+      AND order_sn=#{orderSn,jdbcType=VARCHAR}
+     </if>
+     <if test="riderStatus != null">
+      AND rider_status=#{riderStatus,jdbcType=TINYINT}
+     </if>
+     <if test="payStatus != null">
+      AND pay_status=#{payStatus,jdbcType=TINYINT}
+     </if>
+     <if test="uid != null">
+      AND uid=#{uid,jdbcType=INTEGER}
+     </if>
+     <if test="rid != null">
+      AND rid=#{rid,jdbcType=INTEGER}
+     </if>
+     <if test="marketid != null">
+      AND marketid=#{marketid,jdbcType=INTEGER}
+     </if>
+     <if test="riderPay != null">
+      AND rider_pay=#{riderPay,jdbcType=DECIMAL}
+     </if>
+     <if test="addressId != null">
+      AND address_id=#{addressId,jdbcType=INTEGER}
+     </if>
+     <if test="couponid != null">
+      AND couponid=#{couponid,jdbcType=INTEGER}
+     </if>
+     <if test="typePay != null">
+      AND type_pay=#{typePay,jdbcType=VARCHAR}
+     </if>
+     <if test="totalprice != null">
+      AND totalPrice=#{totalprice,jdbcType=DOUBLE}
+     </if>
+     <if test="payTime != null">
+      AND pay_time=#{payTime,jdbcType=INTEGER}
+     </if>
+     <if test="serviceTime != null">
+      AND service_time=#{serviceTime,jdbcType=INTEGER}
+     </if>
+     <if test="orderTime != null">
+      AND order_time=#{orderTime,jdbcType=INTEGER}
+     </if>
+     <if test="finishTime != null">
+      AND finish_time=#{finishTime,jdbcType=INTEGER}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+     <if test="integral != null">
+      AND integral=#{integral,jdbcType=INTEGER}
+     </if>
+     <if test="isAppointment != null">
+      AND is_appointment=#{isAppointment,jdbcType=SMALLINT}
+     </if>
+     <if test="endTime != null">
+      AND end_time=#{endTime,jdbcType=INTEGER}
+     </if>
+     <if test="originalPrice != null">
+      AND original_price=#{originalPrice,jdbcType=DECIMAL}
+     </if>
+     <if test="outTradeNo != null">
+      AND out_trade_no=#{outTradeNo,jdbcType=VARCHAR}
+     </if>
+     <if test="couponPrice != null">
+      AND coupon_price=#{couponPrice,jdbcType=DECIMAL}
+     </if>
+     <if test="marketActivityPrice != null">
+      AND market_activity_price=#{marketActivityPrice,jdbcType=DECIMAL}
+     </if>
+     <if test="storeActivityPrice != null">
+      AND store_activity_price=#{storeActivityPrice,jdbcType=DECIMAL}
+     </if>
+     <if test="vipRelief != null">
+      AND vip_relief=#{vipRelief,jdbcType=DECIMAL}
+     </if>
+     <if test="errorPrice != null">
+      AND error_price=#{errorPrice,jdbcType=DECIMAL}
+     </if>
+     <if test="remark != null">
+      AND remark=#{remark,jdbcType=VARCHAR}
+     </if>
+     <if test="test != null">
+      AND test=#{test,jdbcType=INTEGER}
+     </if>
+    </where>
+  </select>
+</mapper>

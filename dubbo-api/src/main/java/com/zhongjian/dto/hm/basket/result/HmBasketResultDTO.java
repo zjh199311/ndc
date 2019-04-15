@@ -20,6 +20,11 @@ public class HmBasketResultDTO implements Serializable {
     private Integer id;
 
     /**
+     * 商户id
+     */
+    private Integer sid;
+
+    /**
      * 商品数量
      */
     private String amount;
@@ -27,6 +32,11 @@ public class HmBasketResultDTO implements Serializable {
      * 商品总价
      */
     private String totalPrice;
+
+    /**
+     * 商品价
+     */
+    private String price;
 
     /**
      * 商品名称
