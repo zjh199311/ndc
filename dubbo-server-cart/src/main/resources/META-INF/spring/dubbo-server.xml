@@ -50,8 +50,8 @@
                     threads="4" port="${spring.dubbo.protocol.port}"/>
     <!-- declare the service interface to be exported -->
     <!-- server start -->
-    <dubbo:service interface="com.zhongjian.service.hm.basket.HmBasketService" ref="hmBasketService" version="1.0.0"/>
-    <dubbo:service interface="com.zhongjian.service.hm.shopown.HmShopownService" ref="hmShopownService"
+    <dubbo:service interface="com.zhongjian.service.cart.basket.CartBasketService" ref="hmBasketService" version="1.0.0"/>
+    <dubbo:service interface="com.zhongjian.service.cart.shopown.CartShopownService" ref="hmShopownService"
                    version="1.0.0"/>
     <!-- server end -->
 
@@ -74,7 +74,7 @@
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <!-- 数据源 -->
         <property name="dataSource" ref="dataSourceId"/>
-        <property name="mapperLocations" value="classpath:com/zhongjian/dao/mapping/hm/*/*.xml"/>
+        <property name="mapperLocations" value="classpath:com/zhongjian/dao/mapping/cart/*/*.xml"/>
     </bean>
     <!--注解方式实现事务-->
     <tx:annotation-driven transaction-manager="txManager"/>

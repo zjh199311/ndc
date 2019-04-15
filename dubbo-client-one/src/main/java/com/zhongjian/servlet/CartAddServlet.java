@@ -10,10 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.zhongjian.dto.cart.basket.query.HmBasketEditQueryDTO;
 import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultUtil;
-import com.zhongjian.dto.hm.basket.query.HmBasketEditQueryDTO;
-import com.zhongjian.service.hm.basket.HmBasketService;
+import com.zhongjian.service.cart.basket.CartBasketService;
 import org.apache.log4j.Logger;
 
 import com.zhongjian.common.GsonUtil;
@@ -33,8 +33,8 @@ public class CartAddServlet extends HttpServlet {
 
 	private static Logger log = Logger.getLogger(CartAddServlet.class);
 
-	private HmBasketService hmBasketService = (HmBasketService) SpringContextHolder.getBean(HmBasketService.class);
-
+	private CartBasketService hmBasketService = (CartBasketService) SpringContextHolder.getBean(CartBasketService.class);
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 

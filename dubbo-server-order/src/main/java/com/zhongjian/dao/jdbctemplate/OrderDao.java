@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.SQLType;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +18,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import com.zhongjian.dto.hm.storeActivity.result.HmStoreActivityResultDTO;
+import com.zhongjian.dto.cart.storeActivity.result.HmStoreActivityResultDTO;
 import com.zhongjian.util.DateUtil;
-import com.zhongjian.util.RandomUtil;
 
 @Repository
 public class OrderDao {

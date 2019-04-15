@@ -1,6 +1,6 @@
 package com.zhongjian.component;
 
-import com.zhongjian.commoncomponent.PropComponent;
+import com.zhongjian.component.PropComponent;
 
 public class PropUtil {
 
@@ -13,7 +13,7 @@ public class PropUtil {
 	private void setProp() {
 		setAppkey((String) propComponent.getMap().get("client.appkey"));
 		setAppSecret((String) propComponent.getMap().get("client.appSecret"));
-		setIsDebug((boolean)propComponent.getMap().get("client.debug"));
+		setIsDebug(Boolean.valueOf((String) propComponent.getMap().get("client.debug")).booleanValue());
 	}
 
 	private String appkey;

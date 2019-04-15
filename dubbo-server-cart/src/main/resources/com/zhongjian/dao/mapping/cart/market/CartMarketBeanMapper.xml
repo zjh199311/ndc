@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.cart.market.CartMarketBean" >
+  <resultMap id="BaseResultMap" type="com.zhongjian.dao.entity.cart.market.CartMarketBean" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="ename" property="ename" jdbcType="VARCHAR" />
+    <result column="contacts" property="contacts" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="province" property="province" jdbcType="VARCHAR" />
+    <result column="city" property="city" jdbcType="VARCHAR" />
+    <result column="area" property="area" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="ctime" property="ctime" jdbcType="INTEGER" />
+    <result column="longitude" property="longitude" jdbcType="VARCHAR" />
+    <result column="latitude" property="latitude" jdbcType="VARCHAR" />
+    <result column="starttime" property="starttime" jdbcType="VARCHAR" />
+    <result column="endtime" property="endtime" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="size" property="size" jdbcType="VARCHAR" />
+    <result column="market_pic" property="marketPic" jdbcType="VARCHAR" />
+    <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="activity" property="activity" jdbcType="VARCHAR" />
+    <result column="no_pay" property="noPay" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, ename, contacts, phone, province, city, area, address, ctime, longitude, latitude, 
+    starttime, endtime, state, size, market_pic, is_delete, status, activity, no_pay
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hm_market
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hm_market
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhongjian.dao.entity.cart.market.CartMarketBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_market (ename, contacts, phone, 
+      province, city, area, 
+      address, ctime, longitude, 
+      latitude, starttime, endtime, 
+      state, size, market_pic, 
+      is_delete, status, activity, 
+      no_pay)
+    values (#{ename,jdbcType=VARCHAR}, #{contacts,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{province,jdbcType=VARCHAR}, #{city,jdbcType=VARCHAR}, #{area,jdbcType=VARCHAR}, 
+      #{address,jdbcType=VARCHAR}, #{ctime,jdbcType=INTEGER}, #{longitude,jdbcType=VARCHAR}, 
+      #{latitude,jdbcType=VARCHAR}, #{starttime,jdbcType=VARCHAR}, #{endtime,jdbcType=VARCHAR}, 
+      #{state,jdbcType=TINYINT}, #{size,jdbcType=VARCHAR}, #{marketPic,jdbcType=VARCHAR}, 
+      #{isDelete,jdbcType=TINYINT}, #{status,jdbcType=INTEGER}, #{activity,jdbcType=VARCHAR}, 
+      #{noPay,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhongjian.dao.entity.cart.market.CartMarketBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_market
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="ename != null" >
+        ename,
+      </if>
+      <if test="contacts != null" >
+        contacts,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="province != null" >
+        province,
+      </if>
+      <if test="city != null" >
+        city,
+      </if>
+      <if test="area != null" >
+        area,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="ctime != null" >
+        ctime,
+      </if>
+      <if test="longitude != null" >
+        longitude,
+      </if>
+      <if test="latitude != null" >
+        latitude,
+      </if>
+      <if test="starttime != null" >
+        starttime,
+      </if>
+      <if test="endtime != null" >
+        endtime,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="size != null" >
+        size,
+      </if>
+      <if test="marketPic != null" >
+        market_pic,
+      </if>
+      <if test="isDelete != null" >
+        is_delete,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="activity != null" >
+        activity,
+      </if>
+      <if test="noPay != null" >
+        no_pay,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="ename != null" >
+        #{ename,jdbcType=VARCHAR},
+      </if>
+      <if test="contacts != null" >
+        #{contacts,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="ctime != null" >
+        #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="longitude != null" >
+        #{longitude,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null" >
+        #{latitude,jdbcType=VARCHAR},
+      </if>
+      <if test="starttime != null" >
+        #{starttime,jdbcType=VARCHAR},
+      </if>
+      <if test="endtime != null" >
+        #{endtime,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="size != null" >
+        #{size,jdbcType=VARCHAR},
+      </if>
+      <if test="marketPic != null" >
+        #{marketPic,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null" >
+        #{isDelete,jdbcType=TINYINT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="activity != null" >
+        #{activity,jdbcType=VARCHAR},
+      </if>
+      <if test="noPay != null" >
+        #{noPay,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhongjian.dao.entity.cart.market.CartMarketBean" >
+    update hm_market
+    <set >
+      <if test="ename != null" >
+        ename = #{ename,jdbcType=VARCHAR},
+      </if>
+      <if test="contacts != null" >
+        contacts = #{contacts,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null" >
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="city != null" >
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="area != null" >
+        area = #{area,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="ctime != null" >
+        ctime = #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="longitude != null" >
+        longitude = #{longitude,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null" >
+        latitude = #{latitude,jdbcType=VARCHAR},
+      </if>
+      <if test="starttime != null" >
+        starttime = #{starttime,jdbcType=VARCHAR},
+      </if>
+      <if test="endtime != null" >
+        endtime = #{endtime,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="size != null" >
+        size = #{size,jdbcType=VARCHAR},
+      </if>
+      <if test="marketPic != null" >
+        market_pic = #{marketPic,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null" >
+        is_delete = #{isDelete,jdbcType=TINYINT},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="activity != null" >
+        activity = #{activity,jdbcType=VARCHAR},
+      </if>
+      <if test="noPay != null" >
+        no_pay = #{noPay,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhongjian.dao.entity.cart.market.CartMarketBean" >
+    update hm_market
+    set ename = #{ename,jdbcType=VARCHAR},
+      contacts = #{contacts,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      province = #{province,jdbcType=VARCHAR},
+      city = #{city,jdbcType=VARCHAR},
+      area = #{area,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      ctime = #{ctime,jdbcType=INTEGER},
+      longitude = #{longitude,jdbcType=VARCHAR},
+      latitude = #{latitude,jdbcType=VARCHAR},
+      starttime = #{starttime,jdbcType=VARCHAR},
+      endtime = #{endtime,jdbcType=VARCHAR},
+      state = #{state,jdbcType=TINYINT},
+      size = #{size,jdbcType=VARCHAR},
+      market_pic = #{marketPic,jdbcType=VARCHAR},
+      is_delete = #{isDelete,jdbcType=TINYINT},
+      status = #{status,jdbcType=INTEGER},
+      activity = #{activity,jdbcType=VARCHAR},
+      no_pay = #{noPay,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="searchByEntityCount" resultType="java.lang.Integer" parameterType="com.zhongjian.dao.entity.cart.market.CartMarketBean" >
+    select
+    count(*)
+    from hm_market
+    <where>
+     <if test="ename != null">
+      ename=#{ename,jdbcType=VARCHAR}
+     </if>
+     <if test="contacts != null">
+      AND contacts=#{contacts,jdbcType=VARCHAR}
+     </if>
+     <if test="phone != null">
+      AND phone=#{phone,jdbcType=VARCHAR}
+     </if>
+     <if test="province != null">
+      AND province=#{province,jdbcType=VARCHAR}
+     </if>
+     <if test="city != null">
+      AND city=#{city,jdbcType=VARCHAR}
+     </if>
+     <if test="area != null">
+      AND area=#{area,jdbcType=VARCHAR}
+     </if>
+     <if test="address != null">
+      AND address=#{address,jdbcType=VARCHAR}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+     <if test="longitude != null">
+      AND longitude=#{longitude,jdbcType=VARCHAR}
+     </if>
+     <if test="latitude != null">
+      AND latitude=#{latitude,jdbcType=VARCHAR}
+     </if>
+     <if test="starttime != null">
+      AND starttime=#{starttime,jdbcType=VARCHAR}
+     </if>
+     <if test="endtime != null">
+      AND endtime=#{endtime,jdbcType=VARCHAR}
+     </if>
+     <if test="state != null">
+      AND state=#{state,jdbcType=TINYINT}
+     </if>
+     <if test="size != null">
+      AND size=#{size,jdbcType=VARCHAR}
+     </if>
+     <if test="marketPic != null">
+      AND market_pic=#{marketPic,jdbcType=VARCHAR}
+     </if>
+     <if test="isDelete != null">
+      AND is_delete=#{isDelete,jdbcType=TINYINT}
+     </if>
+     <if test="status != null">
+      AND status=#{status,jdbcType=INTEGER}
+     </if>
+     <if test="activity != null">
+      AND activity=#{activity,jdbcType=VARCHAR}
+     </if>
+     <if test="noPay != null">
+      AND no_pay=#{noPay,jdbcType=VARCHAR}
+     </if>
+    </where>
+  </select>
+  <select id="searchByEntity" resultMap="BaseResultMap" parameterType="com.zhongjian.dao.entity.cart.market.CartMarketBean" >
+    select
+    <include refid="Base_Column_List"/>
+    from hm_market
+    <where>
+     <if test="ename != null">
+      ename=#{ename,jdbcType=VARCHAR}
+     </if>
+     <if test="contacts != null">
+      AND contacts=#{contacts,jdbcType=VARCHAR}
+     </if>
+     <if test="phone != null">
+      AND phone=#{phone,jdbcType=VARCHAR}
+     </if>
+     <if test="province != null">
+      AND province=#{province,jdbcType=VARCHAR}
+     </if>
+     <if test="city != null">
+      AND city=#{city,jdbcType=VARCHAR}
+     </if>
+     <if test="area != null">
+      AND area=#{area,jdbcType=VARCHAR}
+     </if>
+     <if test="address != null">
+      AND address=#{address,jdbcType=VARCHAR}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+     <if test="longitude != null">
+      AND longitude=#{longitude,jdbcType=VARCHAR}
+     </if>
+     <if test="latitude != null">
+      AND latitude=#{latitude,jdbcType=VARCHAR}
+     </if>
+     <if test="starttime != null">
+      AND starttime=#{starttime,jdbcType=VARCHAR}
+     </if>
+     <if test="endtime != null">
+      AND endtime=#{endtime,jdbcType=VARCHAR}
+     </if>
+     <if test="state != null">
+      AND state=#{state,jdbcType=TINYINT}
+     </if>
+     <if test="size != null">
+      AND size=#{size,jdbcType=VARCHAR}
+     </if>
+     <if test="marketPic != null">
+      AND market_pic=#{marketPic,jdbcType=VARCHAR}
+     </if>
+     <if test="isDelete != null">
+      AND is_delete=#{isDelete,jdbcType=TINYINT}
+     </if>
+     <if test="status != null">
+      AND status=#{status,jdbcType=INTEGER}
+     </if>
+     <if test="activity != null">
+      AND activity=#{activity,jdbcType=VARCHAR}
+     </if>
+     <if test="noPay != null">
+      AND no_pay=#{noPay,jdbcType=VARCHAR}
+     </if>
+    </where>
+  </select>
+</mapper>

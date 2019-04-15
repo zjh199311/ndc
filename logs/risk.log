@@ -1,6 +1,6 @@
 2019-03-26 11:14:43,464 [main] INFO  com.zhongjian.NDCServiceApplication:50 - Starting NDCServiceApplication on USER-20190310LH with PID 4200 (D:\ndc\ndc\dubbo-server-test\target\classes started by Administrator in D:\ndc\ndc)
 2019-03-26 11:14:43,471 [main] INFO  com.zhongjian.NDCServiceApplication:675 - No active profile set, falling back to default profiles: default
-2019-03-26 11:14:44,235 [main] WARN  org.mybatis.spring.mapper.ClassPathMapperScanner:166 - No MyBatis mapper was found in '[com.zhongjian.dao.entity.hm]' package. Please check your configuration.
+2019-03-26 11:14:44,235 [main] WARN  org.mybatis.spring.mapper.ClassPathMapperScanner:166 - No MyBatis mapper was found in '[com.zhongjian.dao.entity.order]' package. Please check your configuration.
 2019-03-26 11:14:44,406 [main] WARN  org.mybatis.spring.mapper.ClassPathMapperScanner:166 - No MyBatis mapper was found in '[com.zhongjian]' package. Please check your configuration.
 2019-03-26 11:14:45,309 [main] INFO  o.s.boot.web.embedded.tomcat.TomcatWebServer:90 - Tomcat initialized with port(s): 8088 (http)
 2019-03-26 11:14:45,339 [main] INFO  org.apache.coyote.http11.Http11NioProtocol:173 - Initializing ProtocolHandler ["http-nio-8088"]

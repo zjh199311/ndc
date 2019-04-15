@@ -1,10 +1,9 @@
 package com.zhongjian.executor;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ThreadPoolExecutorSingle {
 	
-	public static ThreadPoolExecutor executor = new ThreadPoolExecutor(4, 20, 50000L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(100));
+	public static ExecutorService executor =  Executors.newCachedThreadPool();
 }

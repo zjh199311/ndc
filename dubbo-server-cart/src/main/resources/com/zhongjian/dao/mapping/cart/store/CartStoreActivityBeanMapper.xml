@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.cart.store.CartStoreActivityBean" >
+  <resultMap id="BaseResultMap" type="com.zhongjian.dao.entity.cart.store.CartStoreActivityBean" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="sid" property="sid" jdbcType="INTEGER" />
+    <result column="full" property="full" jdbcType="DECIMAL" />
+    <result column="reduce" property="reduce" jdbcType="DECIMAL" />
+    <result column="discount" property="discount" jdbcType="VARCHAR" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="enable" property="enable" jdbcType="TINYINT" />
+    <result column="is_delete" property="isDelete" jdbcType="TINYINT" />
+    <result column="examine" property="examine" jdbcType="INTEGER" />
+    <result column="examine_info" property="examineInfo" jdbcType="VARCHAR" />
+    <result column="ctime" property="ctime" jdbcType="INTEGER" />
+    <result column="apply_time" property="applyTime" jdbcType="INTEGER" />
+    <result column="examine_time" property="examineTime" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, sid, full, reduce, discount, type, enable, is_delete, examine, examine_info, 
+    ctime, apply_time, examine_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hm_store_activity
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hm_store_activity
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhongjian.dao.entity.cart.store.CartStoreActivityBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_store_activity (sid, full, reduce, 
+      discount, type, enable, 
+      is_delete, examine, examine_info, 
+      ctime, apply_time, examine_time
+      )
+    values (#{sid,jdbcType=INTEGER}, #{full,jdbcType=DECIMAL}, #{reduce,jdbcType=DECIMAL}, 
+      #{discount,jdbcType=VARCHAR}, #{type,jdbcType=TINYINT}, #{enable,jdbcType=TINYINT}, 
+      #{isDelete,jdbcType=TINYINT}, #{examine,jdbcType=INTEGER}, #{examineInfo,jdbcType=VARCHAR}, 
+      #{ctime,jdbcType=INTEGER}, #{applyTime,jdbcType=INTEGER}, #{examineTime,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhongjian.dao.entity.cart.store.CartStoreActivityBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_store_activity
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="sid != null" >
+        sid,
+      </if>
+      <if test="full != null" >
+        full,
+      </if>
+      <if test="reduce != null" >
+        reduce,
+      </if>
+      <if test="discount != null" >
+        discount,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="enable != null" >
+        enable,
+      </if>
+      <if test="isDelete != null" >
+        is_delete,
+      </if>
+      <if test="examine != null" >
+        examine,
+      </if>
+      <if test="examineInfo != null" >
+        examine_info,
+      </if>
+      <if test="ctime != null" >
+        ctime,
+      </if>
+      <if test="applyTime != null" >
+        apply_time,
+      </if>
+      <if test="examineTime != null" >
+        examine_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="sid != null" >
+        #{sid,jdbcType=INTEGER},
+      </if>
+      <if test="full != null" >
+        #{full,jdbcType=DECIMAL},
+      </if>
+      <if test="reduce != null" >
+        #{reduce,jdbcType=DECIMAL},
+      </if>
+      <if test="discount != null" >
+        #{discount,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="enable != null" >
+        #{enable,jdbcType=TINYINT},
+      </if>
+      <if test="isDelete != null" >
+        #{isDelete,jdbcType=TINYINT},
+      </if>
+      <if test="examine != null" >
+        #{examine,jdbcType=INTEGER},
+      </if>
+      <if test="examineInfo != null" >
+        #{examineInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="ctime != null" >
+        #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="applyTime != null" >
+        #{applyTime,jdbcType=INTEGER},
+      </if>
+      <if test="examineTime != null" >
+        #{examineTime,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhongjian.dao.entity.cart.store.CartStoreActivityBean" >
+    update hm_store_activity
+    <set >
+      <if test="sid != null" >
+        sid = #{sid,jdbcType=INTEGER},
+      </if>
+      <if test="full != null" >
+        full = #{full,jdbcType=DECIMAL},
+      </if>
+      <if test="reduce != null" >
+        reduce = #{reduce,jdbcType=DECIMAL},
+      </if>
+      <if test="discount != null" >
+        discount = #{discount,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="enable != null" >
+        enable = #{enable,jdbcType=TINYINT},
+      </if>
+      <if test="isDelete != null" >
+        is_delete = #{isDelete,jdbcType=TINYINT},
+      </if>
+      <if test="examine != null" >
+        examine = #{examine,jdbcType=INTEGER},
+      </if>
+      <if test="examineInfo != null" >
+        examine_info = #{examineInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="ctime != null" >
+        ctime = #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="applyTime != null" >
+        apply_time = #{applyTime,jdbcType=INTEGER},
+      </if>
+      <if test="examineTime != null" >
+        examine_time = #{examineTime,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhongjian.dao.entity.cart.store.CartStoreActivityBean" >
+    update hm_store_activity
+    set sid = #{sid,jdbcType=INTEGER},
+      full = #{full,jdbcType=DECIMAL},
+      reduce = #{reduce,jdbcType=DECIMAL},
+      discount = #{discount,jdbcType=VARCHAR},
+      type = #{type,jdbcType=TINYINT},
+      enable = #{enable,jdbcType=TINYINT},
+      is_delete = #{isDelete,jdbcType=TINYINT},
+      examine = #{examine,jdbcType=INTEGER},
+      examine_info = #{examineInfo,jdbcType=VARCHAR},
+      ctime = #{ctime,jdbcType=INTEGER},
+      apply_time = #{applyTime,jdbcType=INTEGER},
+      examine_time = #{examineTime,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="searchByEntityCount" resultType="java.lang.Integer" parameterType="com.zhongjian.dao.entity.cart.store.CartStoreActivityBean" >
+    select
+    count(*)
+    from hm_store_activity
+    <where>
+     <if test="sid != null">
+      sid=#{sid,jdbcType=INTEGER}
+     </if>
+     <if test="full != null">
+      AND full=#{full,jdbcType=DECIMAL}
+     </if>
+     <if test="reduce != null">
+      AND reduce=#{reduce,jdbcType=DECIMAL}
+     </if>
+     <if test="discount != null">
+      AND discount=#{discount,jdbcType=VARCHAR}
+     </if>
+     <if test="type != null">
+      AND type=#{type,jdbcType=TINYINT}
+     </if>
+     <if test="enable != null">
+      AND enable=#{enable,jdbcType=TINYINT}
+     </if>
+     <if test="isDelete != null">
+      AND is_delete=#{isDelete,jdbcType=TINYINT}
+     </if>
+     <if test="examine != null">
+      AND examine=#{examine,jdbcType=INTEGER}
+     </if>
+     <if test="examineInfo != null">
+      AND examine_info=#{examineInfo,jdbcType=VARCHAR}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+     <if test="applyTime != null">
+      AND apply_time=#{applyTime,jdbcType=INTEGER}
+     </if>
+     <if test="examineTime != null">
+      AND examine_time=#{examineTime,jdbcType=INTEGER}
+     </if>
+    </where>
+  </select>
+  <select id="searchByEntity" resultMap="BaseResultMap" parameterType="com.zhongjian.dao.entity.cart.store.CartStoreActivityBean" >
+    select
+    <include refid="Base_Column_List"/>
+    from hm_store_activity
+    <where>
+     <if test="sid != null">
+      sid=#{sid,jdbcType=INTEGER}
+     </if>
+     <if test="full != null">
+      AND full=#{full,jdbcType=DECIMAL}
+     </if>
+     <if test="reduce != null">
+      AND reduce=#{reduce,jdbcType=DECIMAL}
+     </if>
+     <if test="discount != null">
+      AND discount=#{discount,jdbcType=VARCHAR}
+     </if>
+     <if test="type != null">
+      AND type=#{type,jdbcType=TINYINT}
+     </if>
+     <if test="enable != null">
+      AND enable=#{enable,jdbcType=TINYINT}
+     </if>
+     <if test="isDelete != null">
+      AND is_delete=#{isDelete,jdbcType=TINYINT}
+     </if>
+     <if test="examine != null">
+      AND examine=#{examine,jdbcType=INTEGER}
+     </if>
+     <if test="examineInfo != null">
+      AND examine_info=#{examineInfo,jdbcType=VARCHAR}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+     <if test="applyTime != null">
+      AND apply_time=#{applyTime,jdbcType=INTEGER}
+     </if>
+     <if test="examineTime != null">
+      AND examine_time=#{examineTime,jdbcType=INTEGER}
+     </if>
+    </where>
+  </select>
+</mapper>

@@ -49,7 +49,7 @@
     <dubbo:protocol host="${spring.dubbo.protocol.host}" name="${spring.dubbo.protocol.name}" threadpool="cached" threads="4" port="${spring.dubbo.protocol.port}"  />
     <!-- declare the service interface to be exported -->
     <!-- server start -->
-     <dubbo:service interface="com.zhongjian.service.order.shopown.OrderHmShopownService" ref="orderHmShopownService" version="1.0.0"/>
+
      <!-- server end -->
 
      <!-- 创建数据源 -->

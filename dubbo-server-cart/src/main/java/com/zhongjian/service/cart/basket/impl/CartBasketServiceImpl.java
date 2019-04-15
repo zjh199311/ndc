@@ -10,10 +10,10 @@ import com.zhongjian.dao.cart.CartParamDTO;
 import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.common.ResultUtil;
-import com.zhongjian.dto.hm.basket.query.HmBasketDelQueryDTO;
-import com.zhongjian.dto.hm.basket.query.HmBasketEditQueryDTO;
-import com.zhongjian.dto.hm.basket.query.HmBasketListQueryDTO;
-import com.zhongjian.dto.hm.basket.result.HmBasketResultDTO;
+import com.zhongjian.dto.cart.basket.query.HmBasketDelQueryDTO;
+import com.zhongjian.dto.cart.basket.query.HmBasketEditQueryDTO;
+import com.zhongjian.dto.cart.basket.query.HmBasketListQueryDTO;
+import com.zhongjian.dto.cart.basket.result.HmBasketResultDTO;
 import com.zhongjian.service.cart.basket.CartBasketService;
 import com.zhongjian.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -117,19 +117,20 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
             cartBasketBean.setAmount(new BigDecimal(hmBasketEditQueryDTO.getAmount()));
             cartBasketBean.setUnitprice(cartGoodsBean.getPrice());
             //计算总价保留两个小数点
-            cartBasketBean.setPrice(BigDecimal.valueOf(multiply.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
+            cartBasketBean.setPrice(multiply.setScale(2, BigDecimal.ROUND_HALF_UP));
             this.dao.insertSelective(cartBasketBean);
         } else {
             cartBasketBean.setId(findBasketBeanById.getId());
             //获取原本的总价.
             BigDecimal unitprice = findBasketBeanById.getPrice();
             //计算新的总价(原本总价+单价乘价格)
-            cartBasketBean.setPrice(BigDecimal.valueOf(multiply.add(unitprice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
+            //----------------
+            cartBasketBean.setPrice(multiply.add(unitprice).setScale(2, BigDecimal.ROUND_HALF_UP));
             cartBasketBean.setAmount(findBasketBeanById.getAmount().add(new BigDecimal(hmBasketEditQueryDTO.getAmount())));
             cartBasketBean.setUnitprice(cartGoodsBean.getPrice());
             this.dao.updateByPrimaryKeySelective(cartBasketBean);
         }
-        return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
+        return ResultUtil.getSuccess(null);
     }
 
     @Override
@@ -141,7 +142,6 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         if (null == hmBasketListQueryDTO.getUid()) {
             return ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL);
         }
-
         if (null == hmBasketListQueryDTO.getSid()) {
             return ResultUtil.getFail(CommonMessageEnum.SID_IS_NULL);
         }
@@ -186,7 +186,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         }
         this.dao.executeDeleteMethod(hmBasketDelQueryDTO, "deleteBeanById");
 
-        return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
+        return ResultUtil.getSuccess(null);
     }
 
     @Override
@@ -202,7 +202,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         }
         this.dao.executeDeleteMethod(hmBasketDelQueryDTO, "deleteBeanById");
 
-        return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
+        return ResultUtil.getSuccess(null);
     }
 
     @Override
@@ -258,7 +258,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
             cartBasketBean.setCtime(unixTime.intValue());
             this.dao.updateByPrimaryKeySelective(cartBasketBean);
         }
-        return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
+        return ResultUtil.getSuccess(null);
     }
 
     @Override
@@ -271,6 +271,6 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         }
         this.dao.executeDeleteMethod(hmBasketDelQueryDTO, "deleteInfoBySids");
 
-        return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
+        return ResultUtil.getSuccess(null);
     }
 }

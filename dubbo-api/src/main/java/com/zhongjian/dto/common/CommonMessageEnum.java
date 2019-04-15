@@ -36,6 +36,8 @@ public enum CommonMessageEnum {
 
     UID_IS_NULL("用户id为空", "UID_IS_NULL"),
 
+    PRICE_IS_NULL("价格为空","PRICE_IS_NULL"),
+
     //订单
     PID_IS_NULL("商户id为空", "PID_IS_NULL"),
 

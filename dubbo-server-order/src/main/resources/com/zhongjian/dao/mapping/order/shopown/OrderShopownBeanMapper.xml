@@ -1,0 +1,808 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.order.shopown.OrderShopownBean" >
+  <resultMap id="BaseResultMap" type="com.zhongjian.dao.entity.order.shopown.OrderShopownBean" >
+    <id column="pid" property="pid" jdbcType="INTEGER" />
+    <result column="pic" property="pic" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="sname" property="sname" jdbcType="VARCHAR" />
+    <result column="real_name" property="realName" jdbcType="VARCHAR" />
+    <result column="scope_business" property="scopeBusiness" jdbcType="VARCHAR" />
+    <result column="business_license" property="businessLicense" jdbcType="VARCHAR" />
+    <result column="food_license" property="foodLicense" jdbcType="VARCHAR" />
+    <result column="card_pic" property="cardPic" jdbcType="VARCHAR" />
+    <result column="money" property="money" jdbcType="DECIMAL" />
+    <result column="balance" property="balance" jdbcType="DECIMAL" />
+    <result column="marketid" property="marketid" jdbcType="INTEGER" />
+    <result column="is_hot" property="isHot" jdbcType="TINYINT" />
+    <result column="is_recommend" property="isRecommend" jdbcType="TINYINT" />
+    <result column="grade" property="grade" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="accid" property="accid" jdbcType="VARCHAR" />
+    <result column="token" property="token" jdbcType="VARCHAR" />
+    <result column="device_number" property="deviceNumber" jdbcType="VARCHAR" />
+    <result column="cameraid" property="cameraid" jdbcType="VARCHAR" />
+    <result column="roomid" property="roomid" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="ctime" property="ctime" jdbcType="INTEGER" />
+    <result column="salt" property="salt" jdbcType="VARCHAR" />
+    <result column="is_since" property="isSince" jdbcType="BIT" />
+    <result column="printer_num" property="printerNum" jdbcType="VARCHAR" />
+    <result column="printer_key" property="printerKey" jdbcType="VARCHAR" />
+    <result column="examine" property="examine" jdbcType="INTEGER" />
+    <result column="is_show" property="isShow" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="is_appointment" property="isAppointment" jdbcType="INTEGER" />
+    <result column="recommend" property="recommend" jdbcType="INTEGER" />
+    <result column="examine_info" property="examineInfo" jdbcType="VARCHAR" />
+    <result column="phoneType" property="phonetype" jdbcType="CHAR" />
+    <result column="pushToken" property="pushtoken" jdbcType="VARCHAR" />
+    <result column="unFavorable" property="unfavorable" jdbcType="INTEGER" />
+    <result column="login_token" property="loginToken" jdbcType="VARCHAR" />
+    <result column="yx_token" property="yxToken" jdbcType="VARCHAR" />
+    <result column="vip_promotion_reward" property="vipPromotionReward" jdbcType="DECIMAL" />
+    <result column="vip_promotion_rewardget" property="vipPromotionRewardget" jdbcType="DECIMAL" />
+    <result column="vip_promotion_rewardover" property="vipPromotionRewardover" jdbcType="DECIMAL" />
+    <result column="public_openid" property="publicOpenid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    pid, pic, phone, password, sname, real_name, scope_business, business_license, food_license, 
+    card_pic, money, balance, marketid, is_hot, is_recommend, grade, address, accid, 
+    token, device_number, cameraid, roomid, status, ctime, salt, is_since, printer_num, 
+    printer_key, examine, is_show, type, is_appointment, recommend, examine_info, phoneType, 
+    pushToken, unFavorable, login_token, yx_token, vip_promotion_reward, vip_promotion_rewardget, 
+    vip_promotion_rewardover, public_openid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hm_shopown
+    where pid = #{pid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hm_shopown
+    where pid = #{pid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhongjian.dao.entity.order.shopown.OrderShopownBean" >
+    insert into hm_shopown (pid, pic, phone, 
+      password, sname, real_name, 
+      scope_business, business_license, food_license, 
+      card_pic, money, balance, 
+      marketid, is_hot, is_recommend, 
+      grade, address, accid, 
+      token, device_number, cameraid, 
+      roomid, status, ctime, 
+      salt, is_since, printer_num, 
+      printer_key, examine, is_show, 
+      type, is_appointment, recommend, 
+      examine_info, phoneType, pushToken, 
+      unFavorable, login_token, yx_token, 
+      vip_promotion_reward, vip_promotion_rewardget, 
+      vip_promotion_rewardover, public_openid)
+    values (#{pid,jdbcType=INTEGER}, #{pic,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{sname,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, 
+      #{scopeBusiness,jdbcType=VARCHAR}, #{businessLicense,jdbcType=VARCHAR}, #{foodLicense,jdbcType=VARCHAR}, 
+      #{cardPic,jdbcType=VARCHAR}, #{money,jdbcType=DECIMAL}, #{balance,jdbcType=DECIMAL}, 
+      #{marketid,jdbcType=INTEGER}, #{isHot,jdbcType=TINYINT}, #{isRecommend,jdbcType=TINYINT}, 
+      #{grade,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{accid,jdbcType=VARCHAR}, 
+      #{token,jdbcType=VARCHAR}, #{deviceNumber,jdbcType=VARCHAR}, #{cameraid,jdbcType=VARCHAR}, 
+      #{roomid,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, #{ctime,jdbcType=INTEGER}, 
+      #{salt,jdbcType=VARCHAR}, #{isSince,jdbcType=BIT}, #{printerNum,jdbcType=VARCHAR}, 
+      #{printerKey,jdbcType=VARCHAR}, #{examine,jdbcType=INTEGER}, #{isShow,jdbcType=INTEGER}, 
+      #{type,jdbcType=TINYINT}, #{isAppointment,jdbcType=INTEGER}, #{recommend,jdbcType=INTEGER}, 
+      #{examineInfo,jdbcType=VARCHAR}, #{phonetype,jdbcType=CHAR}, #{pushtoken,jdbcType=VARCHAR}, 
+      #{unfavorable,jdbcType=INTEGER}, #{loginToken,jdbcType=VARCHAR}, #{yxToken,jdbcType=VARCHAR}, 
+      #{vipPromotionReward,jdbcType=DECIMAL}, #{vipPromotionRewardget,jdbcType=DECIMAL}, 
+      #{vipPromotionRewardover,jdbcType=DECIMAL}, #{publicOpenid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhongjian.dao.entity.order.shopown.OrderShopownBean" >
+    insert into hm_shopown
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pid != null" >
+        pid,
+      </if>
+      <if test="pic != null" >
+        pic,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="sname != null" >
+        sname,
+      </if>
+      <if test="realName != null" >
+        real_name,
+      </if>
+      <if test="scopeBusiness != null" >
+        scope_business,
+      </if>
+      <if test="businessLicense != null" >
+        business_license,
+      </if>
+      <if test="foodLicense != null" >
+        food_license,
+      </if>
+      <if test="cardPic != null" >
+        card_pic,
+      </if>
+      <if test="money != null" >
+        money,
+      </if>
+      <if test="balance != null" >
+        balance,
+      </if>
+      <if test="marketid != null" >
+        marketid,
+      </if>
+      <if test="isHot != null" >
+        is_hot,
+      </if>
+      <if test="isRecommend != null" >
+        is_recommend,
+      </if>
+      <if test="grade != null" >
+        grade,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="accid != null" >
+        accid,
+      </if>
+      <if test="token != null" >
+        token,
+      </if>
+      <if test="deviceNumber != null" >
+        device_number,
+      </if>
+      <if test="cameraid != null" >
+        cameraid,
+      </if>
+      <if test="roomid != null" >
+        roomid,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="ctime != null" >
+        ctime,
+      </if>
+      <if test="salt != null" >
+        salt,
+      </if>
+      <if test="isSince != null" >
+        is_since,
+      </if>
+      <if test="printerNum != null" >
+        printer_num,
+      </if>
+      <if test="printerKey != null" >
+        printer_key,
+      </if>
+      <if test="examine != null" >
+        examine,
+      </if>
+      <if test="isShow != null" >
+        is_show,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="isAppointment != null" >
+        is_appointment,
+      </if>
+      <if test="recommend != null" >
+        recommend,
+      </if>
+      <if test="examineInfo != null" >
+        examine_info,
+      </if>
+      <if test="phonetype != null" >
+        phoneType,
+      </if>
+      <if test="pushtoken != null" >
+        pushToken,
+      </if>
+      <if test="unfavorable != null" >
+        unFavorable,
+      </if>
+      <if test="loginToken != null" >
+        login_token,
+      </if>
+      <if test="yxToken != null" >
+        yx_token,
+      </if>
+      <if test="vipPromotionReward != null" >
+        vip_promotion_reward,
+      </if>
+      <if test="vipPromotionRewardget != null" >
+        vip_promotion_rewardget,
+      </if>
+      <if test="vipPromotionRewardover != null" >
+        vip_promotion_rewardover,
+      </if>
+      <if test="publicOpenid != null" >
+        public_openid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pid != null" >
+        #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="pic != null" >
+        #{pic,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="sname != null" >
+        #{sname,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null" >
+        #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="scopeBusiness != null" >
+        #{scopeBusiness,jdbcType=VARCHAR},
+      </if>
+      <if test="businessLicense != null" >
+        #{businessLicense,jdbcType=VARCHAR},
+      </if>
+      <if test="foodLicense != null" >
+        #{foodLicense,jdbcType=VARCHAR},
+      </if>
+      <if test="cardPic != null" >
+        #{cardPic,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null" >
+        #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="balance != null" >
+        #{balance,jdbcType=DECIMAL},
+      </if>
+      <if test="marketid != null" >
+        #{marketid,jdbcType=INTEGER},
+      </if>
+      <if test="isHot != null" >
+        #{isHot,jdbcType=TINYINT},
+      </if>
+      <if test="isRecommend != null" >
+        #{isRecommend,jdbcType=TINYINT},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="accid != null" >
+        #{accid,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceNumber != null" >
+        #{deviceNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="cameraid != null" >
+        #{cameraid,jdbcType=VARCHAR},
+      </if>
+      <if test="roomid != null" >
+        #{roomid,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="ctime != null" >
+        #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="salt != null" >
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="isSince != null" >
+        #{isSince,jdbcType=BIT},
+      </if>
+      <if test="printerNum != null" >
+        #{printerNum,jdbcType=VARCHAR},
+      </if>
+      <if test="printerKey != null" >
+        #{printerKey,jdbcType=VARCHAR},
+      </if>
+      <if test="examine != null" >
+        #{examine,jdbcType=INTEGER},
+      </if>
+      <if test="isShow != null" >
+        #{isShow,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=TINYINT},
+      </if>
+      <if test="isAppointment != null" >
+        #{isAppointment,jdbcType=INTEGER},
+      </if>
+      <if test="recommend != null" >
+        #{recommend,jdbcType=INTEGER},
+      </if>
+      <if test="examineInfo != null" >
+        #{examineInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="phonetype != null" >
+        #{phonetype,jdbcType=CHAR},
+      </if>
+      <if test="pushtoken != null" >
+        #{pushtoken,jdbcType=VARCHAR},
+      </if>
+      <if test="unfavorable != null" >
+        #{unfavorable,jdbcType=INTEGER},
+      </if>
+      <if test="loginToken != null" >
+        #{loginToken,jdbcType=VARCHAR},
+      </if>
+      <if test="yxToken != null" >
+        #{yxToken,jdbcType=VARCHAR},
+      </if>
+      <if test="vipPromotionReward != null" >
+        #{vipPromotionReward,jdbcType=DECIMAL},
+      </if>
+      <if test="vipPromotionRewardget != null" >
+        #{vipPromotionRewardget,jdbcType=DECIMAL},
+      </if>
+      <if test="vipPromotionRewardover != null" >
+        #{vipPromotionRewardover,jdbcType=DECIMAL},
+      </if>
+      <if test="publicOpenid != null" >
+        #{publicOpenid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhongjian.dao.entity.order.shopown.OrderShopownBean" >
+    update hm_shopown
+    <set >
+      <if test="pic != null" >
+        pic = #{pic,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="sname != null" >
+        sname = #{sname,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null" >
+        real_name = #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="scopeBusiness != null" >
+        scope_business = #{scopeBusiness,jdbcType=VARCHAR},
+      </if>
+      <if test="businessLicense != null" >
+        business_license = #{businessLicense,jdbcType=VARCHAR},
+      </if>
+      <if test="foodLicense != null" >
+        food_license = #{foodLicense,jdbcType=VARCHAR},
+      </if>
+      <if test="cardPic != null" >
+        card_pic = #{cardPic,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null" >
+        money = #{money,jdbcType=DECIMAL},
+      </if>
+      <if test="balance != null" >
+        balance = #{balance,jdbcType=DECIMAL},
+      </if>
+      <if test="marketid != null" >
+        marketid = #{marketid,jdbcType=INTEGER},
+      </if>
+      <if test="isHot != null" >
+        is_hot = #{isHot,jdbcType=TINYINT},
+      </if>
+      <if test="isRecommend != null" >
+        is_recommend = #{isRecommend,jdbcType=TINYINT},
+      </if>
+      <if test="grade != null" >
+        grade = #{grade,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="accid != null" >
+        accid = #{accid,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        token = #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="deviceNumber != null" >
+        device_number = #{deviceNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="cameraid != null" >
+        cameraid = #{cameraid,jdbcType=VARCHAR},
+      </if>
+      <if test="roomid != null" >
+        roomid = #{roomid,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="ctime != null" >
+        ctime = #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="salt != null" >
+        salt = #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="isSince != null" >
+        is_since = #{isSince,jdbcType=BIT},
+      </if>
+      <if test="printerNum != null" >
+        printer_num = #{printerNum,jdbcType=VARCHAR},
+      </if>
+      <if test="printerKey != null" >
+        printer_key = #{printerKey,jdbcType=VARCHAR},
+      </if>
+      <if test="examine != null" >
+        examine = #{examine,jdbcType=INTEGER},
+      </if>
+      <if test="isShow != null" >
+        is_show = #{isShow,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=TINYINT},
+      </if>
+      <if test="isAppointment != null" >
+        is_appointment = #{isAppointment,jdbcType=INTEGER},
+      </if>
+      <if test="recommend != null" >
+        recommend = #{recommend,jdbcType=INTEGER},
+      </if>
+      <if test="examineInfo != null" >
+        examine_info = #{examineInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="phonetype != null" >
+        phoneType = #{phonetype,jdbcType=CHAR},
+      </if>
+      <if test="pushtoken != null" >
+        pushToken = #{pushtoken,jdbcType=VARCHAR},
+      </if>
+      <if test="unfavorable != null" >
+        unFavorable = #{unfavorable,jdbcType=INTEGER},
+      </if>
+      <if test="loginToken != null" >
+        login_token = #{loginToken,jdbcType=VARCHAR},
+      </if>
+      <if test="yxToken != null" >
+        yx_token = #{yxToken,jdbcType=VARCHAR},
+      </if>
+      <if test="vipPromotionReward != null" >
+        vip_promotion_reward = #{vipPromotionReward,jdbcType=DECIMAL},
+      </if>
+      <if test="vipPromotionRewardget != null" >
+        vip_promotion_rewardget = #{vipPromotionRewardget,jdbcType=DECIMAL},
+      </if>
+      <if test="vipPromotionRewardover != null" >
+        vip_promotion_rewardover = #{vipPromotionRewardover,jdbcType=DECIMAL},
+      </if>
+      <if test="publicOpenid != null" >
+        public_openid = #{publicOpenid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where pid = #{pid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhongjian.dao.entity.order.shopown.OrderShopownBean" >
+    update hm_shopown
+    set pic = #{pic,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      sname = #{sname,jdbcType=VARCHAR},
+      real_name = #{realName,jdbcType=VARCHAR},
+      scope_business = #{scopeBusiness,jdbcType=VARCHAR},
+      business_license = #{businessLicense,jdbcType=VARCHAR},
+      food_license = #{foodLicense,jdbcType=VARCHAR},
+      card_pic = #{cardPic,jdbcType=VARCHAR},
+      money = #{money,jdbcType=DECIMAL},
+      balance = #{balance,jdbcType=DECIMAL},
+      marketid = #{marketid,jdbcType=INTEGER},
+      is_hot = #{isHot,jdbcType=TINYINT},
+      is_recommend = #{isRecommend,jdbcType=TINYINT},
+      grade = #{grade,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      accid = #{accid,jdbcType=VARCHAR},
+      token = #{token,jdbcType=VARCHAR},
+      device_number = #{deviceNumber,jdbcType=VARCHAR},
+      cameraid = #{cameraid,jdbcType=VARCHAR},
+      roomid = #{roomid,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      ctime = #{ctime,jdbcType=INTEGER},
+      salt = #{salt,jdbcType=VARCHAR},
+      is_since = #{isSince,jdbcType=BIT},
+      printer_num = #{printerNum,jdbcType=VARCHAR},
+      printer_key = #{printerKey,jdbcType=VARCHAR},
+      examine = #{examine,jdbcType=INTEGER},
+      is_show = #{isShow,jdbcType=INTEGER},
+      type = #{type,jdbcType=TINYINT},
+      is_appointment = #{isAppointment,jdbcType=INTEGER},
+      recommend = #{recommend,jdbcType=INTEGER},
+      examine_info = #{examineInfo,jdbcType=VARCHAR},
+      phoneType = #{phonetype,jdbcType=CHAR},
+      pushToken = #{pushtoken,jdbcType=VARCHAR},
+      unFavorable = #{unfavorable,jdbcType=INTEGER},
+      login_token = #{loginToken,jdbcType=VARCHAR},
+      yx_token = #{yxToken,jdbcType=VARCHAR},
+      vip_promotion_reward = #{vipPromotionReward,jdbcType=DECIMAL},
+      vip_promotion_rewardget = #{vipPromotionRewardget,jdbcType=DECIMAL},
+      vip_promotion_rewardover = #{vipPromotionRewardover,jdbcType=DECIMAL},
+      public_openid = #{publicOpenid,jdbcType=VARCHAR}
+    where pid = #{pid,jdbcType=INTEGER}
+  </update>
+  <select id="searchByEntityCount" resultType="java.lang.Integer" parameterType="com.zhongjian.dao.entity.order.shopown.OrderShopownBean" >
+    select
+    count(*)
+    from hm_shopown
+    <where>
+     <if test="pic != null">
+      pic=#{pic,jdbcType=VARCHAR}
+     </if>
+     <if test="phone != null">
+      AND phone=#{phone,jdbcType=VARCHAR}
+     </if>
+     <if test="password != null">
+      AND password=#{password,jdbcType=VARCHAR}
+     </if>
+     <if test="sname != null">
+      AND sname=#{sname,jdbcType=VARCHAR}
+     </if>
+     <if test="realName != null">
+      AND real_name=#{realName,jdbcType=VARCHAR}
+     </if>
+     <if test="scopeBusiness != null">
+      AND scope_business=#{scopeBusiness,jdbcType=VARCHAR}
+     </if>
+     <if test="businessLicense != null">
+      AND business_license=#{businessLicense,jdbcType=VARCHAR}
+     </if>
+     <if test="foodLicense != null">
+      AND food_license=#{foodLicense,jdbcType=VARCHAR}
+     </if>
+     <if test="cardPic != null">
+      AND card_pic=#{cardPic,jdbcType=VARCHAR}
+     </if>
+     <if test="money != null">
+      AND money=#{money,jdbcType=DECIMAL}
+     </if>
+     <if test="balance != null">
+      AND balance=#{balance,jdbcType=DECIMAL}
+     </if>
+     <if test="marketid != null">
+      AND marketid=#{marketid,jdbcType=INTEGER}
+     </if>
+     <if test="isHot != null">
+      AND is_hot=#{isHot,jdbcType=TINYINT}
+     </if>
+     <if test="isRecommend != null">
+      AND is_recommend=#{isRecommend,jdbcType=TINYINT}
+     </if>
+     <if test="grade != null">
+      AND grade=#{grade,jdbcType=VARCHAR}
+     </if>
+     <if test="address != null">
+      AND address=#{address,jdbcType=VARCHAR}
+     </if>
+     <if test="accid != null">
+      AND accid=#{accid,jdbcType=VARCHAR}
+     </if>
+     <if test="token != null">
+      AND token=#{token,jdbcType=VARCHAR}
+     </if>
+     <if test="deviceNumber != null">
+      AND device_number=#{deviceNumber,jdbcType=VARCHAR}
+     </if>
+     <if test="cameraid != null">
+      AND cameraid=#{cameraid,jdbcType=VARCHAR}
+     </if>
+     <if test="roomid != null">
+      AND roomid=#{roomid,jdbcType=VARCHAR}
+     </if>
+     <if test="status != null">
+      AND status=#{status,jdbcType=INTEGER}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+     <if test="salt != null">
+      AND salt=#{salt,jdbcType=VARCHAR}
+     </if>
+     <if test="isSince != null">
+      AND is_since=#{isSince,jdbcType=BIT}
+     </if>
+     <if test="printerNum != null">
+      AND printer_num=#{printerNum,jdbcType=VARCHAR}
+     </if>
+     <if test="printerKey != null">
+      AND printer_key=#{printerKey,jdbcType=VARCHAR}
+     </if>
+     <if test="examine != null">
+      AND examine=#{examine,jdbcType=INTEGER}
+     </if>
+     <if test="isShow != null">
+      AND is_show=#{isShow,jdbcType=INTEGER}
+     </if>
+     <if test="type != null">
+      AND type=#{type,jdbcType=TINYINT}
+     </if>
+     <if test="isAppointment != null">
+      AND is_appointment=#{isAppointment,jdbcType=INTEGER}
+     </if>
+     <if test="recommend != null">
+      AND recommend=#{recommend,jdbcType=INTEGER}
+     </if>
+     <if test="examineInfo != null">
+      AND examine_info=#{examineInfo,jdbcType=VARCHAR}
+     </if>
+     <if test="phonetype != null">
+      AND phoneType=#{phonetype,jdbcType=CHAR}
+     </if>
+     <if test="pushtoken != null">
+      AND pushToken=#{pushtoken,jdbcType=VARCHAR}
+     </if>
+     <if test="unfavorable != null">
+      AND unFavorable=#{unfavorable,jdbcType=INTEGER}
+     </if>
+     <if test="loginToken != null">
+      AND login_token=#{loginToken,jdbcType=VARCHAR}
+     </if>
+     <if test="yxToken != null">
+      AND yx_token=#{yxToken,jdbcType=VARCHAR}
+     </if>
+     <if test="vipPromotionReward != null">
+      AND vip_promotion_reward=#{vipPromotionReward,jdbcType=DECIMAL}
+     </if>
+     <if test="vipPromotionRewardget != null">
+      AND vip_promotion_rewardget=#{vipPromotionRewardget,jdbcType=DECIMAL}
+     </if>
+     <if test="vipPromotionRewardover != null">
+      AND vip_promotion_rewardover=#{vipPromotionRewardover,jdbcType=DECIMAL}
+     </if>
+     <if test="publicOpenid != null">
+      AND public_openid=#{publicOpenid,jdbcType=VARCHAR}
+     </if>
+    </where>
+  </select>
+  <select id="searchByEntity" resultMap="BaseResultMap" parameterType="com.zhongjian.dao.entity.order.shopown.OrderShopownBean" >
+    select
+    <include refid="Base_Column_List"/>
+    from hm_shopown
+    <where>
+     <if test="pic != null">
+      pic=#{pic,jdbcType=VARCHAR}
+     </if>
+     <if test="phone != null">
+      AND phone=#{phone,jdbcType=VARCHAR}
+     </if>
+     <if test="password != null">
+      AND password=#{password,jdbcType=VARCHAR}
+     </if>
+     <if test="sname != null">
+      AND sname=#{sname,jdbcType=VARCHAR}
+     </if>
+     <if test="realName != null">
+      AND real_name=#{realName,jdbcType=VARCHAR}
+     </if>
+     <if test="scopeBusiness != null">
+      AND scope_business=#{scopeBusiness,jdbcType=VARCHAR}
+     </if>
+     <if test="businessLicense != null">
+      AND business_license=#{businessLicense,jdbcType=VARCHAR}
+     </if>
+     <if test="foodLicense != null">
+      AND food_license=#{foodLicense,jdbcType=VARCHAR}
+     </if>
+     <if test="cardPic != null">
+      AND card_pic=#{cardPic,jdbcType=VARCHAR}
+     </if>
+     <if test="money != null">
+      AND money=#{money,jdbcType=DECIMAL}
+     </if>
+     <if test="balance != null">
+      AND balance=#{balance,jdbcType=DECIMAL}
+     </if>
+     <if test="marketid != null">
+      AND marketid=#{marketid,jdbcType=INTEGER}
+     </if>
+     <if test="isHot != null">
+      AND is_hot=#{isHot,jdbcType=TINYINT}
+     </if>
+     <if test="isRecommend != null">
+      AND is_recommend=#{isRecommend,jdbcType=TINYINT}
+     </if>
+     <if test="grade != null">
+      AND grade=#{grade,jdbcType=VARCHAR}
+     </if>
+     <if test="address != null">
+      AND address=#{address,jdbcType=VARCHAR}
+     </if>
+     <if test="accid != null">
+      AND accid=#{accid,jdbcType=VARCHAR}
+     </if>
+     <if test="token != null">
+      AND token=#{token,jdbcType=VARCHAR}
+     </if>
+     <if test="deviceNumber != null">
+      AND device_number=#{deviceNumber,jdbcType=VARCHAR}
+     </if>
+     <if test="cameraid != null">
+      AND cameraid=#{cameraid,jdbcType=VARCHAR}
+     </if>
+     <if test="roomid != null">
+      AND roomid=#{roomid,jdbcType=VARCHAR}
+     </if>
+     <if test="status != null">
+      AND status=#{status,jdbcType=INTEGER}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+     <if test="salt != null">
+      AND salt=#{salt,jdbcType=VARCHAR}
+     </if>
+     <if test="isSince != null">
+      AND is_since=#{isSince,jdbcType=BIT}
+     </if>
+     <if test="printerNum != null">
+      AND printer_num=#{printerNum,jdbcType=VARCHAR}
+     </if>
+     <if test="printerKey != null">
+      AND printer_key=#{printerKey,jdbcType=VARCHAR}
+     </if>
+     <if test="examine != null">
+      AND examine=#{examine,jdbcType=INTEGER}
+     </if>
+     <if test="isShow != null">
+      AND is_show=#{isShow,jdbcType=INTEGER}
+     </if>
+     <if test="type != null">
+      AND type=#{type,jdbcType=TINYINT}
+     </if>
+     <if test="isAppointment != null">
+      AND is_appointment=#{isAppointment,jdbcType=INTEGER}
+     </if>
+     <if test="recommend != null">
+      AND recommend=#{recommend,jdbcType=INTEGER}
+     </if>
+     <if test="examineInfo != null">
+      AND examine_info=#{examineInfo,jdbcType=VARCHAR}
+     </if>
+     <if test="phonetype != null">
+      AND phoneType=#{phonetype,jdbcType=CHAR}
+     </if>
+     <if test="pushtoken != null">
+      AND pushToken=#{pushtoken,jdbcType=VARCHAR}
+     </if>
+     <if test="unfavorable != null">
+      AND unFavorable=#{unfavorable,jdbcType=INTEGER}
+     </if>
+     <if test="loginToken != null">
+      AND login_token=#{loginToken,jdbcType=VARCHAR}
+     </if>
+     <if test="yxToken != null">
+      AND yx_token=#{yxToken,jdbcType=VARCHAR}
+     </if>
+     <if test="vipPromotionReward != null">
+      AND vip_promotion_reward=#{vipPromotionReward,jdbcType=DECIMAL}
+     </if>
+     <if test="vipPromotionRewardget != null">
+      AND vip_promotion_rewardget=#{vipPromotionRewardget,jdbcType=DECIMAL}
+     </if>
+     <if test="vipPromotionRewardover != null">
+      AND vip_promotion_rewardover=#{vipPromotionRewardover,jdbcType=DECIMAL}
+     </if>
+     <if test="publicOpenid != null">
+      AND public_openid=#{publicOpenid,jdbcType=VARCHAR}
+     </if>
+    </where>
+  </select>
+</mapper>
