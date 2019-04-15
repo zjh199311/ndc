@@ -109,7 +109,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
             this.dao.insertSelective(cartBasketBean);
         } else {
             if (FinalDatas.ZERO == hmBasketEditQueryDTO.getGid()) {
-                cartBasketBean.setId(findBasketBeanById.getId());
+                cartBasketBean.setId(findBasketBeanById.getId() );
                 cartBasketBean.setCtime(unixTime.intValue());
                 cartBasketBean.setPrice(new BigDecimal(hmBasketEditQueryDTO.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
                 cartBasketBean.setRemark(hmBasketEditQueryDTO.getRemark());
