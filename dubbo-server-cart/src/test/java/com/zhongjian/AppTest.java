@@ -8,8 +8,11 @@ import com.zhongjian.dto.hm.basket.query.HmBasketDelQueryDTO;
 import com.zhongjian.dto.hm.basket.query.HmBasketEditQueryDTO;
 import com.zhongjian.dto.hm.basket.query.HmBasketListQueryDTO;
 import com.zhongjian.service.hm.basket.HmBasketService;
+import com.zhongjian.service.hm.shopown.HmShopownService;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -22,6 +25,8 @@ public class AppTest {
     @Resource
     private HmBasketService hmBasketService;
 
+    @Autowired
+    private HmShopownService hmShopownService;
     @Resource
     private PropUtil propUtil;
 
@@ -70,6 +75,11 @@ public class AppTest {
         hmBasketListQueryDTO.setUid(1);
         System.out.println(JSONObject.toJSONString(hmBasketService.editInfo(hmBasketListQueryDTO)));
     }
-
+    @Test
+    public void  get() {
+    	System.out.println("--------------------");
+    	 System.out.println(JSONObject.toJSONString(hmShopownService.queryList(32716)));
+    	System.out.println("--------------------");
+    }
 
 }
