@@ -14,18 +14,14 @@ import com.zhongjian.dto.hm.basket.query.HmBasketEditQueryDTO;
 import com.zhongjian.dto.hm.basket.query.HmBasketListQueryDTO;
 import com.zhongjian.dto.hm.basket.result.HmBasketResultDTO;
 import com.zhongjian.service.hm.basket.HmBasketService;
-import com.zhongjian.service.pay.GenerateSignatureService;
 import com.zhongjian.util.LogUtil;
 import com.zhongjian.util.StringUtil;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -50,7 +46,7 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
         this.hmUserBeanHmDAO = hmUserBeanHmDAO;
         this.hmUserBeanHmDAO.setPerfix(HmUserBean.class.getName());
     }
-
+    //添加新记录
     @Override
     public ResultDTO<Object> addOrUpdateInfo(HmBasketEditQueryDTO hmBasketEditQueryDTO) {
         //参数校验
@@ -92,21 +88,20 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
             hmBasketBean.setAmount(new BigDecimal(hmBasketEditQueryDTO.getAmount()));
             hmBasketBean.setUnitprice(hmGoodsBean.getPrice());
             //计算总价保留两个小数点
-            hmBasketBean.setPrice(BigDecimal.valueOf(multiply.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
+            hmBasketBean.setPrice(multiply.setScale(2, BigDecimal.ROUND_HALF_UP));
             this.dao.insertSelective(hmBasketBean);
         } else {
             hmBasketBean.setId(findBasketBeanById.getId());
-            //获取原本的总价.
-            BigDecimal unitprice = findBasketBeanById.getPrice();
             //计算新的总价(原本总价+单价乘价格)
-            hmBasketBean.setPrice(BigDecimal.valueOf(multiply.add(unitprice).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue()));
-            hmBasketBean.setAmount(findBasketBeanById.getAmount().add(new BigDecimal(hmBasketEditQueryDTO.getAmount())));
+          BigDecimal newAmounnt =  findBasketBeanById.getAmount().add(new BigDecimal(hmBasketEditQueryDTO.getAmount()));
+            hmBasketBean.setPrice(hmGoodsBean.getPrice().multiply(newAmounnt).setScale(2, BigDecimal.ROUND_HALF_UP));
+            hmBasketBean.setAmount(newAmounnt);
             hmBasketBean.setUnitprice(hmGoodsBean.getPrice());
             this.dao.updateByPrimaryKeySelective(hmBasketBean);
         }
-        return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
+        return ResultUtil.getSuccess(null);
     }
-
+    //uid,sid查询购物车
     @Override
     public ResultDTO<Object> queryList(HmBasketListQueryDTO hmBasketListQueryDTO) {
         if (null == hmBasketListQueryDTO) {
@@ -134,8 +129,9 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
         }
         return ResultUtil.getSuccess(selectBasketBeanById);
     }
-
+    //针对删除购物车(basketId,uid,sid)
     @Override
+   
     public ResultDTO<Object> deleteInfoById(HmBasketDelQueryDTO hmBasketDelQueryDTO) {
 
         if (null == hmBasketDelQueryDTO) {
@@ -149,9 +145,9 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
         }
         this.dao.executeDeleteMethod(hmBasketDelQueryDTO, "deleteBeanById");
 
-        return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
+        return ResultUtil.getSuccess(null);
     }
-
+    //清空某商户购物车(uid,sid)
     @Override
     public ResultDTO<Object> deleteAllInfoById(HmBasketDelQueryDTO hmBasketDelQueryDTO) {
         if (null == hmBasketDelQueryDTO) {
@@ -168,9 +164,9 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
         hmBasketParamDTO.setUid(hmBasketDelQueryDTO.getUid());
         this.dao.executeDeleteMethod(hmBasketParamDTO, "deleteBeanById");
 
-        return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
+        return ResultUtil.getSuccess(null);
     }
-
+   //商户购物车编辑，购物车列表编辑
     @Override
     public ResultDTO<Object> editInfo(HmBasketEditQueryDTO hmBasketEditQueryDTO) {
         if (null == hmBasketEditQueryDTO) {
@@ -225,7 +221,7 @@ public class HmBasketServiceImpl extends HmBaseService<HmBasketBean, Integer> im
                 this.dao.updateByPrimaryKeySelective(hmBasketBean);
             }
         }
-        return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
+        return ResultUtil.getSuccess(null);
     }
 
     @Override
