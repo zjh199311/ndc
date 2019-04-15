@@ -1,14 +1,14 @@
-package com.zhongjian.dto.hm.shopown.result;
+package com.zhongjian.dto.cart.shopown.result;
 
-import com.zhongjian.dto.hm.basket.result.HmBasketResultDTO;
-import com.zhongjian.dto.hm.storeActivity.result.HmStoreActivityResultDTO;
+import com.zhongjian.dto.cart.basket.result.HmBasketResultDTO;
+import com.zhongjian.dto.cart.storeActivity.result.HmStoreActivityResultDTO;
 
 import java.util.List;
 
 /**
  * @Author: ldd
  */
-public class HmShopownResultByAdvenceDTO {
+public class HmShopownResultByOpenDTO {
 
     private static final long serialVersionUID = 197018972999527001L;
 

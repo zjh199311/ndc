@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.zhongjian.dao.entity.cart.market.CartMarketBean">
-    <resultMap id="BaseMarket" type="com.zhongjian.dto.hm.market.result.HmMarketResultDTO">
+    <resultMap id="BaseMarket" type="com.zhongjian.dto.cart.market.result.HmMarketResultDTO">
         <id column="id" property="martketId"/>
         <result column="ename" property="marketName" jdbcType="VARCHAR"/>
         <association property="hmMarketActivityResultDTO" column="id"

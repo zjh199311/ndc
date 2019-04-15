@@ -1,7 +1,7 @@
-package com.zhongjian.dto.hm.market.result;
+package com.zhongjian.dto.cart.market.result;
 
-import com.zhongjian.dto.hm.marketActivity.result.HmMarketActivityResultDTO;
-import com.zhongjian.dto.hm.shopown.result.HmShopownResultDTO;
+import com.zhongjian.dto.cart.marketActivity.result.HmMarketActivityResultDTO;
+import com.zhongjian.dto.cart.shopown.result.HmShopownResultDTO;
 import lombok.Data;
 
 import java.io.Serializable;

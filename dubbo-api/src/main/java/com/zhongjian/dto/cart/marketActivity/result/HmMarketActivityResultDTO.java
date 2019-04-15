@@ -1,4 +1,4 @@
-package com.zhongjian.dto.hm.marketActivity.result;
+package com.zhongjian.dto.cart.marketActivity.result;
 
 import lombok.Data;
 

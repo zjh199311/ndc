@@ -9,7 +9,7 @@ import com.zhongjian.dao.jdbctemplate.OrderDao;
 import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.common.ResultUtil;
-import com.zhongjian.dto.hm.storeActivity.result.HmStoreActivityResultDTO;
+import com.zhongjian.dto.cart.storeActivity.result.HmStoreActivityResultDTO;
 import com.zhongjian.dto.order.address.query.OrderAddressQueryDTO;
 import com.zhongjian.dto.order.address.result.OrderAddressResultDTO;
 import com.zhongjian.dto.order.order.query.OrderStatusQueryDTO;

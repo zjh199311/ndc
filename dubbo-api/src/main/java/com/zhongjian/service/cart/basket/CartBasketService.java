@@ -1,9 +1,9 @@
 package com.zhongjian.service.cart.basket;
 
 import com.zhongjian.dto.common.ResultDTO;
-import com.zhongjian.dto.hm.basket.query.HmBasketDelQueryDTO;
-import com.zhongjian.dto.hm.basket.query.HmBasketEditQueryDTO;
-import com.zhongjian.dto.hm.basket.query.HmBasketListQueryDTO;
+import com.zhongjian.dto.cart.basket.query.HmBasketDelQueryDTO;
+import com.zhongjian.dto.cart.basket.query.HmBasketEditQueryDTO;
+import com.zhongjian.dto.cart.basket.query.HmBasketListQueryDTO;
 
 /**
  * @Author: ldd

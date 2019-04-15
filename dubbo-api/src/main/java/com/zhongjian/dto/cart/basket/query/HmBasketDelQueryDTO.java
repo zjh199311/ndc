@@ -1,4 +1,4 @@
-package com.zhongjian.dto.hm.basket.query;
+package com.zhongjian.dto.cart.basket.query;
 
 import lombok.Data;
 

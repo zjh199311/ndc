@@ -7,9 +7,9 @@ import com.zhongjian.dao.cart.CartParamDTO;
 import com.zhongjian.dao.entity.cart.rider.CartRiderOrderBean;
 import com.zhongjian.dao.framework.inf.HmDAO;
 import com.zhongjian.dto.common.ResultDTO;
-import com.zhongjian.dto.hm.basket.query.HmBasketDelQueryDTO;
-import com.zhongjian.dto.hm.basket.query.HmBasketEditQueryDTO;
-import com.zhongjian.dto.hm.basket.query.HmBasketListQueryDTO;
+import com.zhongjian.dto.cart.basket.query.HmBasketDelQueryDTO;
+import com.zhongjian.dto.cart.basket.query.HmBasketEditQueryDTO;
+import com.zhongjian.dto.cart.basket.query.HmBasketListQueryDTO;
 import com.zhongjian.service.cart.basket.CartBasketService;
 import com.zhongjian.service.cart.shopown.CartShopownService;
 import com.zhongjian.service.user.UserService;
@@ -20,8 +20,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import javax.xml.crypto.Data;
-import java.util.List;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)

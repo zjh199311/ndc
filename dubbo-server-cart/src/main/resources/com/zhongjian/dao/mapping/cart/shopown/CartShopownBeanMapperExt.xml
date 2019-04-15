@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.zhongjian.dao.entity.cart.shopown.CartShopownBean">
 
-    <resultMap id="BaseShopownMap" type="com.zhongjian.dto.hm.shopown.result.HmShopownResultDTO">
+    <resultMap id="BaseShopownMap" type="com.zhongjian.dto.cart.shopown.result.HmShopownResultDTO">
         <id column="pid" property="pid" jdbcType="INTEGER"/>
         <result column="sname" property="shopName" jdbcType="VARCHAR"/>
         <result column="pic" property="picture" jdbcType="VARCHAR"/>

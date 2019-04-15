@@ -1,8 +1,7 @@
-package com.zhongjian.dto.hm.market.result;
+package com.zhongjian.dto.cart.market.result;
 
-import com.zhongjian.dto.hm.marketActivity.result.HmMarketActivityResultDTO;
-import com.zhongjian.dto.hm.shopown.result.HmShopownResultByAdvenceDTO;
-import com.zhongjian.dto.hm.shopown.result.HmShopownResultDTO;
+import com.zhongjian.dto.cart.marketActivity.result.HmMarketActivityResultDTO;
+import com.zhongjian.dto.cart.shopown.result.HmShopownResultDTO;
 import lombok.Data;
 
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
  * @Author: ldd
  */
 @Data
-public class HmMarketResultByAdvenceDTO {
+public class HmMarketResultByOpenDTO {
 
     private static final long serialVersionUID = 197018972999527001L;
 

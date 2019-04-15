@@ -1,10 +1,8 @@
-package com.zhongjian.dto.hm.basket.result;
+package com.zhongjian.dto.cart.basket.result;
 
 import lombok.Data;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 
 /**
  * @Author: ldd
