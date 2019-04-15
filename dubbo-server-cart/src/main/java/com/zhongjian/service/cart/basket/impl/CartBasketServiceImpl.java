@@ -83,6 +83,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
             //获取时间用unix时间戳
             Long unixTime = System.currentTimeMillis() / 1000;
             cartBasketBean.setCtime(unixTime.intValue());
+            cartBasketBean.setAmount(new BigDecimal(1));
             if (StringUtil.isBlank(hmBasketEditQueryDTO.getRemark())) {
                 cartBasketBean.setRemark("");
             } else {
@@ -121,11 +122,10 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
             this.dao.insertSelective(cartBasketBean);
         } else {
             cartBasketBean.setId(findBasketBeanById.getId());
-            //获取原本的总价.
-            BigDecimal unitprice = findBasketBeanById.getPrice();
-            //计算新的总价(原本总价+单价乘价格)
-            //----------------
-            cartBasketBean.setPrice(multiply.add(unitprice).setScale(2, BigDecimal.ROUND_HALF_UP));
+            //计算新的总价(去good里面获取价格重新计算)
+            BigDecimal add = findBasketBeanById.getAmount().add(new BigDecimal(hmBasketEditQueryDTO.getAmount()));
+            BigDecimal multiply1 = add.multiply(cartGoodsBean.getPrice());
+            cartBasketBean.setPrice(multiply1.setScale(2, BigDecimal.ROUND_HALF_UP));
             cartBasketBean.setAmount(findBasketBeanById.getAmount().add(new BigDecimal(hmBasketEditQueryDTO.getAmount())));
             cartBasketBean.setUnitprice(cartGoodsBean.getPrice());
             this.dao.updateByPrimaryKeySelective(cartBasketBean);
