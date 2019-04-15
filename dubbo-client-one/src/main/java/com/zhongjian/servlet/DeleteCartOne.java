@@ -33,7 +33,7 @@ public class DeleteCartOne extends HttpServlet {
 
 	private static Logger log = Logger.getLogger(DeleteCartOne.class);
 
-	private CartBasketService cartBasketService = (CartBasketService) SpringContextHolder.getBean(HmBasketService.class);
+	private CartBasketService cartBasketService = (CartBasketService) SpringContextHolder.getBean(CartBasketService.class);
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -78,6 +78,6 @@ public class DeleteCartOne extends HttpServlet {
 		HmBasketDelQueryDTO hmBasketDelQueryDTO = new HmBasketDelQueryDTO();
 		hmBasketDelQueryDTO.setUid(uid);
 		hmBasketDelQueryDTO.setId(basketId);
-		return GsonUtil.GsonString(CartBasketService.deleteInfoById(hmBasketDelQueryDTO));
+		return GsonUtil.GsonString(cartBasketService.deleteInfoById(hmBasketDelQueryDTO));
 	}
 }
