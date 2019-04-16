@@ -31,7 +31,8 @@
               class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
               <property name="locations">
                      <list>
-                            <value>/serverconfig.properties</value>
+            <!-- 线上配置 -->
+              <value>file:serverconfig.properties</value>
                      </list>
               </property>
       </bean>

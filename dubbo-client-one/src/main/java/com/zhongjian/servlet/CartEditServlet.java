@@ -23,7 +23,7 @@ import com.zhongjian.service.cart.basket.CartBasketService;
 
 import java.io.IOException;
 
-@WebServlet(value = "/cart/edit", asyncSupported = true)
+@WebServlet(value = "/v1/cart/edit", asyncSupported = true)
 public class CartEditServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;

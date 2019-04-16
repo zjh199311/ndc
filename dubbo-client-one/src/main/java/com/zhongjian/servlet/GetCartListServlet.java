@@ -23,7 +23,7 @@ import com.zhongjian.executor.ThreadPoolExecutorSingle;
 
 import java.io.IOException;
 
-@WebServlet(value = "/cart/getStoreList", asyncSupported = true)
+@WebServlet(value = "/v1/cart/getStoreList", asyncSupported = true)
 public class GetCartListServlet extends HttpServlet {
 
 	/**

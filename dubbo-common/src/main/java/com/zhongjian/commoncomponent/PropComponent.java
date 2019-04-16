@@ -11,6 +11,8 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Component;
 
+import com.zhongjian.util.LogUtil;
+
 
 @Component
 public class PropComponent {
@@ -20,13 +22,14 @@ public class PropComponent {
 	@PostConstruct
 	public void readProperties() throws IOException {
 		 Properties properties = new Properties();
-//		 FileInputStream in = new FileInputStream("/serverconfig.properties");
-//		 properties.load(in);
-	        properties.load(PropComponent.class.getClassLoader().getResourceAsStream("serverconfig.properties"));
+		 FileInputStream in = new FileInputStream("serverconfig.properties");
+		 properties.load(in);
 	        Set<Entry<Object,Object>> entrySet = properties.entrySet();
 	        for (Entry<Object, Object> entry : entrySet) {
 	        	map.put((String)entry.getKey(), entry.getValue());
 	        }
+	        LogUtil.info("配置ip",(String)map.get("spring.dubbo.protocol.host"));
+	        LogUtil.info("配置port",(String)map.get("spring.dubbo.protocol.port"));
 	}
 
 	public HashMap<String, Object> getMap() {

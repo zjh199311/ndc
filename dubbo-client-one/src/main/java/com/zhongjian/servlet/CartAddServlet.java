@@ -23,7 +23,7 @@ import com.zhongjian.executor.ThreadPoolExecutorSingle;
 
 import java.io.IOException;
 
-@WebServlet(value = "/cart/add", asyncSupported = true)
+@WebServlet(value = "/v1/cart/add", asyncSupported = true)
 public class CartAddServlet extends HttpServlet {
 
 	
@@ -52,6 +52,7 @@ public class CartAddServlet extends HttpServlet {
 					Integer gid = Integer.valueOf(request2.getParameter("gid"));
 					String amount = request2.getParameter("amount");
 					String remark = request2.getParameter("remark");
+//					String remark = request2.getParameter("remark");
 					result = CartAddServlet.this.handle(uid, gid, amount, remark);
 					// 返回数据
 					try {

@@ -27,7 +27,7 @@ public class CrosFilter implements Filter {
 
 	private PropUtil propUtil = (PropUtil) SpringContextHolder.getBean(PropUtil.class);
 	
-//	private UserService userService = (UserService) SpringContextHolder.getBean(UserService.class);
+	private UserService userService = (UserService) SpringContextHolder.getBean(UserService.class);
     /**
      * Default constructor. 
      */
@@ -65,12 +65,12 @@ public class CrosFilter implements Filter {
 		httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type");
 		httpResponse.setHeader("Access-Control-Allow-Methods", "*");
 		//add login_token jungle
-//		if (request.getParameter("login_token")  != null) {
-//			request.setAttribute("uid",userService.getUidByLoginToken(request.getParameter("login_token")));
-//			}else {
-//				request.setAttribute("uid", 0);
-//			}
-		request.setAttribute("uid",32716);
+		if (request.getParameter("login_token")  != null) {
+			request.setAttribute("uid",userService.getUidByLoginToken(request.getParameter("login_token")));
+			}else {
+				request.setAttribute("uid", 0);
+			}
+//		request.setAttribute("uid",32716);
 		chain.doFilter(request, response);
 	}
 

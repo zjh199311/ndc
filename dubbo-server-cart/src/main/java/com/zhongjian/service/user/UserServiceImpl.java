@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 /**
  * @Author: ldd
  */
-@Service
+@Service("userService")
 public class UserServiceImpl extends HmBaseService<UserBean, Integer> implements UserService {
     @Override
     public Integer getUidByLoginToken(String loginToken) {

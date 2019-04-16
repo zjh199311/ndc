@@ -20,7 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedMap;
 
-@Service
+@Service("generateSignatureService")
 public class GenerateSignatureServiceImpl implements GenerateSignatureService {
 
     @Resource

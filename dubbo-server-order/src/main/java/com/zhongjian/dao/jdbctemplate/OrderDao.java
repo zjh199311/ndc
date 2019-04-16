@@ -113,7 +113,7 @@ public class OrderDao {
 	public Integer addHmOrder(Map<String, Object> map) {
 		String sql = "INSERT INTO `hm_order` (order_sn,pid,uid,marketid,total,payment,integral,"
 				+ "pay_status,order_status,ctime,is_appointment,roid,type,couponid,pay_time,cartids,remark,test) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, 0, ?, 0,  ?, ?, ?,null,null,null,null,null,null)";
+				+ "VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?,  ?, ?, ?,null,null,null,null,null,null)";
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
@@ -125,9 +125,10 @@ public class OrderDao {
 				ps.setBigDecimal(5, (BigDecimal)map.get("total"));
 				ps.setBigDecimal(6, (BigDecimal)map.get("payment"));
 				ps.setInt(7, (Integer)map.get("pay_status"));
-				ps.setInt(8, (int)map.get("ctime"));
-				ps.setInt(9, (int)map.get("is_appointment"));
-				ps.setInt(10, (int)map.get("roid"));
+				ps.setInt(8, (Integer)map.get("order_status"));
+				ps.setInt(9, (int)map.get("ctime"));
+				ps.setInt(10, (int)map.get("is_appointment"));
+				ps.setInt(11, (int)map.get("roid"));
 				return ps;
 			}
 		}, keyHolder);
@@ -139,7 +140,7 @@ public class OrderDao {
 		final String sql = "INSERT INTO hm_rider_order (rider_sn,order_sn,uid,marketid,rid,pay_status,address_id,rider_pay,"
 				+ "couponid,type_pay,totalPrice,pay_time,service_time,order_time,finish_time,ctime,integral,is_appointment,end_time,"
 				+ "original_price,out_trade_no,coupon_price,market_activity_price,store_activity_price,vip_relief,remark,test,rider_status) VALUES (?,?,?,"
-				+ "?,?,?,?,?,?,null,?,?,?,null,null,?,?,?,null,?,null,?,?,?,?,null,null,?)";
+				+ "?,?,?,?,?,?,null,?,?,?,null,null,?,?,?,null,?,?,?,?,?,?,null,null,?)";
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
@@ -160,11 +161,12 @@ public class OrderDao {
 				ps.setObject(14, (BigDecimal)map.get("integral"), java.sql.Types.BIGINT);
 				ps.setInt(15, (Integer)map.get("is_appointment"));
 				ps.setBigDecimal(16, (BigDecimal)map.get("original_price"));
-				ps.setObject(17, (BigDecimal)map.get("coupon_price"), java.sql.Types.INTEGER);
-				ps.setObject(18, (BigDecimal)map.get("market_activity_price"), java.sql.Types.INTEGER);
-				ps.setBigDecimal(19, (BigDecimal)map.get("store_activity_price"));
-				ps.setBigDecimal(20, (BigDecimal)map.get("vip_relief"));
-				ps.setInt(21, (Integer)map.get("rider_status"));
+				ps.setString(17, (String)map.get("out_trade_no"));
+				ps.setObject(18, (BigDecimal)map.get("coupon_price"), java.sql.Types.INTEGER);
+				ps.setObject(19, (BigDecimal)map.get("market_activity_price"), java.sql.Types.INTEGER);
+				ps.setBigDecimal(20, (BigDecimal)map.get("store_activity_price"));
+				ps.setBigDecimal(21, (BigDecimal)map.get("vip_relief"));
+				ps.setInt(22, (Integer)map.get("rider_status"));
 				return ps;
 			}
 		}, keyHolder);
@@ -175,5 +177,16 @@ public class OrderDao {
 		String sql = "select rid from  hm_rider_user where marketid = ?";
 		List<Integer> res = jdbcTemplate.queryForList(sql, Integer.class,new Object[] { marketId });
 		return res;
+	}
+	
+	public  Map<String, Object>getDetailByOrderId(Integer uid,Integer orderId) {
+		String sql = "select out_trade_no,totalPrice from  hm_rider_order where id = ? and uid = ?";
+		Map<String, Object> resMap = null;
+		try {
+			resMap = jdbcTemplate.queryForMap(sql,uid,orderId);
+		} catch (EmptyResultDataAccessException e) {
+			
+		}
+		return resMap;
 	}
 }

@@ -23,7 +23,7 @@ import com.zhongjian.service.cart.basket.CartBasketService;
 
 import java.io.IOException;
 
-@WebServlet(value = "/cart/delete", asyncSupported = true)
+@WebServlet(value = "/v1/cart/delete", asyncSupported = true)
 public class DeleteCartOne extends HttpServlet {
 
 	/**

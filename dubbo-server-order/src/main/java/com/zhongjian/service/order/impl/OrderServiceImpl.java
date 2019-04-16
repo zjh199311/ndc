@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 @Service("orderService")
 public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> implements OrderService {
@@ -86,13 +87,13 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		// 市场优惠
 		BigDecimal marketActivityPrice = BigDecimal.ZERO;
 
-		//vip优惠
+		// vip优惠
 		BigDecimal vipFavourRiderOrder = BigDecimal.ZERO;
-		
+
 		int createTime = (int) (System.currentTimeMillis() / 1000);
-		//小订单拼接
+		// 小订单拼接
 		StringBuilder orderJoint = new StringBuilder();
-		Map<String, Object> storeOrders = null;//总集合
+		Map<String, Object> storeOrders = null;// 总集合
 		List<String> storeIds = null;
 		if (toCreateOrder) {
 			storeOrders = new HashMap<String, Object>();
@@ -102,11 +103,11 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		for (int i = 0; i < sids.length; i++) {
 			Map<String, Object> storeOrderInfo = null;
 			List<Map<String, Object>> hmCartList = null;
-		
+
 			if (toCreateOrder) {
 				hmCartList = new ArrayList<Map<String, Object>>();
 				storeOrderInfo = new HashMap<String, Object>();
-				
+
 			}
 			Map<String, Object> store = new HashMap<String, Object>();
 			// 查出价格商户名(原价)
@@ -127,7 +128,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				if (flag == true) {
 					marketId = (Integer) map.get("marketid");
 					sname = (String) map.get("sname");// 商户名
-					sid =  map.get("pid").toString();
+					sid = map.get("pid").toString();
 					unFavorable = (int) map.get("unFavorable");
 					flag = false;
 				}
@@ -136,7 +137,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				BigDecimal priceBigDecimal = map.get("price") == null ? (BigDecimal) map.get("basketprice")
 						: (BigDecimal) map.get("price");
 				BigDecimal singleAmount = amoBigDecimal.multiply(priceBigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP);
-				
+
 				if (toCreateOrder) {
 					hmCart = new HashMap<String, Object>();
 					Integer gid = (Integer) map.get("gid");
@@ -145,7 +146,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					String remark = (String) map.get("remark");
 					hmCart.put("gid", gid);
 					hmCart.put("gname", gname);
-					hmCart.put("unit", unit == null?"个":unit);
+					hmCart.put("unit", unit == null ? "个" : unit);
 					hmCart.put("uid", uid);
 					hmCart.put("price", singleAmount);
 					hmCart.put("amount", amoBigDecimal);
@@ -171,7 +172,8 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 							.subtract(new BigDecimal(storeActivtiy.getReduce())).setScale(2, BigDecimal.ROUND_HALF_UP);
 				} else {
 					actualStoreAmountBigDecimal = storeAmountBigDecimal
-							.multiply(new BigDecimal(storeActivtiy.getDiscount())).setScale(2, BigDecimal.ROUND_HALF_UP);
+							.multiply(new BigDecimal(storeActivtiy.getDiscount()))
+							.setScale(2, BigDecimal.ROUND_HALF_UP);
 				}
 			}
 			store.put("sid", sid);
@@ -180,15 +182,16 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			store.put("realPrice", actualStoreAmountBigDecimal.toString());
 			// 计算商户优惠的价格
 			if (toCreateOrder) {
-				storeActivityPrice = storeActivityPrice.add(storeAmountBigDecimal.subtract(actualStoreAmountBigDecimal));
+				storeActivityPrice = storeActivityPrice
+						.add(storeAmountBigDecimal.subtract(actualStoreAmountBigDecimal));
 				// 为生成hm_order做准备
 				String smallOrderSn = "HM" + RandomUtil.getFlowNumber();
 				if (orderJoint.length() == 0) {
 					orderJoint.append(smallOrderSn);
-				}else {
+				} else {
 					orderJoint.append("|").append(smallOrderSn);
 				}
-				storeOrderInfo.put("pid",Integer.valueOf(sid));
+				storeOrderInfo.put("pid", Integer.valueOf(sid));
 				storeOrderInfo.put("order_sn", smallOrderSn);
 				storeOrderInfo.put("uid", uid);
 				storeOrderInfo.put("marketid", marketId);
@@ -234,7 +237,8 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 							needSuBigDecimal = new BigDecimal(split[1]);
 							needPay = needPay.subtract(needSuBigDecimal);
 						} else {
-							needSuBigDecimal = upBigDecimal.subtract(new BigDecimal(rule).multiply(upBigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP));
+							needSuBigDecimal = upBigDecimal.subtract(
+									new BigDecimal(rule).multiply(upBigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP));
 							needPay = needPay.subtract(needSuBigDecimal);
 						}
 						marketActivityPrice = needSuBigDecimal;
@@ -255,7 +259,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		}
 		Integer vipStatus = (Integer) (uMap.get("vip_status"));
 		Integer vipexpire = (Integer) (uMap.get("vip_expire"));
-		BigDecimal vipFavourable = needPay.multiply(new BigDecimal("0.05")).setScale(2,BigDecimal.ROUND_HALF_UP);
+		BigDecimal vipFavourable = needPay.multiply(new BigDecimal("0.05")).setScale(2, BigDecimal.ROUND_HALF_UP);
 		vipFavourRiderOrder = vipFavourable;
 		vipFavour = "￥" + vipFavourable.setScale(2).toString();
 		// 判断是否是会员
@@ -344,25 +348,36 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			storeOrders.put("marketid", marketId);
 			storeOrders.put("rider_pay", deliverfeeBigDecimal);
 			storeOrders.put("address_id", addresId);
-			storeOrders.put("integral", integralSub == BigDecimal.ZERO ?null:integralSub);
+			storeOrders.put("integral", integralSub == BigDecimal.ZERO ? null : integralSub);
 			storeOrders.put("totalPrice", needPay);
 			storeOrders.put("ctime", createTime);
 			storeOrders.put("service_time", unixTime);
 			storeOrders.put("is_appointment", isAppointment);
 			storeOrders.put("original_price", storesAmountBigDecimal);
-			storeOrders.put("market_activity_price", marketActivityPrice== BigDecimal.ZERO ?null:marketActivityPrice);
+			storeOrders.put("out_trade_no", UUID.randomUUID().toString().replaceAll("-", ""));//生成订单的时候三方号同时生成
+			storeOrders.put("market_activity_price",
+					marketActivityPrice == BigDecimal.ZERO ? null : marketActivityPrice);
 			storeOrders.put("store_activity_price", storeActivityPrice);
 			storeOrders.put("vip_relief", vipFavourRiderOrder);
 			storeOrders.put("pay_status", 0);
 			storeOrders.put("rider_status", 0);
 			if (integralPay) {
-				//插入骑手
+				//回调
+				//1.支付状态变化
+				//2.订单骑手生成
+				//3.订单地址生成
+				//4.积分增加(totalPrice数值)
+				//5.订单扣除积分记录
+				//6.发消息
+				//7.默认市场
+				//8.默认地址
+				// 插入骑手
 				Integer rid = getRidFormMarket(marketId, "random");
 				if (rid == -1) {
 					throw new RuntimeException("系统调度中");
 				}
 				storeOrders.put("rid", rid);
-				//全积分支付
+				// 全积分支付
 				storeOrders.put("pay_status", 1);
 				storeOrders.put("pay_time", createTime);
 			}
@@ -371,13 +386,14 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			}
 			Integer roid = orderDao.addHmRiderOrder(storeOrders);
 			for (String storeId : storeIds) {
-				Object sobj= storeOrders.get(storeId);
+				Object sobj = storeOrders.get(storeId);
 				if (sobj != null) {
 					Map<String, Object> sInfo = (Map<String, Object>) sobj;
 					sInfo.put("roid", roid);
 					sInfo.put("pay_status", storeOrders.get("pay_status"));
+					sInfo.put("order_status", storeOrders.get("rider_status"));
 					Integer oid = orderDao.addHmOrder(sInfo);
-					List<Map<String, Object>> cartList  = (List<Map<String, Object>>) sInfo.get("cartList");
+					List<Map<String, Object>> cartList = (List<Map<String, Object>>) sInfo.get("cartList");
 					for (Map<String, Object> cart : cartList) {
 						cart.put("oid", oid);
 						orderDao.addHmCart(cart);
@@ -390,8 +406,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 
 	}
 
-	
-	Integer getRidFormMarket(Integer marketId,String strategy){
+	Integer getRidFormMarket(Integer marketId, String strategy) {
 		List<Integer> ridList = orderDao.getRidBymarketId(marketId);
 		if (ridList.size() == 0) {
 			return -1;
@@ -402,8 +417,9 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			return ridList.get(n);
 		}
 		return -1;
-		//负载均衡
+		// 负载均衡
 	}
+
 	@Override
 	// 付款时检测商户状态服务 ext增加检测是否同一市场
 	public ResultDTO<Object> judgeHmShopownStatus(OrderStatusQueryDTO orderStatusQueryDTO) {
@@ -512,5 +528,18 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			}
 			return null;
 		}
+	}
+
+	@Override
+	public Map<String, Object> getOutTradeNoAndAmount(Integer uid,Integer orderId, String business) {
+		 if (business.equals("RIO")) {
+	            Map<String, Object>  orderInfo = orderDao.getDetailByOrderId(uid,orderId);
+	           return orderInfo;
+	        } else {
+				return null;
+			}
+	}
+	public static void main(String[] args) {
+		System.out.println(UUID.randomUUID().toString().replaceAll("-", "").length());
 	}
 }

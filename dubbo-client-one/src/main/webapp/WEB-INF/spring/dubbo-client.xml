@@ -29,6 +29,9 @@
     <!-- generate proxy for the remote service, then demoService can be used in the same way as the
     local regular interface -->
     <dubbo:reference id="hmBasketService" interface="com.zhongjian.service.cart.basket.CartBasketService" version="1.0.0"/>
+    <dubbo:reference id="userService" interface="com.zhongjian.service.user.UserService" version="1.0.0"/>
+    <dubbo:reference id="orderService" interface="com.zhongjian.service.order.OrderService" version="1.0.0"/>
+    
     <bean class="com.zhongjian.common.SpringContextHolder"></bean>
     <bean id="propComponent"  init-method="readProperties" class="com.zhongjian.component.PropComponent"></bean>
     <bean class="com.zhongjian.component.PropUtil" init-method="setProp">

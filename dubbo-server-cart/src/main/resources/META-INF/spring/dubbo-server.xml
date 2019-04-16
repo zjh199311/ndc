@@ -31,7 +31,8 @@
           class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
-                <value>serverconfig.properties</value>
+            <!-- 线上配置 -->
+                <value>file:serverconfig.properties</value>
             </list>
         </property>
     </bean>
@@ -51,8 +52,8 @@
     <!-- declare the service interface to be exported -->
     <!-- server start -->
     <dubbo:service interface="com.zhongjian.service.cart.basket.CartBasketService" ref="hmBasketService" version="1.0.0"/>
-    <dubbo:service interface="com.zhongjian.service.cart.shopown.CartShopownService" ref="hmShopownService"
-                   version="1.0.0"/>
+    <dubbo:service interface="com.zhongjian.service.cart.shopown.CartShopownService" ref="hmShopownService" version="1.0.0"/>
+    <dubbo:service interface="com.zhongjian.service.user.UserService" ref="userService" version="1.0.0"/>            
     <!-- server end -->
 
     <!-- 创建数据源 -->
