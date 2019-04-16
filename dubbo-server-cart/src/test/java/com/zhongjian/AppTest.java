@@ -54,10 +54,10 @@ public class AppTest {
     public void addOrUpdateInfo() {
         HmBasketEditQueryDTO hmBasketDelQueryDTO = new HmBasketEditQueryDTO();
         hmBasketDelQueryDTO.setUid(32716);
-        hmBasketDelQueryDTO.setGid(32639);
-        hmBasketDelQueryDTO.setSid(530);
-//        hmBasketDelQueryDTO.setPrice("200");
-       hmBasketDelQueryDTO.setAmount("2");
+        hmBasketDelQueryDTO.setGid(0);
+        hmBasketDelQueryDTO.setSid(127);
+        hmBasketDelQueryDTO.setPrice("200");
+        hmBasketDelQueryDTO.setAmount("4");
         hmBasketDelQueryDTO.setRemark("2");
         System.out.println(JSONObject.toJSONString(hmBasketService.addOrUpdateInfo(hmBasketDelQueryDTO)));
 
@@ -76,8 +76,8 @@ public class AppTest {
     @Test
     public void deleteInfoById() {
         HmBasketDelQueryDTO hmBasketListQueryDTO = new HmBasketDelQueryDTO();
-        hmBasketListQueryDTO.setId(22);
-        hmBasketListQueryDTO.setUid(1);
+        hmBasketListQueryDTO.setId(36);
+        hmBasketListQueryDTO.setUid(32716);
         System.out.println(JSONObject.toJSONString(hmBasketService.deleteInfoById(hmBasketListQueryDTO)));
     }
 
@@ -93,8 +93,9 @@ public class AppTest {
     public void editInfo() {
         HmBasketEditQueryDTO hmBasketListQueryDTO = new HmBasketEditQueryDTO();
         hmBasketListQueryDTO.setAmount("0");
-//        hmBasketListQueryDTO.setPrice("200");
-        hmBasketListQueryDTO.setId(19);
+//       hmBasketListQueryDTO.setPrice("100");
+        hmBasketListQueryDTO.setId(33);
+        hmBasketListQueryDTO.setUid(32716);
         System.out.println(JSONObject.toJSONString(hmBasketService.editInfo(hmBasketListQueryDTO)));
     }
     @Test

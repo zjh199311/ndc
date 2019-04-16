@@ -51,7 +51,7 @@ public class DeleteCartOne extends HttpServlet {
 					String result = null;
 					Integer uid = (Integer) request.getAttribute("uid");
 					ServletRequest request2 = asyncContext.getRequest();
-					Integer basketId = Integer.valueOf(request2.getParameter("basketid"));
+					Integer basketId = Integer.valueOf(request2.getParameter("id"));
 					result = DeleteCartOne.this.handle(uid, basketId);
 					// 返回数据
 					try {
@@ -71,13 +71,13 @@ public class DeleteCartOne extends HttpServlet {
 
 	}
 
-	private String handle(Integer uid, Integer basketId) {
+	private String handle(Integer uid, Integer id) {
 		if (uid == 0) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
 		}
 		HmBasketDelQueryDTO hmBasketDelQueryDTO = new HmBasketDelQueryDTO();
 		hmBasketDelQueryDTO.setUid(uid);
-		hmBasketDelQueryDTO.setId(basketId);
+		hmBasketDelQueryDTO.setId(id);
 		return GsonUtil.GsonString(cartBasketService.deleteInfoById(hmBasketDelQueryDTO));
 	}
 }

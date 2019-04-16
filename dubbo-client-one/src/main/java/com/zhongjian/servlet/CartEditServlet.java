@@ -49,9 +49,10 @@ public class CartEditServlet extends HttpServlet {
 					Integer uid = (Integer) request.getAttribute("uid");
 					ServletRequest request2 = asyncContext.getRequest();
 					Integer gid = Integer.valueOf(request2.getParameter("gid"));
+					Integer id= Integer.valueOf(request2.getParameter("id"));
 					String amount = request2.getParameter("amount");
 					String remark = request2.getParameter("remark");
-					result = CartEditServlet.this.handle(uid, gid, amount, remark);
+					result = CartEditServlet.this.handle(id,uid, gid, amount, remark);
 					// 返回数据
 					try {
 						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
@@ -70,12 +71,13 @@ public class CartEditServlet extends HttpServlet {
 
 	}
 
-	private String handle(Integer uid, Integer gid, String amount, String remark) {
+	private String handle(Integer id,Integer uid, Integer gid, String amount, String remark) {
 		if (uid == 0) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
 		}
 		HmBasketEditQueryDTO hmBasketEditQueryDTO = new HmBasketEditQueryDTO();
 		hmBasketEditQueryDTO.setUid(uid);
+		hmBasketEditQueryDTO.setId(id);
 		hmBasketEditQueryDTO.setGid(gid);
 		hmBasketEditQueryDTO.setAmount(amount);
 		hmBasketEditQueryDTO.setRemark(remark);
