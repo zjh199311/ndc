@@ -95,6 +95,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
         List<HmMarketResultByOpenDTO> hmMarketResultByOpenDTOList = new ArrayList<>();
         StringBuilder stringbuider;
         DecimalFormat decimalFormat = new DecimalFormat("0.##");
+
         //当前时间减去今天的最小时间并根据uid查询并且状态为待支付和支付成功时.该用户就不为首单了.那么该用户则不能被菜场优惠
         CartParamDTO cartParamDTO = new CartParamDTO();
         Long todayZeroTime = DateUtil.getTodayZeroTime();

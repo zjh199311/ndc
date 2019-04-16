@@ -20,6 +20,15 @@
         sid=#{sid,jdbcType=INTEGER}
     </select>
 
+    <select id="selectBasketInfoById" parameterType="com.zhongjian.dao.cart.CartParamDTO"
+            resultType="com.zhongjian.dao.entity.cart.basket.CartBasketBean">
+        select
+        <include refid="Base_Column_List"/>
+        from hm_basket
+        where id=#{id,jdbcType=INTEGER} AND
+        uid=#{uid,jdbcType=INTEGER}
+    </select>
+
     <delete id="deleteBeanById" parameterType="com.zhongjian.dto.cart.basket.query.HmBasketDelQueryDTO">
         DELETE FROM
         hm_basket
@@ -37,6 +46,7 @@
     </delete>
 
     <resultMap id="BaseBasketInfoMap" type="com.zhongjian.dto.cart.basket.result.HmBasketResultDTO">
+        <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="amount" property="amount" jdbcType="VARCHAR"/>
         <result column="gid" property="gid" jdbcType="INTEGER"/>
         <result column="price" property="totalPrice" jdbcType="VARCHAR"/>
@@ -48,6 +58,7 @@
     <select id="findBasketById" parameterType="com.zhongjian.dto.cart.basket.query.HmBasketListQueryDTO"
             resultMap="BaseBasketInfoMap">
        SELECT
+            id,
             amount,
             gid,
             price,

@@ -111,7 +111,8 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
             if (FinalDatas.ZERO == hmBasketEditQueryDTO.getGid()) {
                 cartBasketBean.setId(findBasketBeanById.getId() );
                 cartBasketBean.setCtime(unixTime.intValue());
-                cartBasketBean.setPrice(new BigDecimal(hmBasketEditQueryDTO.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                BigDecimal add = findBasketBeanById.getPrice().add(new BigDecimal(hmBasketEditQueryDTO.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                cartBasketBean.setPrice(add);
                 cartBasketBean.setRemark(hmBasketEditQueryDTO.getRemark());
                 cartBasketBean.setUnitprice(cartBasketBean.getPrice());
             }else{
@@ -209,16 +210,24 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         if (null == hmBasketEditQueryDTO.getId()) {
             return ResultUtil.getFail(CommonMessageEnum.PRI_ID_IS_EMPT);
         }
-        CartBasketBean cartBasketBean = this.dao.selectByPrimaryKey(hmBasketEditQueryDTO.getId());
+        if (null == hmBasketEditQueryDTO.getUid()) {
+            return ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL);
+        }
+        CartParamDTO cartParamDTO = new CartParamDTO();
+        cartParamDTO.setId(hmBasketEditQueryDTO.getId());
+        cartParamDTO.setUid(hmBasketEditQueryDTO.getUid());
+        CartBasketBean cartBasketBean = this.dao.executeSelectOneMethod(cartParamDTO,"selectBasketInfoById",CartBasketBean.class);
         //根据主键id查询得到gid 如果为0则为其他.根据价格修改. 如果不是0则根据数量修改
         if (FinalDatas.ZERO == cartBasketBean.getGid()) {
             if (StringUtils.isBlank(hmBasketEditQueryDTO.getPrice())) {
                 return ResultUtil.getFail(CommonMessageEnum.PRICE_IS_NULL);
             } else {
-                cartBasketBean.setPrice(new BigDecimal(hmBasketEditQueryDTO.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                BigDecimal bigDecimal = new BigDecimal(hmBasketEditQueryDTO.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP);
+                cartBasketBean.setPrice(bigDecimal);
                 //获取时间用unix时间戳
                 Long unixTime = System.currentTimeMillis() / 1000;
                 cartBasketBean.setCtime(unixTime.intValue());
+                cartBasketBean.setUnitprice(bigDecimal);
                 if (StringUtil.isBlank(hmBasketEditQueryDTO.getRemark())) {
                     cartBasketBean.setRemark("");
                 } else {
