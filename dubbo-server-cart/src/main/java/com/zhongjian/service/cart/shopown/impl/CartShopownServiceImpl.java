@@ -704,21 +704,21 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                     }
                 }
             }
-//            //开张
-//            if (null != hmMarketResultByOpenDTO.getMartketId()) {
-//                hmMarketResultByOpenDTOList.add(hmMarketResultByOpenDTO);
-//                hmMarketResultListDTO.setHmMarketResultByOpen(hmMarketResultByOpenDTOList);
-//            }
+            //开张
+            if (null != hmMarketResultByOpenDTO.getMartketId()) {
+                hmMarketResultByOpenDTOList.add(hmMarketResultByOpenDTO);
+                hmMarketResultListDTO.setHmMarketResultByOpen(hmMarketResultByOpenDTOList);
+            }
             if (null != hmMarketResultByAdvenceDTO.getMartketId()) {
                 //预约
                 hmMarketResultByAdvenceDTOList.add(hmMarketResultByAdvenceDTO);
                 hmMarketResultListDTO.setHmMarketResultByAdvance(hmMarketResultByAdvenceDTOList);
             }
-//            //打烊
-//            if (null != hmMarketResultByCloseDTO.getMartketId()) {
-//                hmMarketResultByCloseDTOList.add(hmMarketResultByCloseDTO);
-//                hmMarketResultListDTO.setHmMarketResultByClose(hmMarketResultByCloseDTOList);
-//            }
+            //打烊
+            if (null != hmMarketResultByCloseDTO.getMartketId()) {
+                hmMarketResultByCloseDTOList.add(hmMarketResultByCloseDTO);
+                hmMarketResultListDTO.setHmMarketResultByClose(hmMarketResultByCloseDTOList);
+            }
         }
         return ResultUtil.getSuccess(hmMarketResultListDTO);
     }
