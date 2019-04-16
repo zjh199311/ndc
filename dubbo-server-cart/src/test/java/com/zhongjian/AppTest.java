@@ -54,10 +54,11 @@ public class AppTest {
     public void addOrUpdateInfo() {
         HmBasketEditQueryDTO hmBasketDelQueryDTO = new HmBasketEditQueryDTO();
         hmBasketDelQueryDTO.setUid(32716);
-        hmBasketDelQueryDTO.setGid(2684);
-        hmBasketDelQueryDTO.setSid(152);
+        hmBasketDelQueryDTO.setGid(32639);
+        hmBasketDelQueryDTO.setSid(530);
 //        hmBasketDelQueryDTO.setPrice("200");
        hmBasketDelQueryDTO.setAmount("2");
+        hmBasketDelQueryDTO.setRemark("2");
         System.out.println(JSONObject.toJSONString(hmBasketService.addOrUpdateInfo(hmBasketDelQueryDTO)));
 
     }
@@ -65,8 +66,8 @@ public class AppTest {
     @Test
     public void queryList() {
         HmBasketListQueryDTO hmBasketListQueryDTO = new HmBasketListQueryDTO();
-        hmBasketListQueryDTO.setUid(1);
-        hmBasketListQueryDTO.setSid(196);
+        hmBasketListQueryDTO.setUid(32716);
+        hmBasketListQueryDTO.setSid(229);
         ResultDTO<Object> objectResultDTO = hmBasketService.queryList(hmBasketListQueryDTO);
         System.out.println(JSONObject.toJSONString(objectResultDTO));
 

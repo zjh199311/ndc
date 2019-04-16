@@ -160,7 +160,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
                 //数量
                 String amount = hmBasketResultDTO.getAmount();
                 //decimalFormat格式转换
-                stringBuilder.append(decimalFormat.format(Double.parseDouble(amount))).append("斤");
+                stringBuilder.append(decimalFormat.format(Double.parseDouble(amount))).append(cartGoodsBean.getUnit());
                 hmBasketResultDTO.setAmount(stringBuilder.toString());
                 hmBasketResultDTO.setPrice(hmBasketResultDTO.getPrice() + "元");
             }
