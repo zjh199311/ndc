@@ -4,13 +4,14 @@ import com.zhongjian.dto.cart.marketActivity.result.HmMarketActivityResultDTO;
 import com.zhongjian.dto.cart.shopown.result.HmShopownResultDTO;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @Author: ldd
  */
 @Data
-public class HmMarketResultByAdvenceDTO {
+public class HmMarketResultByAdvenceDTO implements Serializable{
 
     private static final long serialVersionUID = 197018972999527001L;
 

@@ -38,7 +38,7 @@ public class CreateSignatureServlet extends HttpServlet {
 	private GenerateSignatureService generateSignatureService = (GenerateSignatureService) SpringContextHolder
 			.getBean(GenerateSignatureService.class);
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
 		AsyncContext asyncContext = request.startAsync();

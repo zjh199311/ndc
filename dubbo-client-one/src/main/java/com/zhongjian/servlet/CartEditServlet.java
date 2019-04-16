@@ -32,7 +32,7 @@ public class CartEditServlet extends HttpServlet {
 
 	private CartBasketService hmBasketService = (CartBasketService) SpringContextHolder.getBean(CartBasketService.class);
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
 		AsyncContext asyncContext = request.startAsync();

@@ -10,6 +10,7 @@ import com.zhongjian.executor.ThreadPoolExecutorSingle;
 import com.zhongjian.service.cart.basket.CartBasketService;
 import com.zhongjian.service.cart.shopown.CartShopownService;
 import org.apache.log4j.Logger;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;
@@ -33,7 +34,7 @@ public class GetAllCartListServlet extends HttpServlet {
 
     private CartShopownService cartShopownService = (CartShopownService) SpringContextHolder.getBean(CartShopownService.class);
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet( HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         AsyncContext asyncContext = request.startAsync();
@@ -47,6 +48,7 @@ public class GetAllCartListServlet extends HttpServlet {
             public void onAllDataRead() {
                 ThreadPoolExecutorSingle.executor.execute(() -> {
                     String result = null;
+                    ServletRequest request2 = asyncContext.getRequest();
                     Integer uid = (Integer) request.getAttribute("uid");
                     result = GetAllCartListServlet.this.handle(uid);
                     // 返回数据
@@ -69,7 +71,7 @@ public class GetAllCartListServlet extends HttpServlet {
 
     private String handle(Integer uid) {
         if (uid == 0) {
-            return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
+            return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL));
         }
         return GsonUtil.GsonString(cartShopownService.queryList(uid));
     }
