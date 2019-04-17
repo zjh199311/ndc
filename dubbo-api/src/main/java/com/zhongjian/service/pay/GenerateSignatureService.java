@@ -1,12 +1,12 @@
 package com.zhongjian.service.pay;
 
-import java.util.SortedMap;
+import java.util.Map;
 
 public interface GenerateSignatureService {
 
     String getAliSignature(String out_trade_no, String totalAmount);
 
-    SortedMap<String, String> getWxAppSignature(String out_trade_no, String totalAmount, String openId, String spbillCreateIp, Integer type);
+    Map<String, String> getWxAppSignature(String out_trade_no, String totalAmount, String openId, String spbillCreateIp, Integer type);
 
 
 }

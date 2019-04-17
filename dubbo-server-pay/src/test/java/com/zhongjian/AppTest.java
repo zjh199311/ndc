@@ -25,8 +25,8 @@ public class AppTest {
 
     @Test
     public void test() {
-        Object ro = generateSignatureService.getWxAppSignature("RO", "", "192.168.0.106").getData();
-        System.out.println(JSONObject.toJSONString(ro));
+//        Object ro = generateSignatureService.getWxAppSignature("RO", "", "192.168.0.106").getData();
+//        System.out.println(JSONObject.toJSONString(ro));
     }
 
 }

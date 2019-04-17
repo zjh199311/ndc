@@ -25,6 +25,7 @@ import com.zhongjian.service.pay.GenerateSignatureService;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 
 @WebServlet(value = "/v1/pay/createsign", asyncSupported = true)
 public class CreateSignatureServlet extends HttpServlet {
@@ -35,10 +36,10 @@ public class CreateSignatureServlet extends HttpServlet {
 	
 	private OrderService orderService = (OrderService) SpringContextHolder.getBean(OrderService.class);
 
-//	private GenerateSignatureService generateSignatureService = (GenerateSignatureService) SpringContextHolder
-//			.getBean(GenerateSignatureService.class);
+	private GenerateSignatureService generateSignatureService = (GenerateSignatureService) SpringContextHolder
+			.getBean(GenerateSignatureService.class);
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
 		AsyncContext asyncContext = request.startAsync();
@@ -83,12 +84,18 @@ public class CreateSignatureServlet extends HttpServlet {
 		}
 		Map<String, Object>  orderDetail = orderService.getOutTradeNoAndAmount(uid,orderId, busniess);
 		if (orderDetail == null)  {
-			System.out.println("没有该订单");
-			return "";
+			return GsonUtil.GsonString(ResultUtil.getFail(null));
 		}else {
-		return GsonUtil.GsonString(orderDetail);
-//		String out_trade_no = (String) orderDetail.get("out_trade_no");
-//		String total_Amount = orderDetail.get("totalPrice").toString();
+			String out_trade_no = (String) orderDetail.get("out_trade_no");
+			String totalPrice =  orderDetail.get("totalPrice").toString();
+		if (payType == 0) {
+		
+			return generateSignatureService.getAliSignature(out_trade_no, totalPrice);
+		}else if (payType == 1) {
+			return GsonUtil.GsonString(generateSignatureService.getWxAppSignature(out_trade_no, totalPrice, "", "192.168.0.122", 0));
+		}else {
+			return GsonUtil.GsonString(ResultUtil.getFail(null));
+		}
 		}
 	}
 }
