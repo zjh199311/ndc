@@ -716,16 +716,16 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                     }
                 }
             }
-//            //开张
-//            if (null != hmMarketResultByOpenDTO.getMartketId()) {
-//                hmMarketResultByOpenDTOList.add(hmMarketResultByOpenDTO);
-//                hmMarketResultListDTO.setHmMarketResultByOpen(hmMarketResultByOpenDTOList);
-//            }
-//            //预约
-//            if (null != hmMarketResultByAdvenceDTO.getMartketId()) {
-//                hmMarketResultByAdvenceDTOList.add(hmMarketResultByAdvenceDTO);
-//                hmMarketResultListDTO.setHmMarketResultByAdvance(hmMarketResultByAdvenceDTOList);
-//            }
+            //开张
+            if (null != hmMarketResultByOpenDTO.getMartketId()) {
+                hmMarketResultByOpenDTOList.add(hmMarketResultByOpenDTO);
+                hmMarketResultListDTO.setHmMarketResultByOpen(hmMarketResultByOpenDTOList);
+            }
+            //预约
+            if (null != hmMarketResultByAdvenceDTO.getMartketId()) {
+                hmMarketResultByAdvenceDTOList.add(hmMarketResultByAdvenceDTO);
+                hmMarketResultListDTO.setHmMarketResultByAdvance(hmMarketResultByAdvenceDTOList);
+            }
             //打烊
             if (null != hmMarketResultByCloseDTO.getMartketId()) {
                 hmMarketResultByCloseDTOList.add(hmMarketResultByCloseDTO);
