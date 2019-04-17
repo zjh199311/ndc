@@ -30,6 +30,7 @@
     local regular interface -->
     <dubbo:reference id="hmBasketService" interface="com.zhongjian.service.cart.basket.CartBasketService" version="1.0.0"/>
     <dubbo:reference id="userService" interface="com.zhongjian.service.user.UserService" version="1.0.0"/>
+    <dubbo:reference id="generateSignatureService" interface="com.zhongjian.service.pay.GenerateSignatureService" version="1.0.0"/>
     <dubbo:reference id="orderService" interface="com.zhongjian.service.order.OrderService" version="1.0.0"/>
     <dubbo:reference id="hmShopownService" interface="com.zhongjian.service.cart.shopown.CartShopownService" version="1.0.0"/>
     

@@ -35,10 +35,10 @@ public class CreateSignatureServlet extends HttpServlet {
 	
 	private OrderService orderService = (OrderService) SpringContextHolder.getBean(OrderService.class);
 
-	private GenerateSignatureService generateSignatureService = (GenerateSignatureService) SpringContextHolder
-			.getBean(GenerateSignatureService.class);
+//	private GenerateSignatureService generateSignatureService = (GenerateSignatureService) SpringContextHolder
+//			.getBean(GenerateSignatureService.class);
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
 		AsyncContext asyncContext = request.startAsync();
@@ -56,7 +56,9 @@ public class CreateSignatureServlet extends HttpServlet {
 					ServletRequest request2 = asyncContext.getRequest();
 					String busniess = request2.getParameter("busniess");
 					Integer orderid = Integer.valueOf(request2.getParameter("orderid"));
-					result = CreateSignatureServlet.this.handle(uid, busniess, orderid);
+					//0 支付宝 1微信 2微信小程序
+					Integer payType = Integer.valueOf(request2.getParameter("paytype"));
+					result = CreateSignatureServlet.this.handle(uid, busniess, orderid,payType);
 					// 返回数据
 					try {
 						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
@@ -75,14 +77,18 @@ public class CreateSignatureServlet extends HttpServlet {
 
 	}
 
-	private String handle(Integer uid, String busniess, Integer orderId) {
-//		if (uid == 0) {
+	private String handle(Integer uid, String busniess, Integer orderId,Integer payType) {
+		if (uid == 0) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
-//		}
-//		return
-//		Map<String, Object>  orderDetail = orderService.getOutTradeNoAndAmount(uid,orderId, busniess);
-//		orderDetail.get("out_trade_no");
-//		orderDetail.get("totalPrice");
-//		return GsonUtil.GsonString(hmBasketService.editInfo(hmBasketEditQueryDTO));
+		}
+		Map<String, Object>  orderDetail = orderService.getOutTradeNoAndAmount(uid,orderId, busniess);
+		if (orderDetail == null)  {
+			System.out.println("没有该订单");
+			return "";
+		}else {
+		return GsonUtil.GsonString(orderDetail);
+//		String out_trade_no = (String) orderDetail.get("out_trade_no");
+//		String total_Amount = orderDetail.get("totalPrice").toString();
+		}
 	}
 }

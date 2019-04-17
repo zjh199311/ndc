@@ -25,6 +25,6 @@ public class AppTest {
 
     @Test
     public void test() {
-       
+       System.out.println(orderService.getOutTradeNoAndAmount(32716, 165110, "RIO"));
     }
 }

@@ -11,6 +11,7 @@ import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.util.LogUtil;
 import com.zhongjian.util.PayCommonUtil;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,20 +27,9 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
     @Resource
     private PropUtil propUtil;
 
-    @Override
-    public String getAliSignature(String business, String orderId) {
-        String out_trade_no = "";
+   @Override
+    public String getAliSignature(String out_trade_no, String totalAmount) {
         String orderTypeString = "";
-        String totalAmount = "";
-        //普通订单
-        if (business.equals("RO")) {
-            orderTypeString = "订单总价";
-            Map<String, String> result = getOutRradeNoAndAmount(orderId);
-            out_trade_no = result.get("out_trade_no");
-            totalAmount = result.get("totalAmount");
-        } else {
-            return null;
-        }
         //生成签名
         Map<String, String> orderMap = new LinkedHashMap<String, String>(); // 订单实体
         /****** 2.商品参数封装开始 *****/ // 手机端用
@@ -84,17 +74,7 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
     }
 
     @Override
-    public ResultDTO<Object> getWxAppSignature(String business, String orderId, String spbillCreateIp) {
-        String out_trade_no = "";
-        String totalAmount = "";
-        //普通订单
-        if (business.equals("RO")) {
-            Map<String, String> result = getOutRradeNoAndAmount(orderId);
-            out_trade_no = result.get("out_trade_no");
-            totalAmount = result.get("totalAmount");
-        } else {
-            return null;
-        }
+    public ResultDTO<Object> getWxAppSignature(String out_trade_no, String totalAmount, String spbillCreateIp) {
         SortedMap<String, Object> stringObjectSortedMap = null;
         try {
             stringObjectSortedMap = PayCommonUtil.wxPublicPay(out_trade_no, totalAmount, spbillCreateIp, propUtil.getWxAppAppId(), propUtil.getWxAppKey(), propUtil.getWxAppMchId(), propUtil.getWxAppNotifyUrl(), propUtil.getWxAppUrl(),"倪的菜商品订单支付");
@@ -105,10 +85,4 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
         return ResultUtil.getSuccess(stringObjectSortedMap);
     }
 
-    @Transactional
-    private Map<String, String> getOutRradeNoAndAmount(String orderId) {
-        //生成out_trade_no
-        return null;
-
-    }
 }

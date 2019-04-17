@@ -183,9 +183,8 @@ public class OrderDao {
 		String sql = "select out_trade_no,totalPrice from  hm_rider_order where id = ? and uid = ?";
 		Map<String, Object> resMap = null;
 		try {
-			resMap = jdbcTemplate.queryForMap(sql,uid,orderId);
+			resMap = jdbcTemplate.queryForMap(sql,orderId,uid);
 		} catch (EmptyResultDataAccessException e) {
-			
 		}
 		return resMap;
 	}

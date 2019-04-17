@@ -4,7 +4,7 @@ import com.zhongjian.dto.common.ResultDTO;
 
 public interface GenerateSignatureService {
 
-    String getAliSignature(String business, String orderId);
+    String getAliSignature(String out_trade_no, String totalAmount);
 
-    ResultDTO<Object> getWxAppSignature(String business, String orderId, String spbillCreateIp);
+    ResultDTO<Object> getWxAppSignature(String out_trade_no, String totalAmount, String spbillCreateIp);
 }
