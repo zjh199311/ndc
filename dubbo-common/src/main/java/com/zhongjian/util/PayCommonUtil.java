@@ -41,8 +41,8 @@ public class PayCommonUtil {
      * @return -
      * @Param type 0微信支付 1小程序支付
      */
-    public static SortedMap<String, String> wxPublicPay(String trade_no, String totalAmount, String spbillCreateId, String wxAppAppId, String wxAppAppletsId, String WxAppletsKey, String wxAppKey, String wxAppMchId, String wxAppNotifyUrl, String wxAppUrl, String body, String openid, Integer type) throws Exception {
-        Map<String, String> map = weixinAppPrePay(trade_no, totalAmount, wxAppAppletsId, spbillCreateId, wxAppAppId, wxAppMchId, wxAppNotifyUrl, wxAppUrl, wxAppKey, WxAppletsKey, body, type, openid);
+    public static SortedMap<String, String> wxPublicPay(String trade_no, String totalAmount, String spbillCreateId, String wxAppAppletsId ,String wxAppAppId, String WxAppletsKey, String wxAppKey, String wxAppMchId, String wxAppNotifyUrl, String wxAppUrl, String body, String openid, Integer type) throws Exception {
+        Map<String, String> map = weixinAppPrePay(trade_no, totalAmount, spbillCreateId,wxAppAppId,wxAppAppletsId, wxAppMchId, wxAppNotifyUrl, wxAppUrl, wxAppKey, WxAppletsKey, body, type, openid);
         SortedMap<String, String> finalpackage = new TreeMap<>();
         if (0 == type) {
             finalpackage.put("appid", wxAppAppId);
