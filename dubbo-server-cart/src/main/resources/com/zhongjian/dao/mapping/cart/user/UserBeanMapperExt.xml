@@ -8,6 +8,17 @@
           from hm_user
           where login_token =#{loginToken,jdbcType=VARCHAR}
     </select>
+
+
+
+
+    <select id="findUserById" parameterType="java.lang.Integer" resultType="com.zhongjian.dto.user.result.UserResultDTO">
+        select
+        <include refid="Base_Column_List"/>
+
+        from hm_user
+        where id =#{id,jdbcType=INTEGER}
+    </select>
 </mapper>
 
 

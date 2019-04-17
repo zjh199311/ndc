@@ -2,6 +2,7 @@ package com.zhongjian.service.user;
 
 import com.zhongjian.dao.entity.cart.user.UserBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
+import com.zhongjian.dto.user.result.UserResultDTO;
 import org.springframework.stereotype.Service;
 
 /**
@@ -18,5 +19,13 @@ public class UserServiceImpl extends HmBaseService<UserBean, Integer> implements
             return 0;
         }
         return findUserByLoginToken;
+    }
+
+    @Override
+    public UserResultDTO getUserBeanById(Integer id) {
+
+        UserResultDTO findUserById = this.dao.executeSelectOneMethod(id, "findUserById", UserResultDTO.class);
+
+        return findUserById;
     }
 }

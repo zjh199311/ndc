@@ -22,9 +22,18 @@ public interface OrderService {
      */
     ResultDTO<Object> judgeHmShopownStatus(OrderStatusQueryDTO orderStatusQueryDTO);
 
+    /**
+     * 获取默认地址0表示默认
+     * @param orderAddressQueryDTO
+     * @return
+     */
     OrderAddressResultDTO previewOrderAddress(OrderAddressQueryDTO orderAddressQueryDTO);
 
-    //0 "16:20"  1 "04-11 08:48"
+    /**
+     * 获取预约时间
+     * @param isAppointment
+     * @return
+     */
     String previewOrderTime(Integer isAppointment);
     
     Map<String, Object> getOutTradeNoAndAmount(Integer uid,Integer orderId,String business);
