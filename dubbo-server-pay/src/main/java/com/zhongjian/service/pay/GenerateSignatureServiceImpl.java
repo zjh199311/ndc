@@ -12,10 +12,7 @@ import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.util.LogUtil;
 import com.zhongjian.util.PayCommonUtil;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import sun.rmi.runtime.Log;
 
 import javax.annotation.Resource;
 import java.net.URLEncoder;
