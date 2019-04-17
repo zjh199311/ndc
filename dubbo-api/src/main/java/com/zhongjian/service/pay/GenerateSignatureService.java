@@ -1,10 +1,12 @@
 package com.zhongjian.service.pay;
 
-import com.zhongjian.dto.common.ResultDTO;
+import java.util.SortedMap;
 
 public interface GenerateSignatureService {
 
     String getAliSignature(String out_trade_no, String totalAmount);
 
-    ResultDTO<Object> getWxAppSignature(String out_trade_no, String totalAmount, String spbillCreateIp);
+    SortedMap<String, String> getWxAppSignature(String out_trade_no, String totalAmount, String openId, String spbillCreateIp, Integer type);
+
+
 }

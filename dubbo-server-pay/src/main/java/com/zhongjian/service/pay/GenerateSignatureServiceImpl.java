@@ -12,8 +12,10 @@ import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.util.LogUtil;
 import com.zhongjian.util.PayCommonUtil;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sun.rmi.runtime.Log;
 
 import javax.annotation.Resource;
 import java.net.URLEncoder;
@@ -27,7 +29,7 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
     @Resource
     private PropUtil propUtil;
 
-   @Override
+    @Override
     public String getAliSignature(String out_trade_no, String totalAmount) {
         String orderTypeString = "";
         //生成签名
@@ -74,15 +76,21 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
     }
 
     @Override
-    public ResultDTO<Object> getWxAppSignature(String out_trade_no, String totalAmount, String spbillCreateIp) {
-        SortedMap<String, Object> stringObjectSortedMap = null;
+    public SortedMap<String, String> getWxAppSignature(String out_trade_no, String totalAmount, String openId, String spbillCreateIp, Integer type) {
+        SortedMap<String, String> stringObjectSortedMap = null;
         try {
-            stringObjectSortedMap = PayCommonUtil.wxPublicPay(out_trade_no, totalAmount, spbillCreateIp, propUtil.getWxAppAppId(), propUtil.getWxAppKey(), propUtil.getWxAppMchId(), propUtil.getWxAppNotifyUrl(), propUtil.getWxAppUrl(),"倪的菜商品订单支付");
+            if (1 == type) {
+                if (StringUtils.isBlank(openId)) {
+                    stringObjectSortedMap.put("openId为空", openId);
+                    LogUtil.info("openId为空{}",openId);
+                    return stringObjectSortedMap;
+                }
+            }
+            stringObjectSortedMap = PayCommonUtil.wxPublicPay(out_trade_no, totalAmount, spbillCreateIp, propUtil.getWxAppAppId(), propUtil.getWxAppKey(), propUtil.getWxAppMchId(), propUtil.getWxAppNotifyUrl(), propUtil.getWxAppUrl(), "倪的菜商品订单支付", openId, type);
         } catch (Exception e) {
             LogUtil.info("获取签名异常", "e:" + e.getMessage());
             e.getMessage();
         }
-        return ResultUtil.getSuccess(stringObjectSortedMap);
+        return stringObjectSortedMap;
     }
-
 }
