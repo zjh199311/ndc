@@ -54,7 +54,7 @@ public class PayCommonUtil {
             String sign = PayCommonUtil.createSign("UTF-8", finalpackage, wxAppKey);
             finalpackage.put("sign", sign);
         } else if (1 == type) {
-            finalpackage.put("appid", wxAppAppletsId);
+            finalpackage.put("appId", wxAppAppletsId);
             finalpackage.put("timeStamp", String.valueOf(System.currentTimeMillis() / 1000));
             finalpackage.put("nonceStr", getRandomString(32));
             finalpackage.put("package", "prepay_id=" + map.get("prepay_id"));
