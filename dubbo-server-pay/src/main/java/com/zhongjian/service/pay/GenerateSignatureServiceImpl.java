@@ -79,7 +79,7 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
     public Map<String, String> getWxAppSignature(String out_trade_no, String totalAmount, String openId, String spbillCreateIp, Integer type) {
         SortedMap<String, String> stringObjectSortedMap = null;
         try {
-            stringObjectSortedMap = PayCommonUtil.wxPublicPay(out_trade_no, totalAmount, spbillCreateIp, propUtil.getWxAppAppId(), propUtil.getWxAppKey(), propUtil.getWxAppMchId(), propUtil.getWxAppNotifyUrl(), propUtil.getWxAppUrl(), "倪的菜商品订单支付",propUtil.getWxAppLetsId(),propUtil.getWxAppLetsKey(), openId, type);
+            stringObjectSortedMap = PayCommonUtil.wxPublicPay(out_trade_no, totalAmount, spbillCreateIp,propUtil.getWxAppLetsId(), propUtil.getWxAppAppId(), propUtil.getWxAppKey(),propUtil.getWxAppLetsKey(), propUtil.getWxAppMchId(), propUtil.getWxAppNotifyUrl(), propUtil.getWxAppletsNotifyUrl(), propUtil.getWxAppUrl(), "倪的菜商品订单支付", openId, type);
         } catch (Exception e) {
             LogUtil.info("获取签名异常", "e:" + e.getMessage());
             e.getMessage();

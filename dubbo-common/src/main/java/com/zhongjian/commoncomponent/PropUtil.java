@@ -40,6 +40,7 @@ public class PropUtil {
 
 		setWxAppLetsId((String)propComponent.getMap().get("pay.wxApp.appletsId"));
 		setWxAppLetsKey((String)propComponent.getMap().get("pay.wxApp.appletsKey"));
+		setWxAppletsNotifyUrl((String)propComponent.getMap().get("pay.wxApp.appletsNotifyUrl"));
 	}
 
     private String yxUrl;
@@ -65,5 +66,6 @@ public class PropUtil {
 
 	private String wxAppLetsId;
 	private String wxAppLetsKey;
+	private String WxAppletsNotifyUrl;
 
 }

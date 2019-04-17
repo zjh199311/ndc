@@ -41,8 +41,8 @@ public class PayCommonUtil {
      * @return -
      * @Param type 0微信支付 1小程序支付
      */
-    public static SortedMap<String, String> wxPublicPay(String trade_no, String totalAmount, String spbillCreateId, String wxAppAppletsId ,String wxAppAppId, String WxAppletsKey, String wxAppKey, String wxAppMchId, String wxAppNotifyUrl, String wxAppUrl, String body, String openid, Integer type) throws Exception {
-        Map<String, String> map = weixinAppPrePay(trade_no, totalAmount, spbillCreateId,wxAppAppId,wxAppAppletsId, wxAppMchId, wxAppNotifyUrl, wxAppUrl, wxAppKey, WxAppletsKey, body, type, openid);
+    public static SortedMap<String, String> wxPublicPay(String trade_no, String totalAmount, String spbillCreateId, String wxAppAppletsId ,String wxAppAppId,String wxAppKey, String WxAppletsKey,  String wxAppMchId, String wxAppNotifyUrl,String wxAppletsNotifyUrl, String wxAppUrl, String body, String openid, Integer type) throws Exception {
+        Map<String, String> map = weixinAppPrePay(trade_no, totalAmount, spbillCreateId,wxAppAppId,wxAppAppletsId, wxAppMchId, wxAppNotifyUrl,wxAppletsNotifyUrl, wxAppUrl, wxAppKey, WxAppletsKey, body, type, openid);
         SortedMap<String, String> finalpackage = new TreeMap<>();
         if (0 == type) {
             finalpackage.put("appid", wxAppAppId);
@@ -72,7 +72,7 @@ public class PayCommonUtil {
      * @return
      */
     public static Map<String, String> weixinAppPrePay(String outTradeNo, String totalAmount, String spbillCreateId,
-                                                      String wxAppAppId, String wxAppAppletsId, String wxAppMchId, String wxAppNotifyUrl, String wxAppUrl, String wxAppKey, String wxAppLetsKey, String body, Integer type, String openid) throws Exception {
+                                                      String wxAppAppId, String wxAppAppletsId, String wxAppMchId, String wxAppNotifyUrl,String wxAppletsNotifyUrl, String wxAppUrl, String wxAppKey, String wxAppLetsKey, String body, Integer type, String openid) throws Exception {
         SortedMap<String, String> parameterMap = new TreeMap<String, String>();
         //应用ID
         if (0 == type) {
@@ -94,14 +94,16 @@ public class PayCommonUtil {
         parameterMap.put("total_fee", df.format(total));
         //终端IP
         parameterMap.put("spbill_create_ip", spbillCreateId);
-        //通知地址
-        parameterMap.put("notify_url", wxAppNotifyUrl);
         //交易类型 type = 0 为微信, type=1为小程序
         String sign = null;
         if (0 == type) {
+            //通知地址
+            parameterMap.put("notify_url", wxAppletsNotifyUrl);
             parameterMap.put("trade_type", "APP");
             sign = PayCommonUtil.createSign("UTF-8", parameterMap, wxAppKey);
         } else if (1 == type) {
+            //通知地址
+            parameterMap.put("notify_url", wxAppNotifyUrl);
             parameterMap.put("trade_type", "JSAPI");
         }
         if (parameterMap.get("trade_type").equals("JSAPI")) {
