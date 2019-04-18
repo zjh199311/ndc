@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.zhongjian.dao.entity.cart.market.CartMarketActivityBean">
 
-    <resultMap id="BaseMarketInfo" type="com.zhongjian.dto.cart.marketActivity.result.HmMarketActivityResultDTO">
+    <resultMap id="BaseMarketInfo" type="com.zhongjian.dto.cart.marketActivity.result.CartMarketActivityResultDTO">
         <result column="type" property="type" jdbcType="TINYINT"/>
         <result column="rule" property="rule" jdbcType="VARCHAR"/>
         <result column="status" property="status" jdbcType="TINYINT"/>

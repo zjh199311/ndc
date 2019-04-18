@@ -19,7 +19,7 @@
     </select>
 
 
-    <update id="updateMarketIdById" parameterType="com.zhongjian.dto.order.address.query.OrderAddressQueryDTO">
+    <update id="updateMarketIdById" parameterType="com.zhongjian.dto.cart.address.query.CartAddressQueryDTO">
         update hm_user set late_marketid=#{marketId,jdbcType=INTEGER}
     </update>
 </mapper>

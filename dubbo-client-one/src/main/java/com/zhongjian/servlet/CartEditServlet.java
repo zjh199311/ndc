@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.zhongjian.dto.cart.basket.query.HmBasketEditQueryDTO;
+import com.zhongjian.dto.cart.basket.query.CartBasketEditQueryDTO;
 import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultUtil;
 import org.apache.log4j.Logger;
@@ -74,11 +74,11 @@ public class CartEditServlet extends HttpServlet {
 		if (uid == 0) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
 		}
-		HmBasketEditQueryDTO hmBasketEditQueryDTO = new HmBasketEditQueryDTO();
-		hmBasketEditQueryDTO.setUid(uid);
-		hmBasketEditQueryDTO.setId(id);
-		hmBasketEditQueryDTO.setAmount(amount);
-		hmBasketEditQueryDTO.setRemark(remark);
-		return GsonUtil.GsonString(hmBasketService.editInfo(hmBasketEditQueryDTO));
+		CartBasketEditQueryDTO cartBasketEditQueryDTO = new CartBasketEditQueryDTO();
+		cartBasketEditQueryDTO.setUid(uid);
+		cartBasketEditQueryDTO.setId(id);
+		cartBasketEditQueryDTO.setAmount(amount);
+		cartBasketEditQueryDTO.setRemark(remark);
+		return GsonUtil.GsonString(hmBasketService.editInfo(cartBasketEditQueryDTO));
 	}
 }

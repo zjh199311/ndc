@@ -1,7 +1,7 @@
 package com.zhongjian.service.address;
 
-import com.zhongjian.dto.order.address.query.OrderAddressQueryDTO;
-import com.zhongjian.dto.order.address.result.OrderAddressResultDTO;
+import com.zhongjian.dto.cart.address.query.CartAddressQueryDTO;
+import com.zhongjian.dto.cart.address.result.CartAddressResultDTO;
 
 /**
  * @Author: ldd
@@ -10,15 +10,15 @@ public interface AddressService {
 
     /**
      * 获取默认地址0表示默认
-     * @param orderAddressQueryDTO
+     * @param cartAddressQueryDTO
      * @return
      */
-    OrderAddressResultDTO previewOrderAddress(OrderAddressQueryDTO orderAddressQueryDTO);
+    CartAddressResultDTO previewOrderAddress(CartAddressQueryDTO cartAddressQueryDTO);
 
 
-    void updateDefaultAddress(OrderAddressQueryDTO orderAddressQueryDTO);
+    void updateDefaultAddress(CartAddressQueryDTO cartAddressQueryDTO);
 
-    void updateUserMarketIdById(OrderAddressQueryDTO orderAddressQueryDTO);
+    void updateUserMarketIdById(CartAddressQueryDTO cartAddressQueryDTO);
 
 
 

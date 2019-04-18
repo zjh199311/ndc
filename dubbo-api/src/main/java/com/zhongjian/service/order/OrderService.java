@@ -3,8 +3,6 @@ package com.zhongjian.service.order;
 import java.util.Map;
 
 import com.zhongjian.dto.common.ResultDTO;
-import com.zhongjian.dto.order.address.query.OrderAddressQueryDTO;
-import com.zhongjian.dto.order.address.result.OrderAddressResultDTO;
 import com.zhongjian.dto.order.order.query.OrderStatusQueryDTO;
 
 public interface OrderService {

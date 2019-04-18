@@ -12,7 +12,7 @@
     </select>
 
     <select id="selectBasketBeanById" parameterType="com.zhongjian.dao.cart.CartParamDTO"
-            resultType="com.zhongjian.dto.cart.basket.result.HmBasketResultDTO">
+            resultType="com.zhongjian.dto.cart.basket.result.CartBasketResultDTO">
         select
         <include refid="Base_Column_List"/>
         from hm_basket
@@ -29,7 +29,7 @@
         uid=#{uid,jdbcType=INTEGER}
     </select>
 
-    <delete id="deleteBeanById" parameterType="com.zhongjian.dto.cart.basket.query.HmBasketDelQueryDTO">
+    <delete id="deleteBeanById" parameterType="com.zhongjian.dto.cart.basket.query.CartBasketDelQueryDTO">
         DELETE FROM
         hm_basket
         <where>
@@ -45,7 +45,7 @@
         </where>
     </delete>
 
-    <resultMap id="BaseBasketInfoMap" type="com.zhongjian.dto.cart.basket.result.HmBasketResultDTO">
+    <resultMap id="BaseBasketInfoMap" type="com.zhongjian.dto.cart.basket.result.CartBasketResultDTO">
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="amount" property="amount" jdbcType="VARCHAR"/>
         <result column="gid" property="gid" jdbcType="INTEGER"/>
@@ -55,7 +55,7 @@
     </resultMap>
 
 
-    <select id="findBasketById" parameterType="com.zhongjian.dto.cart.basket.query.HmBasketListQueryDTO"
+    <select id="findBasketById" parameterType="com.zhongjian.dto.cart.basket.query.CartBasketListQueryDTO"
             resultMap="BaseBasketInfoMap">
        SELECT
             id,
@@ -71,7 +71,7 @@
          and uid =#{uid,jdbcType=INTEGER}
     </select>
 
-    <delete id="deleteInfoBySids" parameterType="com.zhongjian.dto.cart.basket.query.HmBasketDelQueryDTO">
+    <delete id="deleteInfoBySids" parameterType="com.zhongjian.dto.cart.basket.query.CartBasketDelQueryDTO">
         DELETE FROM
         hm_basket
         where

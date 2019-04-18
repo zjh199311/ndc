@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.zhongjian.dto.cart.basket.query.HmBasketListQueryDTO;
+import com.zhongjian.dto.cart.basket.query.CartBasketListQueryDTO;
 import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.service.cart.basket.CartBasketService;
@@ -75,9 +75,9 @@ public class GetCartListServlet extends HttpServlet {
 		if (uid == 0) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
 		}
-		HmBasketListQueryDTO  hmBasketListQueryDTO= new HmBasketListQueryDTO();
-		hmBasketListQueryDTO.setUid(uid);
-		hmBasketListQueryDTO.setSid(sid);
-		return GsonUtil.GsonString(hmBasketService.queryList(hmBasketListQueryDTO));
+		CartBasketListQueryDTO cartBasketListQueryDTO = new CartBasketListQueryDTO();
+		cartBasketListQueryDTO.setUid(uid);
+		cartBasketListQueryDTO.setSid(sid);
+		return GsonUtil.GsonString(hmBasketService.queryList(cartBasketListQueryDTO));
 	}
 }

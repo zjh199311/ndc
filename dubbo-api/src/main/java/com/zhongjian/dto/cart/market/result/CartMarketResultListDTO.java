@@ -9,22 +9,22 @@ import java.util.List;
  * @Author: ldd
  */
 @Data
-public class HmMarketResultListDTO  implements Serializable{
+public class CartMarketResultListDTO implements Serializable{
 
     private static final long serialVersionUID = 197018972999527001L;
 
     /**
      * 开张
      */
-    private List<HmMarketResultByOpenDTO> hmMarketResultByOpen;
+    private List<CartMarketResultByOpenDTO> hmMarketResultByOpen;
 
     /**
      * 预约
      */
-    private List<HmMarketResultByAdvenceDTO> hmMarketResultByAdvance;
+    private List<CartMarketResultByAdvenceDTO> hmMarketResultByAdvance;
 
     /**
      * 打烊
      */
-    private List<HmMarketResultByCloseDTO> hmMarketResultByClose;
+    private List<CartMarketResultByCloseDTO> hmMarketResultByClose;
 }
