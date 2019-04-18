@@ -25,6 +25,7 @@ public class AppTest {
 
     @Test
     public void test() {
-       System.out.println(orderService.getOutTradeNoAndAmount(32716, 165110, "RIO"));
+    Integer[] sids = {152};
+     orderService.previewOrCreateOrder(32716, sids, "0", 0, "0", true, 1, 321321, 0);
     }
 }
