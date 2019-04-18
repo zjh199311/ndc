@@ -10,6 +10,8 @@ import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.cart.basket.query.HmBasketDelQueryDTO;
 import com.zhongjian.dto.cart.basket.query.HmBasketEditQueryDTO;
 import com.zhongjian.dto.cart.basket.query.HmBasketListQueryDTO;
+import com.zhongjian.dto.order.address.query.OrderAddressQueryDTO;
+import com.zhongjian.service.address.AddressService;
 import com.zhongjian.service.cart.basket.CartBasketService;
 import com.zhongjian.service.cart.shopown.CartShopownService;
 import com.zhongjian.service.user.UserService;
@@ -30,6 +32,10 @@ public class AppTest {
 
     @Resource
     private CartShopownService cartShopownService;
+
+    @Resource
+    private AddressService addressService;
+
 
     @Resource
     private UserService userService;
@@ -110,7 +116,6 @@ public class AppTest {
     }
     @Test
     public void order(){
-
         CartParamDTO cartParamDTO = new CartParamDTO();
         Long todayZeroTime = DateUtil.getTodayZeroTime();
         cartParamDTO.setCtime(todayZeroTime.intValue());
@@ -118,7 +123,47 @@ public class AppTest {
         Integer findCountByUid = this.hmDAO.executeSelectOneMethod(cartParamDTO, "findCountByUid", Integer.class);
         System.out.println(findCountByUid);
     }
+    @Test
+    public void user1(){
+        System.out.println(userService.getUserBeanById(1));
+    }
+    @Test
+    public void address(){
+        OrderAddressQueryDTO orderAddressQueryDTO = new OrderAddressQueryDTO();
+        orderAddressQueryDTO.setId(1);
+        orderAddressQueryDTO.setUid(1);
 
 
+        System.out.println(addressService.previewOrderAddress(orderAddressQueryDTO));
+    }
+
+    @Test
+    public void add(){
+        OrderAddressQueryDTO orderAddressQueryDTO = new OrderAddressQueryDTO();
+        orderAddressQueryDTO.setId(1);
+        orderAddressQueryDTO.setUid(1);
+
+
+        System.out.println(addressService.previewOrderAddress(orderAddressQueryDTO));
+    }
+    @Test
+    public void updateDefalut(){
+        OrderAddressQueryDTO orderAddressQueryDTO = new OrderAddressQueryDTO();
+        orderAddressQueryDTO.setId(4);
+        orderAddressQueryDTO.setUid(1);
+
+
+       addressService.updateDefaultAddress(orderAddressQueryDTO);
+    }
+
+    @Test
+    public void updateUserMarketId(){
+        OrderAddressQueryDTO orderAddressQueryDTO = new OrderAddressQueryDTO();
+        orderAddressQueryDTO.setId(1);
+        orderAddressQueryDTO.setMarketId(53);
+
+
+        addressService.updateUserMarketIdById(orderAddressQueryDTO);
+    }
 
 }

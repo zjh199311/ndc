@@ -9,16 +9,19 @@
           where login_token =#{loginToken,jdbcType=VARCHAR}
     </select>
 
-
-
-
-    <select id="findUserById" parameterType="java.lang.Integer" resultType="com.zhongjian.dto.user.result.UserResultDTO">
+    <select id="findUserById" parameterType="java.lang.Integer"
+            resultType="com.zhongjian.dto.user.result.UserResultDTO">
         select
         <include refid="Base_Column_List"/>
 
         from hm_user
         where id =#{id,jdbcType=INTEGER}
     </select>
+
+
+    <update id="updateMarketIdById" parameterType="com.zhongjian.dto.order.address.query.OrderAddressQueryDTO">
+        update hm_user set late_marketid=#{marketId,jdbcType=INTEGER}
+    </update>
 </mapper>
 
 

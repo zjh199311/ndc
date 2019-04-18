@@ -20,20 +20,6 @@ public class OrderServiceImplTest extends AppTest {
     @Resource
     private OrderService orderService;
 
-    @Test
-    public void previewOrderAddress() throws Exception {
-        OrderAddressQueryDTO orderAddressQueryDTO = new OrderAddressQueryDTO();
-        orderAddressQueryDTO.setId(0);
-        orderAddressQueryDTO.setUid(117);
-        OrderAddressResultDTO orderAddressResultDTO = orderService.previewOrderAddress(orderAddressQueryDTO);
-
-        System.out.println(JSONObject.toJSONString(orderAddressResultDTO));
-
-
-
-
-
-    }
 
     @Test
     public void previewOrderTime() throws Exception {

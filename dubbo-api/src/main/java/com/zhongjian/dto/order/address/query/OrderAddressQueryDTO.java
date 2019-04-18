@@ -21,4 +21,11 @@ public class OrderAddressQueryDTO implements Serializable {
      * 用户id
      */
     private Integer uid;
+
+    /**
+     * marketId
+     */
+    private Integer marketId;
+
+
 }
