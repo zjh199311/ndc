@@ -48,8 +48,8 @@ public class PayCommonUtil {
             finalpackage.put("appid", wxAppAppId);
             finalpackage.put("partnerid", wxAppMchId);
             finalpackage.put("prepayid", map.get("prepay_id"));
-            finalpackage.put("timeStamp", String.valueOf(System.currentTimeMillis() / 1000));
-            finalpackage.put("nonceStr", getRandomString(32));
+            finalpackage.put("timestamp", String.valueOf(System.currentTimeMillis() / 1000));
+            finalpackage.put("noncestr", getRandomString(32));
             finalpackage.put("package", "Sign=WXPay");
             String sign = PayCommonUtil.createSign("UTF-8", finalpackage, wxAppKey);
             finalpackage.put("sign", sign);
@@ -60,7 +60,7 @@ public class PayCommonUtil {
             finalpackage.put("package", "prepay_id=" + map.get("prepay_id"));
             finalpackage.put("signType", "MD5");
             String sign = PayCommonUtil.createSign("UTF-8", finalpackage, WxAppletsKey);
-            finalpackage.put("sign", sign);
+            finalpackage.put("paySign", sign);
         }
         return finalpackage;
     }

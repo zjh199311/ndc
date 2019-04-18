@@ -19,6 +19,7 @@ import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.UUID;
 
 @Service("generateSignatureService")
 public class GenerateSignatureServiceImpl implements GenerateSignatureService {
@@ -83,4 +84,7 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
         }
         return stringObjectSortedMap;
     }
+	 public static void main(String[] args) {
+			System.out.println(UUID.randomUUID().toString().replaceAll("-", ""));
+		}
 }
