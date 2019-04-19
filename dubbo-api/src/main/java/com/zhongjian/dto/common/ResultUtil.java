@@ -48,8 +48,8 @@ public class ResultUtil {
 	static ResultDTO<Object> fail(CommonMessageEnum commonMessageEnum) {
 		ResultDTO<Object> failResult = new ResultDTO<Object>();
 		failResult.setFlag(false);
-		successResult.setMsg(CommonMessageEnum.SUCCESS.getMsg());
-		successResult.setCode(CommonMessageEnum.SUCCESS.getCode());
+		successResult.setMsg(commonMessageEnum.getMsg());
+		successResult.setCode(commonMessageEnum.getCode());
 		return failResult;
 	}
 }

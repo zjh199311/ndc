@@ -19,7 +19,9 @@ public enum CommonMessageEnum {
     SUCCESS("通用成功", 10000),
     FAIL("通用失败", 10001),
     NO_PERMISION("您没有权限执行此操作", 50000),
-    USER_IS_NULL("用户不存在", 11007),;
+    USER_IS_NULL("用户不存在", 11007),
+    PARAM_LOST("参数缺失", 10008);
+    ;
 
     private @Getter
     String msg;
