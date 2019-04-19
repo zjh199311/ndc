@@ -22,10 +22,10 @@ public class ResultDTO<T> implements Serializable{
 
     private T data;
 
-    private String errorMessage;
+    private String msg;
 
-    private String statusCode;
+    private int code;
 
-    private Integer count;
+    private Integer total;
 
 }

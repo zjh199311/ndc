@@ -68,7 +68,7 @@ public class GetAllCartListServlet extends HttpServlet {
 
     private String handle(Integer uid) {
         if (uid == 0) {
-            return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL));
+            return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
         }
         return GsonUtil.GsonString(cartShopownService.queryList(uid));
     }

@@ -83,7 +83,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
     public ResultDTO<Object> queryList(Integer uid) {
         ResultDTO<CartMarketResultListDTO> resultDTO = new ResultDTO<CartMarketResultListDTO>();
         if (null == uid) {
-            return ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL);
+            return ResultUtil.getFail(null);
         }
         //组装打烊预约开张DTO
         CartMarketResultListDTO cartMarketResultListDTO = new CartMarketResultListDTO();

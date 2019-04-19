@@ -62,21 +62,21 @@ public class MessagePushServiceImpl implements MessagePushService {
             if(FinalDatas.NUMBER.equals(messageResParamDTO.getCode())){
                 LogUtil.info("发送成功","状态码:"+messageResParamDTO.getCode());
                 MessageResDTO messageResDTO = JSONObject.parseObject(messageResParamDTO.getData(),MessageResDTO.class);
-                resultDTO.setStatusCode(messageResParamDTO.getCode());
+                resultDTO.setCode(CommonMessageEnum.SUCCESS.getCode());
                 if(null!=messageResDTO){
                     resultDTO.setData(messageResDTO);
                     resultDTO.setFlag(true);
-                    resultDTO.setErrorMessage(CommonMessageEnum.SUCCESS.getMsg());
+                    resultDTO.setMsg(CommonMessageEnum.SUCCESS.getMsg());
                 }
             }else{
                 LogUtil.info("发送失败","");
-                resultDTO.setErrorMessage(CommonMessageEnum.FAIL.getMsg());
-                resultDTO.setErrorMessage(CommonMessageEnum.FAIL.getCode());
+                resultDTO.setMsg(CommonMessageEnum.FAIL.getMsg());
+                resultDTO.setCode(CommonMessageEnum.FAIL.getCode());
             }
         } catch (Exception e) {
             LogUtil.info(e,"出现异常");
-            resultDTO.setErrorMessage(CommonMessageEnum.FAIL.getMsg());
-            resultDTO.setErrorMessage(CommonMessageEnum.FAIL.getCode());
+            resultDTO.setMsg(CommonMessageEnum.FAIL.getMsg());
+            resultDTO.setCode(CommonMessageEnum.FAIL.getCode());
             return resultDTO;
         }finally{
         }

@@ -52,25 +52,25 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
     public ResultDTO<Object> addOrUpdateInfo(CartBasketEditQueryDTO cartBasketEditQueryDTO) {
         //参数校验
         if (null == cartBasketEditQueryDTO) {
-            return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
+            return ResultUtil.getFail(null);
         }
         if (null == cartBasketEditQueryDTO.getSid()) {
-            return ResultUtil.getFail(CommonMessageEnum.SID_IS_NULL);
+            return ResultUtil.getFail(null);
         }
         if (null == cartBasketEditQueryDTO.getGid()) {
-            return ResultUtil.getFail(CommonMessageEnum.GID_IS_NULL);
+            return ResultUtil.getFail(null);
         }
         if (null == cartBasketEditQueryDTO.getUid()) {
-            return ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL);
+            return ResultUtil.getFail(null);
         }
         //当商品名称添加为其他的时候增加该字段
         if (FinalDatas.ZERO == cartBasketEditQueryDTO.getGid()) {
             if (StringUtils.isBlank(cartBasketEditQueryDTO.getPrice())) {
-                return ResultUtil.getFail(CommonMessageEnum.PRICE_IS_NULL);
+                return ResultUtil.getFail(null);
             }
         } else {
             if (null == cartBasketEditQueryDTO.getAmount() || BigDecimal.ZERO.equals(new BigDecimal(cartBasketEditQueryDTO.getAmount()))) {
-                return ResultUtil.getFail(CommonMessageEnum.AMOUNT_IS_NULL);
+                return ResultUtil.getFail(null);
             }
         }
         //根据前端传入的商品id去查询pid,
@@ -133,14 +133,14 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
     @Override
     public ResultDTO<Object> queryList(CartBasketListQueryDTO cartBasketListQueryDTO) {
         if (null == cartBasketListQueryDTO) {
-            return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
+            return ResultUtil.getFail(null);
         }
 
         if (null == cartBasketListQueryDTO.getUid()) {
-            return ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL);
+            return ResultUtil.getFail(null);
         }
         if (null == cartBasketListQueryDTO.getSid()) {
-            return ResultUtil.getFail(CommonMessageEnum.SID_IS_NULL);
+            return ResultUtil.getFail(null);
         }
         //根据用户id和商户id查找basket表中的数据.
         CartParamDTO hmBasketParamDTO = new CartParamDTO();
@@ -173,13 +173,13 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
     public ResultDTO<Object> deleteInfoById(CartBasketDelQueryDTO cartBasketDelQueryDTO) {
 
         if (null == cartBasketDelQueryDTO) {
-            return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
+            return ResultUtil.getFail(null);
         }
         if (null == cartBasketDelQueryDTO.getId()) {
-            return ResultUtil.getFail(CommonMessageEnum.PRI_ID_IS_EMPT);
+            return ResultUtil.getFail(null);
         }
         if (null == cartBasketDelQueryDTO.getUid()) {
-            return ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL);
+            return ResultUtil.getFail(null);
         }
         this.dao.executeDeleteMethod(cartBasketDelQueryDTO, "deleteBeanById");
 
@@ -189,13 +189,13 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
     @Override
     public ResultDTO<Object> deleteAllInfoById(CartBasketDelQueryDTO cartBasketDelQueryDTO) {
         if (null == cartBasketDelQueryDTO) {
-            return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
+            return ResultUtil.getFail(null);
         }
         if (null == cartBasketDelQueryDTO.getSid()) {
-            return ResultUtil.getFail(CommonMessageEnum.SID_IS_NULL);
+            return ResultUtil.getFail(null);
         }
         if (null == cartBasketDelQueryDTO.getUid()) {
-            return ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL);
+            return ResultUtil.getFail(null);
         }
         this.dao.executeDeleteMethod(cartBasketDelQueryDTO, "deleteBeanById");
 
@@ -205,13 +205,13 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
     @Override
     public ResultDTO<Object> editInfo(CartBasketEditQueryDTO cartBasketEditQueryDTO) {
         if (null == cartBasketEditQueryDTO) {
-            return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
+            return ResultUtil.getFail(null);
         }
         if (null == cartBasketEditQueryDTO.getId()) {
-            return ResultUtil.getFail(CommonMessageEnum.PRI_ID_IS_EMPT);
+            return ResultUtil.getFail(null);
         }
         if (null == cartBasketEditQueryDTO.getUid()) {
-            return ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL);
+            return ResultUtil.getFail(null);
         }
         CartParamDTO cartParamDTO = new CartParamDTO();
         cartParamDTO.setId(cartBasketEditQueryDTO.getId());
@@ -220,7 +220,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         //根据主键id查询得到gid 如果为0则为其他.根据价格修改. 如果不是0则根据数量修改
         if (FinalDatas.ZERO == cartBasketBean.getGid()) {
             if (StringUtils.isBlank(cartBasketEditQueryDTO.getPrice())) {
-                return ResultUtil.getFail(CommonMessageEnum.PRICE_IS_NULL);
+                return ResultUtil.getFail(null);
             } else {
                 BigDecimal bigDecimal = new BigDecimal(cartBasketEditQueryDTO.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP);
                 cartBasketBean.setPrice(bigDecimal);
@@ -238,7 +238,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
             }
         } else {
             if (StringUtils.isBlank(cartBasketEditQueryDTO.getAmount())) {
-                return ResultUtil.getFail(CommonMessageEnum.AMOUNT_IS_NULL);
+                return ResultUtil.getFail(null);
             }
         }
         //如果是页面上的减号判断如果传来的值为0则是删除操作.
@@ -269,10 +269,10 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
     @Override
     public ResultDTO<Object> deleteAllByPid(CartBasketDelQueryDTO cartBasketDelQueryDTO) {
         if (null == cartBasketDelQueryDTO.getUid()) {
-            return ResultUtil.getFail(CommonMessageEnum.UID_IS_NULL);
+            return ResultUtil.getFail(null);
         }
         if (null == cartBasketDelQueryDTO.getSids() || cartBasketDelQueryDTO.getSids().length < 0) {
-            return ResultUtil.getFail(CommonMessageEnum.SID_IS_NULL);
+            return ResultUtil.getFail(null);
         }
         this.dao.executeDeleteMethod(cartBasketDelQueryDTO, "deleteInfoBySids");
 

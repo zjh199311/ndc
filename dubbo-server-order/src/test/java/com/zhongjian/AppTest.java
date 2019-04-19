@@ -4,8 +4,6 @@ package com.zhongjian;
 import javax.annotation.Resource;
 
 import com.zhongjian.dao.jdbctemplate.OrderDao;
-import com.zhongjian.dto.order.address.query.OrderAddressQueryDTO;
-import com.zhongjian.dto.order.address.result.OrderAddressResultDTO;
 import com.zhongjian.service.order.OrderService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

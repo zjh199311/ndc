@@ -5,10 +5,10 @@ import java.util.List;
 public class ResultUtil {
 
 	private static ResultDTO<Object> successResult = new ResultDTO<Object>(true, null,
-			CommonMessageEnum.SUCCESS.getMsg(), CommonMessageEnum.SUCCESS.getCode(), null);
+			CommonMessageEnum.SUCCESS.getMsg(), CommonMessageEnum.SUCCESS.getCode(), 0);
 
 	private static ResultDTO<Object> failResult = new ResultDTO<Object>(false, null, CommonMessageEnum.FAIL.getMsg(),
-			CommonMessageEnum.FAIL.getCode(), null);
+			CommonMessageEnum.FAIL.getCode(), 0);
 
 	static ResultDTO<Object> defaultSuccess() {
 		return successResult;
@@ -38,18 +38,18 @@ public class ResultUtil {
 		successResult.setData(object);
 		if (successResult instanceof List) {
 			List<?> theList = (List<?>) successResult;
-			successResult.setCount(theList.size());
+			successResult.setTotal(theList.size());
 		}
-		successResult.setErrorMessage(CommonMessageEnum.SUCCESS.getMsg());
-		successResult.setStatusCode(CommonMessageEnum.SUCCESS.getCode());
+		successResult.setMsg(CommonMessageEnum.SUCCESS.getMsg());
+		successResult.setCode(CommonMessageEnum.SUCCESS.getCode());
 		return successResult;
 	}
 
 	static ResultDTO<Object> fail(CommonMessageEnum commonMessageEnum) {
 		ResultDTO<Object> failResult = new ResultDTO<Object>();
 		failResult.setFlag(false);
-		failResult.setErrorMessage(commonMessageEnum.getMsg());
-		failResult.setStatusCode(commonMessageEnum.getCode());
+		successResult.setMsg(CommonMessageEnum.SUCCESS.getMsg());
+		successResult.setCode(CommonMessageEnum.SUCCESS.getCode());
 		return failResult;
 	}
 }

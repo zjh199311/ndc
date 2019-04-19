@@ -421,10 +421,10 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		ResultDTO<Boolean> resultDTO = new ResultDTO<Boolean>();
 		resultDTO.setFlag(false);
 		if (null == orderStatusQueryDTO.getPids() || 0 == orderStatusQueryDTO.getPids().size()) {
-			return ResultUtil.getFail(CommonMessageEnum.PID_IS_NULL);
+			return ResultUtil.getFail(null);
 		}
 		if (null == orderStatusQueryDTO.getStatus()) {
-			return ResultUtil.getFail(CommonMessageEnum.STATUS_IS_NULL);
+			return ResultUtil.getFail(null);
 		}
 		List<OrderShopownBean> orderShopownBeans = this.dao.executeListMethod(orderStatusQueryDTO,
 				"selectHmShopownStatusByPids", OrderShopownBean.class);
