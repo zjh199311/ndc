@@ -15,9 +15,16 @@ public interface AddressService {
      */
     CartAddressResultDTO previewOrderAddress(CartAddressQueryDTO cartAddressQueryDTO);
 
-
+    /**
+     * 修改默认地址
+     * @param cartAddressQueryDTO
+     */
     void updateDefaultAddress(CartAddressQueryDTO cartAddressQueryDTO);
 
+    /**
+     * 更改marketId
+     * @param cartAddressQueryDTO
+     */
     void updateUserMarketIdById(CartAddressQueryDTO cartAddressQueryDTO);
 
 

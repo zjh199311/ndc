@@ -161,30 +161,26 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         hmBasketParamDTO.setSid(cartBasketListQueryDTO.getSid());
         hmBasketParamDTO.setUid(cartBasketListQueryDTO.getUid());
         List<CartBasketResultDTO> findBasketBeanById = this.dao.executeListMethod(hmBasketParamDTO, "selectBasketBeanById", CartBasketResultDTO.class);
-        StringBuilder stringBuilder;
         DecimalFormat decimalFormat = new DecimalFormat("0.##");
         BigDecimal totalPrice = new BigDecimal(0);
         BigDecimal totalDisPrice = new BigDecimal(0);
         for (CartBasketResultDTO cartBasketResultDTO : findBasketBeanById) {
             if (FinalDatas.ZERO == cartBasketResultDTO.getGid()) {
                 cartBasketResultDTO.setFoodName("其他");
-                cartBasketResultDTO.setAmount("1件");
+                cartBasketResultDTO.setAmount("1");
                 totalPrice = totalPrice.add(new BigDecimal(cartBasketResultDTO.getPrice()));
-                cartBasketResultDTO.setPrice(cartBasketResultDTO.getPrice() + "元");
+                cartBasketResultDTO.setPrice(cartBasketResultDTO.getPrice());
 
             } else {
                 CartGoodsBean cartGoodsBean = this.hmGoodsBeanDAO.selectByPrimaryKey(cartBasketResultDTO.getGid());
                 cartBasketResultDTO.setFoodName(cartGoodsBean.getGname());
-                stringBuilder = new StringBuilder();
                 //数量
                 String amount = cartBasketResultDTO.getAmount();
-                //decimalFormat格式转换
-                stringBuilder.append(decimalFormat.format(Double.parseDouble(amount))).append(cartGoodsBean.getUnit());
-                cartBasketResultDTO.setAmount(stringBuilder.toString());
+                cartBasketResultDTO.setAmount(amount);
                 totalPrice = totalPrice.add(new BigDecimal(cartBasketResultDTO.getPrice()));
-                cartBasketResultDTO.setPrice(cartBasketResultDTO.getPrice() + "元");
+                cartBasketResultDTO.setPrice(cartBasketResultDTO.getPrice());
                 cartBasketResultDTO.setContent(cartGoodsBean.getContent());
-
+                cartBasketResultDTO.setUnit(cartGoodsBean.getUnit());
             }
         }
         List<CartStoreActivityResultDTO> findStoreActivityBySid = this.cartStoreActivityBeanHmDAO.executeListMethod(cartBasketListQueryDTO.getSid(), "findStoreActivityBySid", CartStoreActivityResultDTO.class);
