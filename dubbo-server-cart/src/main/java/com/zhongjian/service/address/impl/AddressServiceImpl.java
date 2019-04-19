@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 /**
  * @Author: ldd
  */
-@Service
+@Service("addressService")
 public class AddressServiceImpl extends HmBaseService<CartAddressBean, Integer> implements AddressService {
 
     private HmDAO<UserBean,Integer>hmDAO;
