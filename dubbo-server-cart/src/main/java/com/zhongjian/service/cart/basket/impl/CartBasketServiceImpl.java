@@ -1,12 +1,16 @@
 package com.zhongjian.service.cart.basket.impl;
 
+import com.google.protobuf.StringValue;
 import com.zhongjian.common.constant.FinalDatas;
 import com.zhongjian.dao.entity.cart.basket.CartBasketBean;
 import com.zhongjian.dao.entity.cart.goods.CartGoodsBean;
+import com.zhongjian.dao.entity.cart.store.CartStoreActivityBean;
 import com.zhongjian.dao.entity.cart.user.UserBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
 import com.zhongjian.dao.framework.inf.HmDAO;
 import com.zhongjian.dao.cart.CartParamDTO;
+import com.zhongjian.dto.cart.basket.result.CartBaskerListResultDTO;
+import com.zhongjian.dto.cart.storeActivity.result.CartStoreActivityResultDTO;
 import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.common.ResultUtil;
@@ -15,10 +19,12 @@ import com.zhongjian.dto.cart.basket.query.CartBasketEditQueryDTO;
 import com.zhongjian.dto.cart.basket.query.CartBasketListQueryDTO;
 import com.zhongjian.dto.cart.basket.result.CartBasketResultDTO;
 import com.zhongjian.service.cart.basket.CartBasketService;
+import com.zhongjian.util.LogUtil;
 import com.zhongjian.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -35,6 +41,8 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
 
     private HmDAO<UserBean, Integer> hmUserBeanHmDAO;
 
+    private HmDAO<CartStoreActivityBean, Integer> cartStoreActivityBeanHmDAO;
+
 
     @Resource
     private void setHmGoodsBeanDAO(HmDAO<CartGoodsBean, Integer> hmGoodsBeanDAO) {
@@ -46,6 +54,12 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
     private void setHmUserBeanHmDAO(HmDAO<UserBean, Integer> hmUserBeanHmDAO) {
         this.hmUserBeanHmDAO = hmUserBeanHmDAO;
         this.hmUserBeanHmDAO.setPerfix(UserBean.class.getName());
+    }
+
+    @Resource
+    private void setCartStoreActivityBeanHmDAO(HmDAO<CartStoreActivityBean, Integer> cartStoreActivityBeanHmDAO) {
+        this.cartStoreActivityBeanHmDAO = cartStoreActivityBeanHmDAO;
+        this.cartStoreActivityBeanHmDAO.setPerfix(CartStoreActivityBean.class.getName());
     }
 
     @Override
@@ -109,13 +123,13 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
             this.dao.insertSelective(cartBasketBean);
         } else {
             if (FinalDatas.ZERO == cartBasketEditQueryDTO.getGid()) {
-                cartBasketBean.setId(findBasketBeanById.getId() );
+                cartBasketBean.setId(findBasketBeanById.getId());
                 cartBasketBean.setCtime(unixTime.intValue());
                 BigDecimal add = findBasketBeanById.getPrice().add(new BigDecimal(cartBasketEditQueryDTO.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
                 cartBasketBean.setPrice(add);
                 cartBasketBean.setRemark(cartBasketEditQueryDTO.getRemark());
                 cartBasketBean.setUnitprice(cartBasketBean.getPrice());
-            }else{
+            } else {
                 cartBasketBean.setId(findBasketBeanById.getId());
                 //计算新的总价(去good里面获取价格重新计算)
                 BigDecimal add = findBasketBeanById.getAmount().add(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
@@ -149,11 +163,15 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         List<CartBasketResultDTO> findBasketBeanById = this.dao.executeListMethod(hmBasketParamDTO, "selectBasketBeanById", CartBasketResultDTO.class);
         StringBuilder stringBuilder;
         DecimalFormat decimalFormat = new DecimalFormat("0.##");
+        BigDecimal totalPrice = new BigDecimal(0);
+        BigDecimal totalDisPrice = new BigDecimal(0);
         for (CartBasketResultDTO cartBasketResultDTO : findBasketBeanById) {
             if (FinalDatas.ZERO == cartBasketResultDTO.getGid()) {
                 cartBasketResultDTO.setFoodName("其他");
                 cartBasketResultDTO.setAmount("1件");
+                totalPrice = totalPrice.add(new BigDecimal(cartBasketResultDTO.getPrice()));
                 cartBasketResultDTO.setPrice(cartBasketResultDTO.getPrice() + "元");
+
             } else {
                 CartGoodsBean cartGoodsBean = this.hmGoodsBeanDAO.selectByPrimaryKey(cartBasketResultDTO.getGid());
                 cartBasketResultDTO.setFoodName(cartGoodsBean.getGname());
@@ -163,10 +181,38 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
                 //decimalFormat格式转换
                 stringBuilder.append(decimalFormat.format(Double.parseDouble(amount))).append(cartGoodsBean.getUnit());
                 cartBasketResultDTO.setAmount(stringBuilder.toString());
+                totalPrice = totalPrice.add(new BigDecimal(cartBasketResultDTO.getPrice()));
                 cartBasketResultDTO.setPrice(cartBasketResultDTO.getPrice() + "元");
+                cartBasketResultDTO.setContent(cartGoodsBean.getContent());
+
             }
         }
-        return ResultUtil.getSuccess(findBasketBeanById);
+        List<CartStoreActivityResultDTO> findStoreActivityBySid = this.cartStoreActivityBeanHmDAO.executeListMethod(cartBasketListQueryDTO.getSid(), "findStoreActivityBySid", CartStoreActivityResultDTO.class);
+        if (CollectionUtils.isEmpty(findStoreActivityBySid)) {
+            LogUtil.info("该商家没有优惠活动", "findStoreActivityBySid" + findStoreActivityBySid);
+        }
+        for (CartStoreActivityResultDTO cartStoreActivityResultDTO : findStoreActivityBySid) {
+
+            //查询时根据满减值倒叙来排列,如果大于则计算后直接跳出循环.如果没大于则再次循环直到满足结果
+            if (totalPrice.compareTo(new BigDecimal(cartStoreActivityResultDTO.getFull())) > 0) {
+                //折扣的优惠
+                if (FinalDatas.ONE == cartStoreActivityResultDTO.getType()) {
+                    totalDisPrice = totalPrice.multiply(new BigDecimal(cartStoreActivityResultDTO.getDiscount()));
+                    break;
+                }
+                //满减优惠
+                if (FinalDatas.ZERO == cartStoreActivityResultDTO.getType()) {
+                    totalDisPrice = totalPrice.subtract(new BigDecimal(cartStoreActivityResultDTO.getReduce()));
+                    break;
+                }
+            }
+        }
+        CartBaskerListResultDTO cartBaskerListResultDTO = new CartBaskerListResultDTO();
+        cartBaskerListResultDTO.setTotalDisPrice(String.valueOf(totalDisPrice.setScale(2)));
+        cartBaskerListResultDTO.setTotalPrice(String.valueOf(totalPrice.setScale(2)));
+        cartBaskerListResultDTO.setCartBasketResultDTOS(findBasketBeanById);
+
+        return ResultUtil.getSuccess(cartBaskerListResultDTO);
     }
 
     @Override
@@ -216,7 +262,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         CartParamDTO cartParamDTO = new CartParamDTO();
         cartParamDTO.setId(cartBasketEditQueryDTO.getId());
         cartParamDTO.setUid(cartBasketEditQueryDTO.getUid());
-        CartBasketBean cartBasketBean = this.dao.executeSelectOneMethod(cartParamDTO,"selectBasketInfoById",CartBasketBean.class);
+        CartBasketBean cartBasketBean = this.dao.executeSelectOneMethod(cartParamDTO, "selectBasketInfoById", CartBasketBean.class);
         //根据主键id查询得到gid 如果为0则为其他.根据价格修改. 如果不是0则根据数量修改
         if (FinalDatas.ZERO == cartBasketBean.getGid()) {
             if (StringUtils.isBlank(cartBasketEditQueryDTO.getPrice())) {
