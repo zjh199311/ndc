@@ -1,8 +1,6 @@
 package com.zhongjian.util;
 
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -12,7 +10,6 @@ import java.math.BigDecimal;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -235,6 +232,16 @@ public class PayCommonUtil {
         }
 
     }
-
+    public static String  inputStream2String  (InputStream  in , String encoding)  throws  Exception  {   
+        StringBuffer  out  =  new  StringBuffer();   
+        InputStreamReader inread = new InputStreamReader(in,encoding);   
+           
+        char[]  b  =  new  char[4096];   
+        for  (int  n;  (n  =  inread.read(b))  !=  -1;)  {   
+                out.append(new  String(b,  0,  n));   
+        }   
+      
+          return out.toString();   
+    }  
 
 }

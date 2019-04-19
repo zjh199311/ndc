@@ -29,7 +29,7 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
 
     @Override
     public String getAliSignature(String out_trade_no, String totalAmount) {
-        String orderTypeString = "";
+        String orderTypeString = "订单支付";
         //生成签名
         Map<String, String> orderMap = new LinkedHashMap<String, String>(); // 订单实体
         /****** 2.商品参数封装开始 *****/ // 手机端用
