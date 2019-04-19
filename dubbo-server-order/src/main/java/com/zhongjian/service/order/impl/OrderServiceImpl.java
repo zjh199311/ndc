@@ -1,17 +1,13 @@
 package com.zhongjian.service.order.impl;
 
 import com.zhongjian.common.constant.FinalDatas;
-import com.zhongjian.dao.entity.order.address.OrderAddressBean;
 import com.zhongjian.dao.entity.order.shopown.OrderShopownBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
-import com.zhongjian.dao.framework.inf.HmDAO;
 import com.zhongjian.dao.jdbctemplate.OrderDao;
+import com.zhongjian.dto.cart.storeActivity.result.CartStoreActivityResultDTO;
 import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.common.ResultUtil;
-import com.zhongjian.dto.cart.storeActivity.result.HmStoreActivityResultDTO;
-import com.zhongjian.dto.order.address.query.OrderAddressQueryDTO;
-import com.zhongjian.dto.order.address.result.OrderAddressResultDTO;
 import com.zhongjian.dto.order.order.query.OrderStatusQueryDTO;
 import com.zhongjian.service.order.OrderService;
 
@@ -19,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -156,7 +151,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				// 享受市场优惠
 				storesAmountBigDecimalForFavorable = storesAmountBigDecimalForFavorable.add(storeAmountBigDecimal);
 			}
-			HmStoreActivityResultDTO storeActivtiy = orderDao.getStoreActivtiy(sids[i], storeAmountBigDecimal);
+			CartStoreActivityResultDTO storeActivtiy = orderDao.getStoreActivtiy(sids[i], storeAmountBigDecimal);
 			if (storeActivtiy == null) {
 				actualStoreAmountBigDecimal = storeAmountBigDecimal;
 			} else {

@@ -3,14 +3,11 @@ package com.zhongjian.servlet;
 import com.zhongjian.common.GsonUtil;
 import com.zhongjian.common.ResponseHandle;
 import com.zhongjian.common.SpringContextHolder;
-import com.zhongjian.dto.cart.basket.query.HmBasketListQueryDTO;
 import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.executor.ThreadPoolExecutorSingle;
-import com.zhongjian.service.cart.basket.CartBasketService;
 import com.zhongjian.service.cart.shopown.CartShopownService;
 import org.apache.log4j.Logger;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.*;
 import javax.servlet.annotation.WebServlet;

@@ -1,4 +1,4 @@
-package com.zhongjian.dto.order.address.query;
+package com.zhongjian.dto.cart.address.query;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @Author: ldd
  */
 @Data
-public class OrderAddressQueryDTO implements Serializable {
+public class CartAddressQueryDTO implements Serializable {
 
     private static final long serialVersionUID = -5948092855255306532L;
 

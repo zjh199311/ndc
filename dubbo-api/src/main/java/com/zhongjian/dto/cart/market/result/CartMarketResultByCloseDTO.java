@@ -1,7 +1,7 @@
 package com.zhongjian.dto.cart.market.result;
 
-import com.zhongjian.dto.cart.marketActivity.result.HmMarketActivityResultDTO;
-import com.zhongjian.dto.cart.shopown.result.HmShopownResultDTO;
+import com.zhongjian.dto.cart.marketActivity.result.CartMarketActivityResultDTO;
+import com.zhongjian.dto.cart.shopown.result.CartShopownResultDTO;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,7 +11,7 @@ import java.util.List;
  * @Author: ldd
  */
 @Data
-public class HmMarketResultByCloseDTO implements Serializable {
+public class CartMarketResultByCloseDTO implements Serializable {
 
     private static final long serialVersionUID = 197018972999527001L;
 
@@ -48,10 +48,10 @@ public class HmMarketResultByCloseDTO implements Serializable {
     /**
      * 用户在商户下购买的信息
      */
-    private List<HmShopownResultDTO> hmShopownResultDTOS;
+    private List<CartShopownResultDTO> cartShopownResultDTOS;
 
     /**
      * 菜场活动
      */
-    HmMarketActivityResultDTO hmMarketActivityResultDTO;
+    CartMarketActivityResultDTO cartMarketActivityResultDTO;
 }

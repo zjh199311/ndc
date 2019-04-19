@@ -1,14 +1,17 @@
 package com.zhongjian.dto.cart.shopown.result;
 
-import com.zhongjian.dto.cart.basket.result.HmBasketResultDTO;
-import com.zhongjian.dto.cart.storeActivity.result.HmStoreActivityResultDTO;
+import com.zhongjian.dto.cart.basket.result.CartBasketResultDTO;
+import com.zhongjian.dto.cart.storeActivity.result.CartStoreActivityResultDTO;
+import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @Author: ldd
  */
-public class HmShopownResultByOpenDTO {
+@Data
+public class CartShopownResultByCloseDTO implements Serializable{
 
     private static final long serialVersionUID = 197018972999527001L;
 
@@ -55,12 +58,12 @@ public class HmShopownResultByOpenDTO {
     /**
      * 商家下对应的活动信息
      */
-    List<HmStoreActivityResultDTO> hmStoreActivityResultDTOS;
+    List<CartStoreActivityResultDTO> cartStoreActivityResultDTOS;
 
     /**
      * 该用户在商家下对应的食品信息
      */
-    List<HmBasketResultDTO> hmBasketResultDTOS;
+    List<CartBasketResultDTO> cartBasketResultDTOS;
 
     /**
      * 备注组合

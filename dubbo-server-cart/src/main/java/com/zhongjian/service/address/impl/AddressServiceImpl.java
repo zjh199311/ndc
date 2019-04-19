@@ -5,8 +5,8 @@ import com.zhongjian.dao.entity.cart.address.CartAddressBean;
 import com.zhongjian.dao.entity.cart.user.UserBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
 import com.zhongjian.dao.framework.inf.HmDAO;
-import com.zhongjian.dto.order.address.query.OrderAddressQueryDTO;
-import com.zhongjian.dto.order.address.result.OrderAddressResultDTO;
+import com.zhongjian.dto.cart.address.query.CartAddressQueryDTO;
+import com.zhongjian.dto.cart.address.result.CartAddressResultDTO;
 import com.zhongjian.service.address.AddressService;
 import org.springframework.stereotype.Service;
 
@@ -29,31 +29,31 @@ public class AddressServiceImpl extends HmBaseService<CartAddressBean, Integer> 
 
 
     @Override
-    public OrderAddressResultDTO previewOrderAddress(OrderAddressQueryDTO orderAddressQueryDTO) {
+    public CartAddressResultDTO previewOrderAddress(CartAddressQueryDTO cartAddressQueryDTO) {
         /**
          * 要是传来的id为0.则根据uid去查询数据库并根据status为1的默认地址返回.limit=1 要是传来的id不为0,则根据id去查询在返回
          */
-        if (FinalDatas.ZERO == orderAddressQueryDTO.getId()) {
-            OrderAddressResultDTO orderAddressResultDTO = this.dao.executeSelectOneMethod(
-                    orderAddressQueryDTO.getUid(), "findAddressByUid", OrderAddressResultDTO.class);
-            return orderAddressResultDTO;
+        if (FinalDatas.ZERO == cartAddressQueryDTO.getId()) {
+            CartAddressResultDTO cartAddressResultDTO = this.dao.executeSelectOneMethod(
+                    cartAddressQueryDTO.getUid(), "findAddressByUid", CartAddressResultDTO.class);
+            return cartAddressResultDTO;
         } else {
-            OrderAddressResultDTO findAddressByid = this.dao.executeSelectOneMethod(
-                    orderAddressQueryDTO.getId(), "findAddressByid", OrderAddressResultDTO.class);
+            CartAddressResultDTO findAddressByid = this.dao.executeSelectOneMethod(
+                    cartAddressQueryDTO.getId(), "findAddressByid", CartAddressResultDTO.class);
             return findAddressByid;
         }
     }
 
     @Override
-    public void updateDefaultAddress(OrderAddressQueryDTO orderAddressQueryDTO) {
+    public void updateDefaultAddress(CartAddressQueryDTO cartAddressQueryDTO) {
 
-        this.dao.executeUpdateMethod(orderAddressQueryDTO, "updateStatusByUid");
+        this.dao.executeUpdateMethod(cartAddressQueryDTO, "updateStatusByUid");
     }
 
     @Override
-    public void updateUserMarketIdById(OrderAddressQueryDTO orderAddressQueryDTO) {
+    public void updateUserMarketIdById(CartAddressQueryDTO cartAddressQueryDTO) {
 
-        this.hmDAO.executeUpdateMethod(orderAddressQueryDTO,"updateMarketIdById");
+        this.hmDAO.executeUpdateMethod(cartAddressQueryDTO,"updateMarketIdById");
 
     }
 }

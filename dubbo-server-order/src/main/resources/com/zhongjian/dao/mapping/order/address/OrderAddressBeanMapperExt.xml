@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.zhongjian.dao.entity.order.address.OrderAddressBean">
 
-    <resultMap id="BaseResultMapExt" type="com.zhongjian.dto.order.address.result.OrderAddressResultDTO" >
+    <resultMap id="BaseResultMapExt" type="com.zhongjian.dto.cart.address.result.CartAddressResultDTO" >
         <id column="id" property="id" jdbcType="INTEGER" />
         <result column="contacts" property="contacts" jdbcType="VARCHAR" />
         <result column="gender" property="gender" jdbcType="CHAR" />
@@ -23,7 +23,7 @@
         LIMIT 1;
     </select>
 
-    <select id="findAddressByid" resultType="com.zhongjian.dto.order.address.query.OrderAddressQueryDTO" resultMap="BaseResultMapExt">
+    <select id="findAddressByid" resultType="com.zhongjian.dto.cart.address.query.CartAddressQueryDTO" resultMap="BaseResultMapExt">
         select
         <include refid="Base_Column_List"/>
         from hm_address

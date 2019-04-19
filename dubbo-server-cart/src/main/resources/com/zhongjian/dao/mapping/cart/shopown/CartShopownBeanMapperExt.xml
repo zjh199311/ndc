@@ -2,13 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.zhongjian.dao.entity.cart.shopown.CartShopownBean">
 
-    <resultMap id="BaseShopownMap" type="com.zhongjian.dto.cart.shopown.result.HmShopownResultDTO">
+    <resultMap id="BaseShopownMap" type="com.zhongjian.dto.cart.shopown.result.CartShopownResultDTO">
         <id column="pid" property="pid" jdbcType="INTEGER"/>
         <result column="sname" property="shopName" jdbcType="VARCHAR"/>
         <result column="pic" property="picture" jdbcType="VARCHAR"/>
         <result column="status" property="status" jdbcType="VARCHAR"/>
         <result column="unFavorable" property="unFavorable" jdbcType="VARCHAR"/>
-        <collection property="hmStoreActivityResultDTOS"
+        <collection property="cartStoreActivityResultDTOS"
                     select="com.zhongjian.dao.entity.cart.store.CartStoreActivityBean.findStoreActivityBySid" column="pid">
         </collection>
     </resultMap>

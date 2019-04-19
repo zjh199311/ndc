@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.zhongjian.dto.cart.basket.query.HmBasketDelQueryDTO;
+import com.zhongjian.dto.cart.basket.query.CartBasketDelQueryDTO;
 import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultUtil;
 import org.apache.log4j.Logger;
@@ -75,9 +75,9 @@ public class DeleteStoreCart extends HttpServlet {
 		if (uid == 0) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
 		}
-		HmBasketDelQueryDTO hmBasketDelQueryDTO = new HmBasketDelQueryDTO();
-		hmBasketDelQueryDTO.setUid(uid);
-		hmBasketDelQueryDTO.setSid(sid);
-		return GsonUtil.GsonString(cartBasketService.deleteAllInfoById(hmBasketDelQueryDTO));
+		CartBasketDelQueryDTO cartBasketDelQueryDTO = new CartBasketDelQueryDTO();
+		cartBasketDelQueryDTO.setUid(uid);
+		cartBasketDelQueryDTO.setSid(sid);
+		return GsonUtil.GsonString(cartBasketService.deleteAllInfoById(cartBasketDelQueryDTO));
 	}
 }

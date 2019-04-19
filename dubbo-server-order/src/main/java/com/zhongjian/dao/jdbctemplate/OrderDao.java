@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
+import com.zhongjian.dto.cart.storeActivity.result.CartStoreActivityResultDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -18,7 +19,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import com.zhongjian.dto.cart.storeActivity.result.HmStoreActivityResultDTO;
 import com.zhongjian.util.DateUtil;
 
 @Repository
@@ -27,17 +27,17 @@ public class OrderDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	public HmStoreActivityResultDTO getStoreActivtiy(Integer sid, BigDecimal amount) {
+	public CartStoreActivityResultDTO getStoreActivtiy(Integer sid, BigDecimal amount) {
 		String sql = "SELECT full,reduce,discount,type from hm_store_activity where sid="
 				+ " ? and full <= ? and `enable` = 1 and is_delete = 0 AND examine = 2 ORDER BY full DESC LIMIT 1";
-		RowMapper<HmStoreActivityResultDTO> rowMapper = new BeanPropertyRowMapper<>(HmStoreActivityResultDTO.class);
-		HmStoreActivityResultDTO hmStoreActivityResultDTO = null;
+		RowMapper<CartStoreActivityResultDTO> rowMapper = new BeanPropertyRowMapper<>(CartStoreActivityResultDTO.class);
+		CartStoreActivityResultDTO cartStoreActivityResultDTO = null;
 		try {
-			hmStoreActivityResultDTO = jdbcTemplate.queryForObject(sql, rowMapper, sid, amount);
+			cartStoreActivityResultDTO = jdbcTemplate.queryForObject(sql, rowMapper, sid, amount);
 		} catch (EmptyResultDataAccessException e) {
-			// hmStoreActivityResultDTO = null;
+			// cartStoreActivityResultDTO = null;
 		}
-		return hmStoreActivityResultDTO;
+		return cartStoreActivityResultDTO;
 	}
 
 	public Map<String, Object> getMarketActivtiy(Integer marketId) {

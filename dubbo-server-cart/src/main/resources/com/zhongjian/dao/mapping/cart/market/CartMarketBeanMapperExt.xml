@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.zhongjian.dao.entity.cart.market.CartMarketBean">
-    <resultMap id="BaseMarket" type="com.zhongjian.dto.cart.market.result.HmMarketResultDTO">
+    <resultMap id="BaseMarket" type="com.zhongjian.dto.cart.market.result.CartMarketResultDTO">
         <id column="id" property="martketId"/>
         <result column="ename" property="marketName" jdbcType="VARCHAR"/>
-        <association property="hmMarketActivityResultDTO" column="id"
+        <association property="cartMarketActivityResultDTO" column="id"
                      select="com.zhongjian.dao.entity.cart.market.CartMarketActivityBean.findActitityById">
         </association>
 
-        <collection property="hmShopownResultDTOS" column="id"
+        <collection property="cartShopownResultDTOS" column="id"
                     select="com.zhongjian.dao.entity.cart.shopown.CartShopownBean.findShopownInfoByMarketId">
         </collection>
     </resultMap>

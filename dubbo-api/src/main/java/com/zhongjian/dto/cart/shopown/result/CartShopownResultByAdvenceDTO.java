@@ -1,17 +1,14 @@
 package com.zhongjian.dto.cart.shopown.result;
 
-import com.zhongjian.dto.cart.basket.result.HmBasketResultDTO;
-import com.zhongjian.dto.cart.storeActivity.result.HmStoreActivityResultDTO;
-import lombok.Data;
+import com.zhongjian.dto.cart.basket.result.CartBasketResultDTO;
+import com.zhongjian.dto.cart.storeActivity.result.CartStoreActivityResultDTO;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
  * @Author: ldd
  */
-@Data
-public class HmShopownResultDTO implements Serializable {
+public class CartShopownResultByAdvenceDTO {
 
     private static final long serialVersionUID = 197018972999527001L;
 
@@ -23,11 +20,6 @@ public class HmShopownResultDTO implements Serializable {
      * 商户图片
      */
     private String picture;
-
-    /**
-     *0优惠1不优惠
-     */
-    private String unFavorable;
 
     /**
      * 商户名称
@@ -63,16 +55,15 @@ public class HmShopownResultDTO implements Serializable {
     /**
      * 商家下对应的活动信息
      */
-    List<HmStoreActivityResultDTO> hmStoreActivityResultDTOS;
+    List<CartStoreActivityResultDTO> cartStoreActivityResultDTOS;
 
     /**
      * 该用户在商家下对应的食品信息
      */
-    List<HmBasketResultDTO> hmBasketResultDTOS;
+    List<CartBasketResultDTO> cartBasketResultDTOS;
 
     /**
      * 备注组合
      */
     private List<String> remarkList;
-
 }

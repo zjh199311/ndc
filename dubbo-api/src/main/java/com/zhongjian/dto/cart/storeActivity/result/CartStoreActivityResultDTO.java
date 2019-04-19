@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @Author: ldd
  */
 @Data
-public class HmStoreActivityResultDTO implements Serializable{
+public class CartStoreActivityResultDTO implements Serializable{
 
     private static final long serialVersionUID = 197018972999527001L;
 
