@@ -68,9 +68,6 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         if (null == cartBasketEditQueryDTO) {
             return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
         }
-        if (null == cartBasketEditQueryDTO.getSid()) {
-            return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
-        }
         if (null == cartBasketEditQueryDTO.getGid()) {
             return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
         }
@@ -80,6 +77,9 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         //当商品名称添加为其他的时候增加该字段
         if (FinalDatas.ZERO == cartBasketEditQueryDTO.getGid()) {
             if (StringUtils.isBlank(cartBasketEditQueryDTO.getPrice())) {
+                return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
+            }
+            if (null == cartBasketEditQueryDTO.getSid()) {
                 return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
             }
         } else {
@@ -119,6 +119,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
                 //总价
                 BigDecimal multiply = cartGoodsBean.getPrice().multiply(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
                 cartBasketBean.setPrice(multiply.setScale(2, BigDecimal.ROUND_HALF_UP));
+                cartBasketBean.setSid(cartGoodsBean.getPid());
             }
             this.dao.insertSelective(cartBasketBean);
         } else {
@@ -137,6 +138,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
                 cartBasketBean.setPrice(multiply1.setScale(2, BigDecimal.ROUND_HALF_UP));
                 cartBasketBean.setAmount(findBasketBeanById.getAmount().add(new BigDecimal(cartBasketEditQueryDTO.getAmount())));
                 cartBasketBean.setUnitprice(cartGoodsBean.getPrice());
+                cartBasketBean.setSid(cartGoodsBean.getPid());
             }
             this.dao.updateByPrimaryKeySelective(cartBasketBean);
 

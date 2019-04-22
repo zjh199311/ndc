@@ -6,9 +6,17 @@
         select
         <include refid="Base_Column_List"/>
         from hm_basket
-        where gid=#{gid,jdbcType=INTEGER} AND
-        uid=#{uid,jdbcType=INTEGER} AND
-        sid=#{sid,jdbcType=INTEGER}
+        <where>
+            <if test="gid!=null and gid!=''">
+                gid=#{gid,jdbcType=INTEGER}
+            </if>
+            <if test="uid!=null and uid!=''">
+                AND uid=#{uid,jdbcType=INTEGER}
+            </if>
+            <if test="sid!=null and sid!=''">
+                AND sid=#{sid,jdbcType=INTEGER}
+            </if>
+        </where>
     </select>
 
     <select id="selectBasketBeanById" parameterType="com.zhongjian.dao.cart.CartParamDTO"
