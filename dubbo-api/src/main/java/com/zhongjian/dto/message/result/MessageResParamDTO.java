@@ -15,6 +15,12 @@ public class MessageResParamDTO implements Serializable {
      * 返回组装的data
      */
     private String data;
+
+    /**
+     * 描述
+     */
+    private String desc;
+
     /**
      * 编码
      */

@@ -1,13 +1,14 @@
 package com.zhongjian.service.message;
 
-import com.zhongjian.dto.common.ResultDTO;
-import com.zhongjian.dto.message.query.MessageReqDTO;
-import com.zhongjian.dto.message.result.MessageResDTO;
+import com.zhongjian.dto.message.result.MessageResParamDTO;
 
 /**
  * @Author: ldd
  */
 public interface MessagePushService {
 
-    ResultDTO<MessageResDTO> messagePush(MessageReqDTO messageReqDTO);
+
+    //起手,用户,商户id body msg
+    void messagePush(String rid, String uid, String[] pid);
+
 }

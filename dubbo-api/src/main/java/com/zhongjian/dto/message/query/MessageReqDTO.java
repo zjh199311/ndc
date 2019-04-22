@@ -34,6 +34,10 @@ public class MessageReqDTO implements Serializable {
      * 100 自定义消息类型
      */
     private Integer type;
+
+
+    private Integer roleType;
+
     /**
      * 请参考下方消息示例说明中对应消息的body字段，最大长度5000字符，为一个JSON串
      */
@@ -43,10 +47,15 @@ public class MessageReqDTO implements Serializable {
      * 为接受消息的字段
      */
     private String msg;
+
+    /**
+     * 为接受消息的内容
+     */
+    private String content;
     /**
      * 发消息时特殊指定的行为选项,JSON格式，可用于指定消息的漫游，存云端历史，发送方多端同步，推送，消息抄送等特殊行为;option中字段不填时表示默认值 ，option示例:
      * <p>
-     * {"push":false,"roam":true,"history":false,"sendersync":true,"route":false,"badge":false,"needPushNick":true}
+     * {"push":false,"roam":true,"history":false,"sendersync":true,"route":false}
      * 字段说明：
      * 1. roam: 该消息是否需要漫游，默认true（需要app开通漫游消息功能）；
      * 2. history: 该消息是否存云端历史，默认true；

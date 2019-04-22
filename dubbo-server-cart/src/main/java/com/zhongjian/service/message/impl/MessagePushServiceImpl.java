@@ -3,19 +3,15 @@ package com.zhongjian.service.message.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.zhongjian.common.constant.FinalDatas;
 import com.zhongjian.commoncomponent.PropUtil;
-import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultDTO;
+import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.dto.message.query.MessageBodyDTO;
+import com.zhongjian.dto.message.query.MessageQueryDTO;
 import com.zhongjian.dto.message.query.MessageReqDTO;
-import com.zhongjian.dto.message.result.MessageResDTO;
 import com.zhongjian.dto.message.result.MessageResParamDTO;
 import com.zhongjian.service.message.MessagePushService;
-import com.zhongjian.util.CheckSumBuilderUtil;
-import com.zhongjian.util.HttpConnectionPoolUtil;
-import com.zhongjian.util.LogUtil;
-import com.zhongjian.util.MapUtil;
-
-
+import com.zhongjian.util.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.HttpPost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,13 +25,56 @@ import java.util.HashMap;
 @Service
 public class MessagePushServiceImpl implements MessagePushService {
 
-	
-   @Autowired
-   private PropUtil propUtil ;
+
+    @Autowired
+    private PropUtil propUtil;
+
     @Override
-    public ResultDTO<MessageResDTO> messagePush(MessageReqDTO messageReqDTO) {
-        ResultDTO<MessageResDTO> resultDTO = new ResultDTO<MessageResDTO>();
-        resultDTO.setFlag(false);
+    public void messagePush(String rid, String uid, String[] pid) {
+        MessageReqDTO messageDTO = new MessageReqDTO();
+        messageDTO.setOpe(0);
+        messageDTO.setType(100);
+        messageDTO.setOption("{\"push\":true,\"roam\":true,\"history\":false,\"sendersync\":true, \"route\":false}");
+        if (!StringUtils.isBlank(rid)) {
+            messageDTO.setTo(String.valueOf(rid));
+            messageDTO.setPushcontent("您有新订单了");
+            messageDTO.setPayload("{\n" +
+                    "          \"key1\": \"value1\",\n" +
+                    "          \"apsField\": {\n" +
+                    "              \"mutable-content\": 1,\n" +
+                    "              \"sound\": \"warningMusic.caf\",\n" +
+                    "              \"alert\": {\n" +
+                    "                  \"title\": \"订单提醒\",\n" +
+                    "                  \"body\": \"您有新的订单了!\"\n" +
+                    "              }\n" +
+                    "           },\n" +
+                    "           \"CustomNews\": {\n" +
+                    "              \"type\": 1,\n" +
+                    "              \"data\": \"您有新的订单了!\"\n" +
+                    "           }\n" +
+                    "      }");
+            messageDTO.setMsg("你有一份新订单");
+            messageDTO.setRoleType(1);
+            messagePush(messageDTO);
+        }
+        if (!StringUtil.isBlank(uid)) {
+            messageDTO.setMsg(null);
+            messageDTO.setTo(String.valueOf(uid));
+            messageDTO.setPushcontent("您的订单已被接单,请耐心等待配送");
+            messageDTO.setRoleType(1001);
+            messageDTO.setPayload(null);
+            messageDTO.setContent("您的订单已被接单,请耐心等待配送");
+            messagePush(messageDTO);
+        }
+        if (null != pid && pid.length != 0) {
+            messageDTO.setPushcontent("");
+            messageDTO.setTo(String.valueOf(pid));
+            messageDTO.setRoleType(1000);
+            messagePush(messageDTO);
+        }
+    }
+
+    public void messagePush(MessageReqDTO messageReqDTO) {
         String appKey = propUtil.getYxAppKey();
         String appSecret = propUtil.getYxAppSecret();
         String nonce = "12345";
@@ -51,35 +90,29 @@ public class MessagePushServiceImpl implements MessagePushService {
         try {
             // 设置请求的参数
             MessageBodyDTO messageBodyDTO = new MessageBodyDTO();
+            MessageQueryDTO messageQueryDTO = new MessageQueryDTO();
+            if (!StringUtil.isBlank(messageReqDTO.getMsg())) {
+                messageQueryDTO.setImMessage(messageReqDTO.getMsg());
+            }
+            if (!StringUtil.isBlank(messageReqDTO.getContent())) {
+                messageQueryDTO.setContent(messageReqDTO.getContent());
+            }
             //设置from
             messageReqDTO.setFrom(propUtil.getYxAccid());
-            messageBodyDTO.setMsg(messageReqDTO.getMsg());
+            messageBodyDTO.setData(JSONObject.toJSONString(messageQueryDTO));
+            messageBodyDTO.setType(messageReqDTO.getRoleType());
             messageReqDTO.setBody(JSONObject.toJSONString(messageBodyDTO));
             HashMap<String, String> map = MapUtil.parseObjectToHashMap(messageReqDTO);
-            String message = HttpConnectionPoolUtil.post(propUtil.getYxUrl(), httpPost,map);
+            String message = HttpConnectionPoolUtil.post(propUtil.getYxUrl(), httpPost, map);
             // 执行请求
             MessageResParamDTO messageResParamDTO = JSONObject.parseObject(message, MessageResParamDTO.class);
-            if(FinalDatas.NUMBER.equals(messageResParamDTO.getCode())){
-                LogUtil.info("发送成功","状态码:"+messageResParamDTO.getCode());
-                MessageResDTO messageResDTO = JSONObject.parseObject(messageResParamDTO.getData(),MessageResDTO.class);
-                resultDTO.setCode(CommonMessageEnum.SUCCESS.getCode());
-                if(null!=messageResDTO){
-                    resultDTO.setData(messageResDTO);
-                    resultDTO.setFlag(true);
-                    resultDTO.setMsg(CommonMessageEnum.SUCCESS.getMsg());
-                }
-            }else{
-                LogUtil.info("发送失败","");
-                resultDTO.setMsg(CommonMessageEnum.FAIL.getMsg());
-                resultDTO.setCode(CommonMessageEnum.FAIL.getCode());
+            if (FinalDatas.NUMBER.equals(messageResParamDTO.getCode())) {
+                LogUtil.info("发送成功", "状态码:" + messageResParamDTO.getCode());
+            } else {
+                LogUtil.info("发送失败", "", messageResParamDTO.getDesc());
             }
         } catch (Exception e) {
-            LogUtil.info(e,"出现异常");
-            resultDTO.setMsg(CommonMessageEnum.FAIL.getMsg());
-            resultDTO.setCode(CommonMessageEnum.FAIL.getCode());
-            return resultDTO;
-        }finally{
+            LogUtil.info(e, "出现异常");
         }
-        return resultDTO;
     }
 }

@@ -5,25 +5,20 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @Author: yd
+ * @Author: ldd
  */
 @Data
-public class MessageBodyDTO implements Serializable {
+public class MessageQueryDTO implements Serializable {
 
     private static final long serialVersionUID = 197018972999527001L;
-    /**
-     * 消息封装的字段
-     */
-    private String data;
 
     /**
-     * type
+     * 消息
      */
-    private Integer type;
+    private String imMessage;
 
     /**
      * 内容
      */
     private String content;
-
 }
