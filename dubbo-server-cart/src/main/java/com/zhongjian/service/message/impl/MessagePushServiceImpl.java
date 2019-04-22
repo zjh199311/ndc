@@ -109,7 +109,7 @@ public class MessagePushServiceImpl implements MessagePushService {
             if (FinalDatas.NUMBER.equals(messageResParamDTO.getCode())) {
                 LogUtil.info("发送成功", "状态码:" + messageResParamDTO.getCode());
             } else {
-                LogUtil.info("发送失败", "", messageResParamDTO.getDesc());
+                LogUtil.info("发送失败", "" +  messageResParamDTO.getDesc());
             }
         } catch (Exception e) {
             LogUtil.info(e, "出现异常");

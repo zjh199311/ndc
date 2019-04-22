@@ -7,13 +7,14 @@ import com.zhongjian.dao.cart.CartParamDTO;
 import com.zhongjian.dao.entity.cart.rider.CartRiderOrderBean;
 import com.zhongjian.dao.framework.inf.HmDAO;
 import com.zhongjian.dto.common.ResultDTO;
-import com.zhongjian.dto.cart.basket.query.HmBasketDelQueryDTO;
-import com.zhongjian.dto.cart.basket.query.HmBasketEditQueryDTO;
-import com.zhongjian.dto.cart.basket.query.HmBasketListQueryDTO;
-import com.zhongjian.dto.order.address.query.OrderAddressQueryDTO;
+import com.zhongjian.dto.cart.basket.query.CartBasketDelQueryDTO;
+import com.zhongjian.dto.cart.basket.query.CartBasketEditQueryDTO;
+import com.zhongjian.dto.cart.basket.query.CartBasketListQueryDTO;
+import com.zhongjian.dto.cart.address.query.CartAddressQueryDTO;
 import com.zhongjian.service.address.AddressService;
 import com.zhongjian.service.cart.basket.CartBasketService;
 import com.zhongjian.service.cart.shopown.CartShopownService;
+import com.zhongjian.service.message.MessagePushService;
 import com.zhongjian.service.user.UserService;
 import com.zhongjian.util.DateUtil;
 import org.junit.Test;
@@ -22,6 +23,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+import javax.annotation.Resources;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -35,6 +37,9 @@ public class AppTest {
 
     @Resource
     private AddressService addressService;
+
+    @Resource
+    private MessagePushService messagePushService;
 
 
     @Resource
@@ -58,7 +63,7 @@ public class AppTest {
 
     @Test
     public void addOrUpdateInfo() {
-        HmBasketEditQueryDTO hmBasketDelQueryDTO = new HmBasketEditQueryDTO();
+        CartBasketEditQueryDTO hmBasketDelQueryDTO = new CartBasketEditQueryDTO();
         hmBasketDelQueryDTO.setUid(32716);
         hmBasketDelQueryDTO.setGid(0);
         hmBasketDelQueryDTO.setSid(127);
@@ -71,17 +76,17 @@ public class AppTest {
 
     @Test
     public void queryList() {
-        HmBasketListQueryDTO hmBasketListQueryDTO = new HmBasketListQueryDTO();
-        hmBasketListQueryDTO.setUid(32716);
-        hmBasketListQueryDTO.setSid(229);
-        ResultDTO<Object> objectResultDTO = hmBasketService.queryList(hmBasketListQueryDTO);
+        CartBasketListQueryDTO cartBasketListQueryDTO = new CartBasketListQueryDTO();
+        cartBasketListQueryDTO.setUid(32716);
+        cartBasketListQueryDTO.setSid(320);
+        ResultDTO<Object> objectResultDTO = hmBasketService.queryList(cartBasketListQueryDTO);
         System.out.println(JSONObject.toJSONString(objectResultDTO));
 
     }
 
     @Test
     public void deleteInfoById() {
-        HmBasketDelQueryDTO hmBasketListQueryDTO = new HmBasketDelQueryDTO();
+        CartBasketDelQueryDTO hmBasketListQueryDTO = new CartBasketDelQueryDTO();
         hmBasketListQueryDTO.setId(36);
         hmBasketListQueryDTO.setUid(32716);
         System.out.println(JSONObject.toJSONString(hmBasketService.deleteInfoById(hmBasketListQueryDTO)));
@@ -89,7 +94,7 @@ public class AppTest {
 
     @Test
     public void deleteAllInfoById() {
-        HmBasketDelQueryDTO hmBasketListQueryDTO = new HmBasketDelQueryDTO();
+        CartBasketDelQueryDTO hmBasketListQueryDTO = new CartBasketDelQueryDTO();
         hmBasketListQueryDTO.setSid(1);
         hmBasketListQueryDTO.setUid(1);
         System.out.println(JSONObject.toJSONString(hmBasketService.deleteAllInfoById(hmBasketListQueryDTO)));
@@ -97,7 +102,7 @@ public class AppTest {
 
     @Test
     public void editInfo() {
-        HmBasketEditQueryDTO hmBasketListQueryDTO = new HmBasketEditQueryDTO();
+        CartBasketEditQueryDTO hmBasketListQueryDTO = new CartBasketEditQueryDTO();
         hmBasketListQueryDTO.setAmount("0");
 //       hmBasketListQueryDTO.setPrice("100");
         hmBasketListQueryDTO.setId(33);
@@ -129,41 +134,49 @@ public class AppTest {
     }
     @Test
     public void address(){
-        OrderAddressQueryDTO orderAddressQueryDTO = new OrderAddressQueryDTO();
-        orderAddressQueryDTO.setId(1);
-        orderAddressQueryDTO.setUid(1);
+        CartAddressQueryDTO cartAddressQueryDTO = new CartAddressQueryDTO();
+        cartAddressQueryDTO.setId(1);
+        cartAddressQueryDTO.setUid(1);
 
 
-        System.out.println(addressService.previewOrderAddress(orderAddressQueryDTO));
+        System.out.println(addressService.previewOrderAddress(cartAddressQueryDTO));
     }
 
     @Test
     public void add(){
-        OrderAddressQueryDTO orderAddressQueryDTO = new OrderAddressQueryDTO();
-        orderAddressQueryDTO.setId(1);
-        orderAddressQueryDTO.setUid(1);
+        CartAddressQueryDTO cartAddressQueryDTO = new CartAddressQueryDTO();
+        cartAddressQueryDTO.setId(1);
+        cartAddressQueryDTO.setUid(1);
 
 
-        System.out.println(addressService.previewOrderAddress(orderAddressQueryDTO));
+        System.out.println(addressService.previewOrderAddress(cartAddressQueryDTO));
     }
     @Test
     public void updateDefalut(){
-        OrderAddressQueryDTO orderAddressQueryDTO = new OrderAddressQueryDTO();
-        orderAddressQueryDTO.setId(4);
-        orderAddressQueryDTO.setUid(1);
+        CartAddressQueryDTO cartAddressQueryDTO = new CartAddressQueryDTO();
+        cartAddressQueryDTO.setId(1);
+        cartAddressQueryDTO.setUid(1);
 
 
-       addressService.updateDefaultAddress(orderAddressQueryDTO);
+       addressService.updateDefaultAddress(cartAddressQueryDTO);
     }
 
     @Test
     public void updateUserMarketId(){
-        OrderAddressQueryDTO orderAddressQueryDTO = new OrderAddressQueryDTO();
-        orderAddressQueryDTO.setId(1);
-        orderAddressQueryDTO.setMarketId(53);
+        CartAddressQueryDTO cartAddressQueryDTO = new CartAddressQueryDTO();
+        cartAddressQueryDTO.setId(1);
+        cartAddressQueryDTO.setMarketId(1);
 
 
-        addressService.updateUserMarketIdById(orderAddressQueryDTO);
+        addressService.updateUserMarketIdById(cartAddressQueryDTO);
+    }
+
+    @Test
+    public void message(){
+
+
+        String  [] pid={"11111","22222","3333"};
+        messagePushService.messagePush("8bd78jf97d4j","525270d2d59bb798",pid);
     }
 
 }

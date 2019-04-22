@@ -21,9 +21,5 @@ public class MessageBodyDTO implements Serializable {
      */
     private Integer type;
 
-    /**
-     * 内容
-     */
-    private String content;
 
 }
