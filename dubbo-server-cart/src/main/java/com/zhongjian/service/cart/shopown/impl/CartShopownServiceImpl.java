@@ -207,9 +207,11 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                         stringbuider = new StringBuilder();
                         stringbuider.append(cartBasketResultDTO.getUnitPrice()).append("元/").append(cartGoodsBean.getUnit());
                         cartBasketResultDTO.setUnitPrice(stringbuider.toString());
+                        cartBasketResultDTO.setUnit(cartGoodsBean.getUnit());
                     }
                     cartBasketResultDTO.setAmount(decimalFormat.format(Double.parseDouble(cartBasketResultDTO.getAmount())));
                     cartBasketResultDTO.setTotalPrice(decimalFormat.format(Double.parseDouble(cartBasketResultDTO.getTotalPrice())));
+
                     if (FinalDatas.ZERO == cartBasketResultDTO.getGid()) {
                         cartBasketResultDTO.setFoodName("其他");
                         cartBasketResultDTO.setStatus(1);
