@@ -8,7 +8,7 @@
         <result column="pic" property="picture" jdbcType="VARCHAR"/>
         <result column="status" property="status" jdbcType="VARCHAR"/>
         <result column="unFavorable" property="unFavorable" jdbcType="VARCHAR"/>
-        <collection property="cartStoreActivityResultDTOS"
+        <collection property="storeActivity"
                     select="com.zhongjian.dao.entity.cart.store.CartStoreActivityBean.findStoreActivityBySid" column="pid">
         </collection>
     </resultMap>
@@ -23,7 +23,7 @@
             hm_shopown s
         inner JOIN hm_market h ON h.id=s.marketid
         inner join hm_goods g on g.pid = s.pid
-        inner join hm_basket b on b.gid=g.id
+        INNER JOIN hm_basket b ON b.sid = g.pid
         WHERE
             s.marketid = #{martketId.jdbcType=INTEGER}
     </select>

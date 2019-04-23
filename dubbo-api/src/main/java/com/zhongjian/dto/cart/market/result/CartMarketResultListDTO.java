@@ -1,5 +1,6 @@
 package com.zhongjian.dto.cart.market.result;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -16,15 +17,15 @@ public class CartMarketResultListDTO implements Serializable{
     /**
      * 开张
      */
-    private List<CartMarketResultByOpenDTO> hmMarketResultByOpen;
+    private List<CartMarketResultByOpenDTO> open;
 
     /**
      * 预约
      */
-    private List<CartMarketResultByAdvenceDTO> hmMarketResultByAdvance;
+    private List<CartMarketResultByAdvenceDTO> advence;
 
     /**
      * 打烊
      */
-    private List<CartMarketResultByCloseDTO> hmMarketResultByClose;
+    private List<CartMarketResultByCloseDTO> close;
 }

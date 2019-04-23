@@ -121,7 +121,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
             //商家信息(打烊)
             List<CartShopownResultDTO> cartShopownResultDTOListByClose = new ArrayList<>();
             //得到商家信息
-            List<CartShopownResultDTO> cartShopownResultDTOS = hmShopownResultDTO.getCartShopownResultDTOS();
+            List<CartShopownResultDTO> cartShopownResultDTOS = hmShopownResultDTO.getShopown();
             //总价优惠后价格(开张)
             BigDecimal totalDisPriceByOpen = BigDecimal.ZERO;
             //总价优惠后价格(预约)
@@ -164,7 +164,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                     shopownResultDTO.setStatusMsg("预约中");
                 }
                 //拼接每个商户下的活动信息
-                List<CartStoreActivityResultDTO> cartStoreActivityResultDTOS = shopownResultDTO.getCartStoreActivityResultDTOS();
+                List<CartStoreActivityResultDTO> cartStoreActivityResultDTOS = shopownResultDTO.getStoreActivity();
                 stringbuider = new StringBuilder();
                 for (int i = cartStoreActivityResultDTOS.size() - 1; i >= 0; i--) {
                     CartStoreActivityResultDTO cartStoreActivityResultDTO = cartStoreActivityResultDTOS.get(i);
@@ -234,7 +234,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                 //备注信息
                 shopownResultDTO.setRemarkList(remarkList);
                 //该用户在商家下对应的食品信息
-                shopownResultDTO.setCartBasketResultDTOS(findBasketById);
+                shopownResultDTO.setBasket(findBasketById);
                 if (FinalDatas.ONE.toString().equals(shopownResultDTO.getStatus())) {
                     numberByClose = new BigDecimal(0);
                     for (int i = 0; i < listByClose.size(); i++) {
@@ -317,7 +317,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                     cartMarketResultByAdvenceDTO.setType(2);
                     cartMarketResultByAdvenceDTO.setRule(hmShopownResultDTO.getRule());
                     cartMarketResultByAdvenceDTO.setStatus(hmShopownResultDTO.getStatus());
-                    cartMarketResultByAdvenceDTO.setCartMarketActivityResultDTO(hmShopownResultDTO.getCartMarketActivityResultDTO());
+                    cartMarketResultByAdvenceDTO.setMarketActivity(hmShopownResultDTO.getMarketActivity());
 
                     //组装菜场DTO 如果一个菜场对应各自的商户.如果没有值则添加如果有值则判断该商户是否为该菜场旗下.
                     if (null == cartMarketResultByAdvenceDTO.getMartketId()) {
@@ -331,12 +331,12 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                             cartShopownResultDTOListByAdvence.add(shopownResultDTO);
                         }
                     }
-                    cartMarketResultByAdvenceDTO.setCartShopownResultDTOS(cartShopownResultDTOListByAdvence);
-                    CartMarketActivityResultDTO hmMarketActivityResult = cartMarketResultByAdvenceDTO.getCartMarketActivityResultDTO();
+                    cartMarketResultByAdvenceDTO.setShopown(cartShopownResultDTOListByAdvence);
+                    CartMarketActivityResultDTO hmMarketActivityResult = cartMarketResultByAdvenceDTO.getMarketActivity();
                     if (null != hmMarketActivityResult) {
                         if (!StringUtils.isBlank(hmMarketActivityResult.getRule())) {
-                            String[] split = hmMarketActivityResult.getRule().split("-");
                             if (FinalDatas.ZERO.equals(hmMarketActivityResult.getType())) {
+                                String[] split = hmMarketActivityResult.getRule().split("-");
                                 stringbuider = new StringBuilder();
                                 stringbuider.append("首单购买满").append(split[0]).append("减").append(split[1]);
                                 cartMarketResultByAdvenceDTO.setRule(stringbuider.toString());
@@ -398,6 +398,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                         if (BigDecimal.ZERO.compareTo(priceByAdvence) < 0) {
                                             if (flagByAdvence) {
                                                 marketByAdvence = marketByAdvence.add(numberByAdvence);
+                                                String[] split = hmMarketActivityResult.getRule().split("-");
                                                 if (marketByAdvence.compareTo(new BigDecimal(split[0])) > 0) {
                                                     totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence.subtract(new BigDecimal(split[1])));
                                                     flagByAdvence = false;
@@ -410,6 +411,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                         } else {
                                             if (flagByAdvence) {
                                                 marketByAdvence = marketByAdvence.add(numberByAdvence);
+                                                String[] split = hmMarketActivityResult.getRule().split("-");
                                                 if (marketByAdvence.compareTo(new BigDecimal(split[0])) > 0) {
                                                     totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence.subtract(new BigDecimal(split[1])));
                                                     flagByAdvence = false;
@@ -451,7 +453,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                     cartMarketResultByOpenDTO.setRule(hmShopownResultDTO.getRule());
                     cartMarketResultByOpenDTO.setStatus(hmShopownResultDTO.getStatus());
                     cartMarketResultByOpenDTO.setType(0);
-                    cartMarketResultByOpenDTO.setCartMarketActivityResultDTO(hmShopownResultDTO.getCartMarketActivityResultDTO());
+                    cartMarketResultByOpenDTO.setMarketActivity(hmShopownResultDTO.getMarketActivity());
 
                     //组装菜场DTO 如果一个菜场对应各自的商户.如果没有值则添加如果有值则判断该商户是否为该菜场旗下.
                     if (null == cartMarketResultByOpenDTO.getMartketId()) {
@@ -465,12 +467,13 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                             cartShopownResultDTOListByOpen.add(shopownResultDTO);
                         }
                     }
-                    cartMarketResultByOpenDTO.setCartShopownResultDTOS(cartShopownResultDTOListByOpen);
-                    CartMarketActivityResultDTO hmMarketActivityResult = cartMarketResultByOpenDTO.getCartMarketActivityResultDTO();
+                    cartMarketResultByOpenDTO.setShopown(cartShopownResultDTOListByOpen);
+                    CartMarketActivityResultDTO hmMarketActivityResult = cartMarketResultByOpenDTO.getMarketActivity();
                     if (null != hmMarketActivityResult) {
                         if (!StringUtils.isBlank(hmMarketActivityResult.getRule())) {
-                            String[] split = hmMarketActivityResult.getRule().split("-");
+
                             if (FinalDatas.ZERO.equals(hmMarketActivityResult.getType())) {
+                                String[] split = hmMarketActivityResult.getRule().split("-");
                                 stringbuider = new StringBuilder();
                                 stringbuider.append("首单购买满").append(split[0]).append("减").append(split[1]);
                                 cartMarketResultByOpenDTO.setRule(stringbuider.toString());
@@ -532,6 +535,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                         if (BigDecimal.ZERO.compareTo(priceByOpen) < 0) {
                                             if (flagByOpen) {
                                                 marketByOpen = marketByOpen.add(numberByOpen);
+                                                String[] split = hmMarketActivityResult.getRule().split("-");
                                                 if (marketByOpen.compareTo(new BigDecimal(split[0])) > 0) {
                                                     totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen.subtract(new BigDecimal(split[1])));
                                                     flagByOpen = false;
@@ -544,6 +548,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                         } else {
                                             if (flagByOpen) {
                                                 marketByOpen = marketByOpen.add(numberByOpen);
+                                                String[] split = hmMarketActivityResult.getRule().split("-");
                                                 if (marketByOpen.compareTo(new BigDecimal(split[0])) > 0) {
                                                     totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen.subtract(new BigDecimal(split[1])));
                                                     flagByOpen = false;
@@ -585,7 +590,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                     cartMarketResultByCloseDTO.setRule(hmShopownResultDTO.getRule());
                     cartMarketResultByCloseDTO.setStatus(hmShopownResultDTO.getStatus());
                     cartMarketResultByCloseDTO.setType(1);
-                    cartMarketResultByCloseDTO.setCartMarketActivityResultDTO(hmShopownResultDTO.getCartMarketActivityResultDTO());
+                    cartMarketResultByCloseDTO.setMarketActivity(hmShopownResultDTO.getMarketActivity());
 
                     //组装菜场DTO 如果一个菜场对应各自的商户.如果没有值则添加如果有值则判断该商户是否为该菜场旗下.
                     if (null == cartMarketResultByCloseDTO.getMartketId()) {
@@ -599,12 +604,12 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                             cartShopownResultDTOListByClose.add(shopownResultDTO);
                         }
                     }
-                    cartMarketResultByCloseDTO.setCartShopownResultDTOS(cartShopownResultDTOListByClose);
-                    CartMarketActivityResultDTO hmMarketActivityResult = cartMarketResultByCloseDTO.getCartMarketActivityResultDTO();
+                    cartMarketResultByCloseDTO.setShopown(cartShopownResultDTOListByClose);
+                    CartMarketActivityResultDTO hmMarketActivityResult = cartMarketResultByCloseDTO.getMarketActivity();
                     if (null != hmMarketActivityResult) {
                         if (!StringUtils.isBlank(hmMarketActivityResult.getRule())) {
-                            String[] split = hmMarketActivityResult.getRule().split("-");
                             if (FinalDatas.ZERO.equals(hmMarketActivityResult.getType())) {
+                                String[] split = hmMarketActivityResult.getRule().split("-");
                                 stringbuider = new StringBuilder();
                                 stringbuider.append("首单购买满").append(split[0]).append("减").append(split[1]);
                                 cartMarketResultByCloseDTO.setRule(stringbuider.toString());
@@ -666,6 +671,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                         if (BigDecimal.ZERO.compareTo(priceByClose) < 0) {
                                             if (flagByClose) {
                                                 marketByClose = marketByClose.add(numberByClose);
+                                                String[] split = hmMarketActivityResult.getRule().split("-");
                                                 if (marketByClose.compareTo(new BigDecimal(split[0])) > 0) {
                                                     totalDisPriceByClose = totalDisPriceByClose.add(priceByClose.subtract(new BigDecimal(split[1])));
                                                     flagByClose = false;
@@ -678,6 +684,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                         } else {
                                             if (flagByClose) {
                                                 marketByClose = marketByClose.add(numberByClose);
+                                                String[] split = hmMarketActivityResult.getRule().split("-");
                                                 if (marketByClose.compareTo(new BigDecimal(split[0])) > 0) {
                                                     totalDisPriceByClose = totalDisPriceByClose.add(numberByClose.subtract(new BigDecimal(split[1])));
                                                     flagByClose = false;
@@ -719,17 +726,17 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
             //开张
             if (null != cartMarketResultByOpenDTO.getMartketId()) {
                 cartMarketResultByOpenDTOList.add(cartMarketResultByOpenDTO);
-                cartMarketResultListDTO.setHmMarketResultByOpen(cartMarketResultByOpenDTOList);
+                cartMarketResultListDTO.setOpen(cartMarketResultByOpenDTOList);
             }
             //预约
             if (null != cartMarketResultByAdvenceDTO.getMartketId()) {
                 cartMarketResultByAdvenceDTOList.add(cartMarketResultByAdvenceDTO);
-                cartMarketResultListDTO.setHmMarketResultByAdvance(cartMarketResultByAdvenceDTOList);
+                cartMarketResultListDTO.setAdvence(cartMarketResultByAdvenceDTOList);
             }
             //打烊
             if (null != cartMarketResultByCloseDTO.getMartketId()) {
                 cartMarketResultByCloseDTOList.add(cartMarketResultByCloseDTO);
-                cartMarketResultListDTO.setHmMarketResultByClose(cartMarketResultByCloseDTOList);
+                cartMarketResultListDTO.setClose(cartMarketResultByCloseDTOList);
             }
         }
         return ResultUtil.getSuccess(cartMarketResultListDTO);

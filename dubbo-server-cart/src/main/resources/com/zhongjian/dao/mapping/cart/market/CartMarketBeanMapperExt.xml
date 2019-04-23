@@ -4,11 +4,11 @@
     <resultMap id="BaseMarket" type="com.zhongjian.dto.cart.market.result.CartMarketResultDTO">
         <id column="id" property="martketId"/>
         <result column="ename" property="marketName" jdbcType="VARCHAR"/>
-        <association property="cartMarketActivityResultDTO" column="id"
+        <association property="marketActivity" column="id"
                      select="com.zhongjian.dao.entity.cart.market.CartMarketActivityBean.findActitityById">
         </association>
 
-        <collection property="cartShopownResultDTOS" column="id"
+        <collection property="Shopown" column="id"
                     select="com.zhongjian.dao.entity.cart.shopown.CartShopownBean.findShopownInfoByMarketId">
         </collection>
     </resultMap>
@@ -22,7 +22,7 @@
             hm_market m
         LEFT JOIN hm_shopown s ON m.id = s.marketid
         LEFT JOIN hm_goods g ON g.pid = s.pid
-        LEFT JOIN hm_basket b ON b.gid = g.id
+        LEFT JOIN hm_basket b ON b.sid = g.pid
         where b.uid=#{uid.jdbcType=INTEGER}
         and m.is_delete=1
 

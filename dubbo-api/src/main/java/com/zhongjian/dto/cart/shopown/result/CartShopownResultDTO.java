@@ -1,5 +1,6 @@
 package com.zhongjian.dto.cart.shopown.result;
 
+import com.google.gson.annotations.SerializedName;
 import com.zhongjian.dto.cart.basket.result.CartBasketResultDTO;
 import com.zhongjian.dto.cart.storeActivity.result.CartStoreActivityResultDTO;
 import lombok.Data;
@@ -63,12 +64,12 @@ public class CartShopownResultDTO implements Serializable {
     /**
      * 商家下对应的活动信息
      */
-    List<CartStoreActivityResultDTO> cartStoreActivityResultDTOS;
+    List<CartStoreActivityResultDTO> storeActivity;
 
     /**
      * 该用户在商家下对应的食品信息
      */
-    List<CartBasketResultDTO> cartBasketResultDTOS;
+    List<CartBasketResultDTO> basket;
 
     /**
      * 备注组合

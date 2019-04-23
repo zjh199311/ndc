@@ -42,12 +42,12 @@ public class CartMarketResultDTO implements Serializable {
     /**
      * 用户在商户下购买的信息
      */
-    private List<CartShopownResultDTO> cartShopownResultDTOS;
+    private List<CartShopownResultDTO> Shopown;
 
     /**
      * 菜场活动
      */
-    CartMarketActivityResultDTO cartMarketActivityResultDTO;
+    CartMarketActivityResultDTO marketActivity;
 
 
 }

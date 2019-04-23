@@ -207,7 +207,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         CartBaskerListResultDTO cartBaskerListResultDTO = new CartBaskerListResultDTO();
         cartBaskerListResultDTO.setTotalDisPrice(String.valueOf(totalDisPrice.setScale(2)));
         cartBaskerListResultDTO.setTotalPrice(String.valueOf(totalPrice.setScale(2)));
-        cartBaskerListResultDTO.setCartBasketResultDTOS(findBasketBeanById);
+        cartBaskerListResultDTO.setCarts(findBasketBeanById);
 
         return ResultUtil.getSuccess(cartBaskerListResultDTO);
     }

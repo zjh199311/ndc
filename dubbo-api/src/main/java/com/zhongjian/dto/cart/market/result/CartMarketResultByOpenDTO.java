@@ -1,5 +1,6 @@
 package com.zhongjian.dto.cart.market.result;
 
+import com.google.gson.annotations.SerializedName;
 import com.zhongjian.dto.cart.marketActivity.result.CartMarketActivityResultDTO;
 import com.zhongjian.dto.cart.shopown.result.CartShopownResultDTO;
 import lombok.Data;
@@ -48,10 +49,10 @@ public class CartMarketResultByOpenDTO implements Serializable{
     /**
      * 用户在商户下购买的信息
      */
-    private List<CartShopownResultDTO> cartShopownResultDTOS;
+    private List<CartShopownResultDTO> shopown;
 
     /**
      * 菜场活动
      */
-    CartMarketActivityResultDTO cartMarketActivityResultDTO;
+    CartMarketActivityResultDTO marketActivity;
 }

@@ -19,8 +19,7 @@ public class CartBaskerListResultDTO implements Serializable{
     /**
      * 食品信息
      */
-    @SerializedName(value = "carts")
-    List<CartBasketResultDTO> cartBasketResultDTOS;
+    List<CartBasketResultDTO> carts;
 
     /**
      * 总价格
