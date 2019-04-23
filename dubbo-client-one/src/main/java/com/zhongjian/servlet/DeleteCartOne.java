@@ -40,9 +40,10 @@ public class DeleteCartOne extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		Map<String, String> formData = FormDataUtil.getFormData(request);
 		AsyncContext asyncContext = request.startAsync();
 		ServletInputStream inputStream = request.getInputStream();
-		Map<String, String> formData = FormDataUtil.getFormData(request);
+		
 		inputStream.setReadListener(new ReadListener() {
 			@Override
 			public void onDataAvailable() throws IOException {

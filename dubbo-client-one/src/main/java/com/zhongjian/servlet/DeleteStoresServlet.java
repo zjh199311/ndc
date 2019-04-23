@@ -25,8 +25,8 @@ import com.zhongjian.service.cart.basket.CartBasketService;
 import java.io.IOException;
 import java.util.Map;
 
-@WebServlet(value = "/v1/cart/deletestore", asyncSupported = true)
-public class DeleteStoreCart extends HttpServlet {
+@WebServlet(value = "/v1/cart/deletestores", asyncSupported = true)
+public class DeleteStoresServlet extends HttpServlet {
 
 	/**
 	 * 
@@ -54,8 +54,13 @@ public class DeleteStoreCart extends HttpServlet {
 					String result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SERVERERR));
 					try {
 					Integer uid = (Integer) request.getAttribute("uid");
-					Integer sid = Integer.valueOf(formData.get("sid"));
-					result = DeleteStoreCart.this.handle(uid, sid);
+					String sid = formData.get("sid");
+					String[] sidsString = sid.split(",");
+					int[] sids = new int[sidsString.length];//sid数组传给service
+					for (int i = 0; i < sidsString.length; i++) {
+						sids[i] = Integer.valueOf(sidsString[i]);
+					}
+					result = DeleteStoresServlet.this.handle(uid, sids);
 					// 返回数据
 					
 						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
@@ -79,13 +84,13 @@ public class DeleteStoreCart extends HttpServlet {
 
 	}
 
-	private String handle(Integer uid, Integer sid) {
+	private String handle(Integer uid, int sids[]) {
 		if (uid == 0) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
 		}
 		CartBasketDelQueryDTO cartBasketDelQueryDTO = new CartBasketDelQueryDTO();
 		cartBasketDelQueryDTO.setUid(uid);
-		cartBasketDelQueryDTO.setSid(sid);
-		return GsonUtil.GsonString(cartBasketService.deleteAllInfoById(cartBasketDelQueryDTO));
+		cartBasketDelQueryDTO.setSids(sids);
+		return GsonUtil.GsonString(cartBasketService.deleteAllByPid(cartBasketDelQueryDTO));
 	}
 }
