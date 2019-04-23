@@ -56,7 +56,7 @@ public class CartAddServlet extends HttpServlet {
 					String amount = formData.get("amount");
 					String remark = formData.get("remark");
 					String price = formData.get("price");
-					Integer sid = Integer.valueOf(formData.get("sid"));
+					Integer sid = formData.get("sid") == null?null:Integer.valueOf(formData.get("sid"));
 					if (gid == 0 && sid == null) {
 						result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.PARAM_LOST));
 						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
@@ -70,6 +70,7 @@ public class CartAddServlet extends HttpServlet {
 				
 						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
 					} catch (Exception e) {
+						e.printStackTrace();
 						try {
 							ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
 						} catch (IOException e1) {
@@ -89,7 +90,7 @@ public class CartAddServlet extends HttpServlet {
 
 	}
 
-	private String handle(Integer uid, Integer gid, String amount, String remark,String price,int sid) {
+	private String handle(Integer uid, Integer gid, String amount, String remark,String price,Integer sid) {
 		if (uid == 0) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
 		}
