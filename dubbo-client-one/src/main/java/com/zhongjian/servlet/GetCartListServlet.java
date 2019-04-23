@@ -33,7 +33,8 @@ public class GetCartListServlet extends HttpServlet {
 
 	private static Logger log = Logger.getLogger(GetCartListServlet.class);
 
-	private CartBasketService hmBasketService = (CartBasketService) SpringContextHolder.getBean(CartBasketService.class);
+	private CartBasketService hmBasketService = (CartBasketService) SpringContextHolder
+			.getBean(CartBasketService.class);
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -48,15 +49,20 @@ public class GetCartListServlet extends HttpServlet {
 			@Override
 			public void onAllDataRead() {
 				ThreadPoolExecutorSingle.executor.execute(() -> {
-					String result = null;
-					Integer uid = (Integer) request.getAttribute("uid");
-					ServletRequest request2 = asyncContext.getRequest();
-					Integer gid = Integer.valueOf(request2.getParameter("sid"));
-					result = GetCartListServlet.this.handle(uid, gid);
-					// 返回数据
+					String result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SERVERERR));
 					try {
+						Integer uid = (Integer) request.getAttribute("uid");
+						ServletRequest request2 = asyncContext.getRequest();
+						Integer gid = Integer.valueOf(request2.getParameter("sid"));
+						result = GetCartListServlet.this.handle(uid, gid);
+						// 返回数据
 						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
-					} catch (IOException e) {
+					} catch (Exception e) {
+						try {
+							ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
 						log.error("fail cart/getStoreList : " + e.getMessage());
 					}
 					asyncContext.complete();

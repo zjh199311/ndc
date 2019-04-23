@@ -7,10 +7,10 @@ import com.zhongjian.dto.order.order.query.OrderStatusQueryDTO;
 
 public interface OrderService {
 
-    //type 0选用积分 extra=null 1选用优惠券 extra = couponId
+    //type 1选用积分 extra=null 2选用优惠券 extra = couponId
     Map<String, Object> previewOrCreateOrder(Integer uid, Integer sids[], String type,
                                              Integer extra, String isSelfMention, boolean toCreateOrder,
-                                             Integer addresId, Integer unixTime, Integer isAppointment);
+                                             Integer addressId, Integer unixTime, Integer isAppointment);
 
     /**
      * 判断所有商铺是不是指定状态
@@ -18,7 +18,7 @@ public interface OrderService {
      * @param orderStatusQueryDTO
      * @return
      */
-    ResultDTO<Object> judgeHmShopownStatus(OrderStatusQueryDTO orderStatusQueryDTO);
+    ResultDTO<Boolean> judgeHmShopownStatus(OrderStatusQueryDTO orderStatusQueryDTO);
 
     /**
      * 获取预约时间
@@ -29,6 +29,16 @@ public interface OrderService {
     String previewOrderTime(Integer isAppointment);
 
     Map<String, Object> getOutTradeNoAndAmount(Integer uid, Integer orderId, String business);
+    
+    /**
+	 *订单回调处理核心
+	 *
+	 * @param out_trade_no
+	 * @param total_amount
+	 * @return orderId
+	 */
+    Integer handleROrder(String out_trade_no,String total_amount);
+     
 
 
 }

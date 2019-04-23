@@ -26,13 +26,14 @@ import com.zhongjian.util.CheckSumBuilderUtil;
 public class CrosFilter implements Filter {
 
 	private PropUtil propUtil = (PropUtil) SpringContextHolder.getBean(PropUtil.class);
-	
+
 	private UserService userService = (UserService) SpringContextHolder.getBean(UserService.class);
-    /**
-     * Default constructor. 
-     */
-    public CrosFilter() {
-    }
+
+	/**
+	 * Default constructor.
+	 */
+	public CrosFilter() {
+	}
 
 	/**
 	 * @see Filter#destroy()
@@ -43,9 +44,10 @@ public class CrosFilter implements Filter {
 	/**
 	 * @see Filter#doFilter(ServletRequest, ServletResponse, FilterChain)
 	 */
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
 		if (!propUtil.getIsDebug()) {
-			//check sign
+			// check sign
 			String appKey = request.getParameter("appKey");
 			String curTime = request.getParameter("curTime");
 			String nonce = request.getParameter("nonce");
@@ -53,24 +55,28 @@ public class CrosFilter implements Filter {
 			String realAppKey = propUtil.getAppkey();
 			String realCheckSum = CheckSumBuilderUtil.getCheckSum(propUtil.getAppSecret(), nonce, curTime);
 			if (appKey == null || !appKey.equals(realAppKey)) {
-				ResponseHandle.wrappedResponse(response, GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.NO_PERMISION)));
+				ResponseHandle.wrappedResponse(response,
+						GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.NO_PERMISION)));
+				return;
 			}
-			if( checkSum == null || !checkSum.equals(realCheckSum)) {
-				ResponseHandle.wrappedResponse(response, GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.NO_PERMISION)));
+			if (checkSum == null || !checkSum.equals(realCheckSum)) {
+				ResponseHandle.wrappedResponse(response,
+						GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.NO_PERMISION)));
+				return;
 			}
 		}
-		
-		HttpServletResponse httpResponse = (HttpServletResponse)response;
+
+		HttpServletResponse httpResponse = (HttpServletResponse) response;
 		httpResponse.setHeader("Access-Control-Allow-Origin", "*");
 		httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type");
 		httpResponse.setHeader("Access-Control-Allow-Methods", "*");
-		//add login_token jungle
-		if (request.getParameter("login_token")  != null) {
-			request.setAttribute("uid",userService.getUidByLoginToken(request.getParameter("login_token")));
-			}else {
-				request.setAttribute("uid", 0);
-			}
-//		request.setAttribute("uid",32716);
+		// add login_token jungle
+		if (request.getParameter("login_token") != null) {
+			request.setAttribute("uid", userService.getUidByLoginToken(request.getParameter("login_token")));
+		} else {
+			request.setAttribute("uid", 0);
+		}
+//		request.setAttribute("uid", 32716);
 		chain.doFilter(request, response);
 	}
 

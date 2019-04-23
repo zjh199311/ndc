@@ -1,8 +1,12 @@
 package com.zhongjian;
 
 
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
+import com.zhongjian.dao.jdbctemplate.AddressDao;
 import com.zhongjian.dao.jdbctemplate.OrderDao;
 import com.zhongjian.service.order.OrderService;
 import org.junit.Test;
@@ -19,11 +23,12 @@ public class AppTest {
     
     @Resource
     OrderDao orderDao;
+    @Resource
+    AddressDao addressDao;
     
 
     @Test
     public void test() {
-    Integer[] sids = {152};
-     orderService.previewOrCreateOrder(32716, sids, "0", 0, "0", true, 1, 321321, 0);
+    	System.out.println(addressDao.getAddressById(1));
     }
 }

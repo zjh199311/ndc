@@ -5,6 +5,8 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * @Author: ldd
  */
@@ -17,6 +19,7 @@ public class CartBaskerListResultDTO implements Serializable{
     /**
      * 食品信息
      */
+    @SerializedName(value = "carts")
     List<CartBasketResultDTO> cartBasketResultDTOS;
 
     /**

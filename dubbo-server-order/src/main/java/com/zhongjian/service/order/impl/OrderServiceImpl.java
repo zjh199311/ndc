@@ -1,8 +1,12 @@
 package com.zhongjian.service.order.impl;
 
 import com.zhongjian.common.constant.FinalDatas;
+import com.zhongjian.dao.entity.order.address.OrderAddressBean;
+import com.zhongjian.dao.entity.order.address.OrderAddressOrderBean;
 import com.zhongjian.dao.entity.order.shopown.OrderShopownBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
+import com.zhongjian.dao.jdbctemplate.AddressDao;
+import com.zhongjian.dao.jdbctemplate.IntegralVipDao;
 import com.zhongjian.dao.jdbctemplate.OrderDao;
 import com.zhongjian.dto.cart.storeActivity.result.CartStoreActivityResultDTO;
 import com.zhongjian.dto.common.CommonMessageEnum;
@@ -11,6 +15,7 @@ import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.dto.order.order.query.OrderStatusQueryDTO;
 import com.zhongjian.service.order.OrderService;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +34,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.UUID;
 
 @Service("orderService")
@@ -37,11 +41,17 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 
 	@Autowired
 	private OrderDao orderDao;
+	
+	@Autowired
+	private AddressDao addressDao;
+	
+	@Autowired
+	private IntegralVipDao integralVipDao;
 
 	@Override
 	@Transactional
 	public Map<String, Object> previewOrCreateOrder(Integer uid, Integer[] sids, String type, Integer extra,
-			String isSelfMention, boolean toCreateOrder, Integer addresId, Integer unixTime, Integer isAppointment) {
+			String isSelfMention, boolean toCreateOrder, Integer addressId, Integer unixTime, Integer isAppointment) {
 		Integer isVIp = 0;
 		String vipFavour = "";
 		String deliverfee = "￥6";
@@ -239,7 +249,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			}
 
 		}
-		Map<String, Object> uMap = orderDao.getIntegralAndVipInfo(uid);
+		Map<String, Object> uMap = integralVipDao.getIntegralAndVipInfo(uid);
 		Integer integral = (Integer) (uMap.get("integral"));
 		integralContent = "[" + integral + "积分]可抵抗扣";
 		if (integral > 0) {
@@ -342,40 +352,30 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			storeOrders.put("uid", uid);
 			storeOrders.put("marketid", marketId);
 			storeOrders.put("rider_pay", deliverfeeBigDecimal);
-			storeOrders.put("address_id", addresId);
+			storeOrders.put("address_id", addressId);
 			storeOrders.put("integral", integralSub == BigDecimal.ZERO ? null : integralSub);
 			storeOrders.put("totalPrice", needPay);
 			storeOrders.put("ctime", createTime);
 			storeOrders.put("service_time", unixTime);
 			storeOrders.put("is_appointment", isAppointment);
 			storeOrders.put("original_price", storesAmountBigDecimal);
-			storeOrders.put("out_trade_no", UUID.randomUUID().toString().replaceAll("-", ""));// 生成订单的时候三方号同时生成
+			String outTradeNo = UUID.randomUUID().toString().replaceAll("-", "");
+			storeOrders.put("out_trade_no", outTradeNo);// 生成订单的时候三方号同时生成
 			storeOrders.put("market_activity_price",
 					marketActivityPrice == BigDecimal.ZERO ? null : marketActivityPrice);
 			storeOrders.put("store_activity_price", storeActivityPrice);
 			storeOrders.put("vip_relief", isVIp == 1 ? vipFavourRiderOrder : BigDecimal.ZERO);
 			storeOrders.put("pay_status", 0);
 			storeOrders.put("rider_status", 0);
-			if (integralPay) {
 				// 回调
 				// 1.支付状态变化
 				// 2.订单骑手生成
 				// 3.订单地址生成
 				// 4.积分增加(totalPrice数值)
-				// 5.订单扣除积分记录
 				// 6.发消息
 				// 7.默认市场
 				// 8.默认地址
 				// 插入骑手
-				Integer rid = getRidFormMarket(marketId, "random");
-				if (rid == -1) {
-					throw new RuntimeException("系统调度中");
-				}
-				storeOrders.put("rid", rid);
-				// 全积分支付
-				storeOrders.put("pay_status", 1);
-				storeOrders.put("pay_time", createTime);
-			}
 			if ("1".equals(isSelfMention)) {
 				storeOrders.put("rider_status", 3);
 			}
@@ -395,43 +395,64 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					}
 				}
 			}
-			return null;
+			Map<String, Object> resMap = new HashMap<String, Object>();
+			if (integralPay) {
+				handleROrder(outTradeNo, needPay.toString());
+				resMap.put("roid", roid);
+				resMap.put("status", 1);
+			}else {
+				resMap.put("roid", roid);
+				resMap.put("status", 0);
+			}
 		}
 		return null;
 
 	}
 
 	Integer getRidFormMarket(Integer marketId, String strategy) {
-		List<Integer> ridList = orderDao.getRidBymarketId(marketId);
+		if ("least".equals(strategy)) {
+		List<Map<String, Object>> ridList = orderDao.getRidBymarketId(marketId,(int) DateUtil.getTodayZeroTime());
 		if (ridList.size() == 0) {
 			return -1;
 		}
-		if ("random".equals(strategy)) {
-			Random random = new Random();
-			int n = random.nextInt(ridList.size());
-			return ridList.get(n);
+		for (Map<String, Object> map : ridList) {
+			Integer sum = (Integer) map.get("sum");
+			if (sum > 0) {
+				return (Integer) map.get("rid");
+			}
 		}
 		return -1;
-		// 负载均衡
+		}else {
+			return -1;	
+		}
+		
 	}
 
 	@Override
 	// 付款时检测商户状态服务 ext增加检测是否同一市场
-	public ResultDTO<Object> judgeHmShopownStatus(OrderStatusQueryDTO orderStatusQueryDTO) {
+	public ResultDTO<Boolean> judgeHmShopownStatus(OrderStatusQueryDTO orderStatusQueryDTO) {
 		ResultDTO<Boolean> resultDTO = new ResultDTO<Boolean>();
-		resultDTO.setFlag(false);
-		if (null == orderStatusQueryDTO.getPids() || 0 == orderStatusQueryDTO.getPids().size()) {
-			return ResultUtil.getFail(null);
-		}
-		if (null == orderStatusQueryDTO.getStatus()) {
-			return ResultUtil.getFail(null);
-		}
 		List<OrderShopownBean> orderShopownBeans = this.dao.executeListMethod(orderStatusQueryDTO,
 				"selectHmShopownStatusByPids", OrderShopownBean.class);
 		// 默认返回状态匹配
 		resultDTO.setFlag(true);
 		resultDTO.setData(true);
+		Integer marketId = 0;
+		boolean flag = false;
 		for (OrderShopownBean orderShopownBean : orderShopownBeans) {
+			if (flag == false) {
+				marketId = orderShopownBean.getMarketid();
+				flag = true;
+			}else {
+				if (marketId != orderShopownBean.getMarketid()) {
+					resultDTO.setData(false);
+					break;
+				}
+			}
+			if (1 == orderShopownBean.getStatus()) {
+				resultDTO.setData(false);
+				break;
+			}
 			// 如果商户状态与传入状态不匹配，返回false
 			if (!orderStatusQueryDTO.getStatus().equals(orderShopownBean.getStatus())) {
 				resultDTO.setData(false);
@@ -449,7 +470,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				break;
 			}
 		}
-		return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
+		return resultDTO;
 	}
 
 	@Override
@@ -519,7 +540,39 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		}
 	}
 
-	public static void main(String[] args) {
-		System.out.println(UUID.randomUUID().toString().replaceAll("-", "").length());
+	@Override
+	@Transactional
+	public Integer handleROrder(String out_trade_no, String total_amount) {
+		Integer rorderId = 0;
+		if (orderDao.updateROStatusToSuccess(out_trade_no,(int) System.currentTimeMillis() / 1000)) {
+			Map<String, Object> rorderDetail = orderDao.getROrderIdByOutTradeNo(out_trade_no);
+			rorderId = (Integer) rorderDetail.get("id");
+			Integer marketId = (Integer) rorderDetail.get("marketid");
+			Integer addressId = (Integer) rorderDetail.get("address_id");
+			String riderSn = (String) rorderDetail.get("rider_sn");
+			Integer uid = (Integer) rorderDetail.get("uid");
+//			List<Integer> orderIds = orderDao.getOrderIdsByRoid(rorderId);
+//			orderDao.updateOStatus(orderIds, 1 , (int) System.currentTimeMillis() / 1000);
+			Integer rid = getRidFormMarket(marketId, "least");
+			if (rid != -1) {
+				//生成骑手
+				orderDao.updateroRider(rid, rorderId);
+			}
+			//生成地址
+			OrderAddressBean addressBean = addressDao.getAddressById(addressId);
+			OrderAddressOrderBean addressOrderBean = new OrderAddressOrderBean();
+			BeanUtils.copyProperties(addressBean, addressOrderBean);
+			addressOrderBean.setCtime((int) System.currentTimeMillis()/1000);
+			addressOrderBean.setRiderSn(riderSn);
+			addressDao.addOrderAddress(addressOrderBean);
+			//增加积分
+			integralVipDao.updateUserIntegral(uid, "+", Double.valueOf(total_amount).intValue());
+			//记录
+		}
+		return rorderId;
 	}
+	public static void main(String[] args) {
+		System.out.println(new BigDecimal("2.00").toString());
+	}
+
 }

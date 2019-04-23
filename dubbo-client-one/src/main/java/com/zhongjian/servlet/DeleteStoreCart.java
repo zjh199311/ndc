@@ -15,6 +15,7 @@ import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultUtil;
 import org.apache.log4j.Logger;
 
+import com.zhongjian.common.FormDataUtil;
 import com.zhongjian.common.GsonUtil;
 import com.zhongjian.common.ResponseHandle;
 import com.zhongjian.common.SpringContextHolder;
@@ -22,6 +23,7 @@ import com.zhongjian.executor.ThreadPoolExecutorSingle;
 import com.zhongjian.service.cart.basket.CartBasketService;
 
 import java.io.IOException;
+import java.util.Map;
 
 @WebServlet(value = "/v1/cart/deleteall", asyncSupported = true)
 public class DeleteStoreCart extends HttpServlet {
@@ -40,6 +42,7 @@ public class DeleteStoreCart extends HttpServlet {
 
 		AsyncContext asyncContext = request.startAsync();
 		ServletInputStream inputStream = request.getInputStream();
+		Map<String, String> formData = FormDataUtil.getFormData(request);
 		inputStream.setReadListener(new ReadListener() {
 			@Override
 			public void onDataAvailable() throws IOException {
@@ -48,15 +51,20 @@ public class DeleteStoreCart extends HttpServlet {
 			@Override
 			public void onAllDataRead() {
 				ThreadPoolExecutorSingle.executor.execute(() -> {
-					String result = null;
+					String result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SERVERERR));
+					try {
 					Integer uid = (Integer) request.getAttribute("uid");
-					ServletRequest request2 = asyncContext.getRequest();
-					Integer sid = Integer.valueOf(request2.getParameter("sid"));
+					Integer sid = Integer.valueOf(formData.get("sid"));
 					result = DeleteStoreCart.this.handle(uid, sid);
 					// 返回数据
-					try {
+					
 						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
-					} catch (IOException e) {
+					} catch (Exception e) {
+						try {
+							ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
 						log.error("fail cart/deleteall : " + e.getMessage());
 					}
 					asyncContext.complete();

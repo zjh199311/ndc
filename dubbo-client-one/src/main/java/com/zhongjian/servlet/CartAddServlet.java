@@ -16,12 +16,14 @@ import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.service.cart.basket.CartBasketService;
 import org.apache.log4j.Logger;
 
+import com.zhongjian.common.FormDataUtil;
 import com.zhongjian.common.GsonUtil;
 import com.zhongjian.common.ResponseHandle;
 import com.zhongjian.common.SpringContextHolder;
 import com.zhongjian.executor.ThreadPoolExecutorSingle;
 
 import java.io.IOException;
+import java.util.Map;
 
 @WebServlet(value = "/v1/cart/add", asyncSupported = true)
 public class CartAddServlet extends HttpServlet {
@@ -35,9 +37,10 @@ public class CartAddServlet extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		Map<String, String> formData = FormDataUtil.getFormData(request);
 		AsyncContext asyncContext = request.startAsync();
 		ServletInputStream inputStream = request.getInputStream();
+	
 		inputStream.setReadListener(new ReadListener() {
 			@Override
 			public void onDataAvailable() throws IOException {
@@ -46,19 +49,24 @@ public class CartAddServlet extends HttpServlet {
 			@Override
 			public void onAllDataRead() {
 				ThreadPoolExecutorSingle.executor.execute(() -> {
-					String result = null;
+					String result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SERVERERR));
+					try {
 					Integer uid = (Integer) request.getAttribute("uid");
-					ServletRequest request2 = asyncContext.getRequest();
-					Integer gid = Integer.valueOf(request2.getParameter("gid"));
-					String amount = request2.getParameter("amount");
-					String remark = request2.getParameter("remark");
-					String price = request2.getParameter("price");
-					Integer sid = Integer.valueOf(request2.getParameter("sid"));
+					Integer gid = Integer.valueOf(formData.get("gid"));
+					String amount = formData.get("amount");
+					String remark = formData.get("remark");
+					String price = formData.get("price");
+					Integer sid = Integer.valueOf(formData.get("sid"));
 					result = CartAddServlet.this.handle(uid, gid, amount, remark,price,sid);
 					// 返回数据
-					try {
+				
 						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
-					} catch (IOException e) {
+					} catch (Exception e) {
+						try {
+							ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
 						log.error("fail cart/add : " + e.getMessage());
 					}
 					asyncContext.complete();

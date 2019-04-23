@@ -1,6 +1,5 @@
 package com.zhongjian.service.cart.basket.impl;
 
-import com.google.protobuf.StringValue;
 import com.zhongjian.common.constant.FinalDatas;
 import com.zhongjian.dao.entity.cart.basket.CartBasketBean;
 import com.zhongjian.dao.entity.cart.goods.CartGoodsBean;

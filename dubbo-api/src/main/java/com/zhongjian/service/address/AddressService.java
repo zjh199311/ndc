@@ -14,7 +14,6 @@ public interface AddressService {
      * @return
      */
     CartAddressResultDTO previewOrderAddress(CartAddressQueryDTO cartAddressQueryDTO);
-
     /**
      * 修改默认地址
      * @param cartAddressQueryDTO

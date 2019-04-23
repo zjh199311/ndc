@@ -5,8 +5,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.JInternalFrame.JDesktopIcon;
 
 import com.zhongjian.dto.cart.storeActivity.result.CartStoreActivityResultDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,19 +71,9 @@ public class OrderDao {
 		return num > 0 ? false : true;
 	}
 
-	// 查看积分
-	public Map<String, Object> getIntegralAndVipInfo(Integer uid) {
-		String sql = "SELECT integral,vip_status,vip_expire from hm_user where id = ?";
-		Map<String, Object> resMap = null;
-		try {
-			resMap = jdbcTemplate.queryForMap(sql, uid);
-		} catch (EmptyResultDataAccessException e) {
-		}
 
-		return resMap;
-	}
 
-	// 查看优惠券
+	// 查看优惠券数量
 	public Integer getCouponsNum(Integer uid) {
 		String sql = "SELECT COUNT(1) from hm_user_coupon,hm_coupon where uid = ? and state "
 				+ "= 0 and timeout = 0 and hm_user_coupon.couponid = hm_coupon.id";
@@ -117,18 +110,18 @@ public class OrderDao {
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-				PreparedStatement ps = con.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
-				ps.setString(1, (String)map.get("order_sn"));
-				ps.setInt(2, (int)map.get("pid"));
-				ps.setInt(3, (int)map.get("uid"));
-				ps.setInt(4, (int)map.get("marketid"));
-				ps.setBigDecimal(5, (BigDecimal)map.get("total"));
-				ps.setBigDecimal(6, (BigDecimal)map.get("payment"));
-				ps.setInt(7, (Integer)map.get("pay_status"));
-				ps.setInt(8, (Integer)map.get("order_status"));
-				ps.setInt(9, (int)map.get("ctime"));
-				ps.setInt(10, (int)map.get("is_appointment"));
-				ps.setInt(11, (int)map.get("roid"));
+				PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+				ps.setString(1, (String) map.get("order_sn"));
+				ps.setInt(2, (int) map.get("pid"));
+				ps.setInt(3, (int) map.get("uid"));
+				ps.setInt(4, (int) map.get("marketid"));
+				ps.setBigDecimal(5, (BigDecimal) map.get("total"));
+				ps.setBigDecimal(6, (BigDecimal) map.get("payment"));
+				ps.setInt(7, (Integer) map.get("pay_status"));
+				ps.setInt(8, (Integer) map.get("order_status"));
+				ps.setInt(9, (int) map.get("ctime"));
+				ps.setInt(10, (int) map.get("is_appointment"));
+				ps.setInt(11, (int) map.get("roid"));
 				return ps;
 			}
 		}, keyHolder);
@@ -145,47 +138,102 @@ public class OrderDao {
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
 				PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-				ps.setString(1, (String)map.get("rider_sn"));
-				ps.setString(2, (String)map.get("order_sn"));
-				ps.setInt(3, (Integer)map.get("uid"));
-				ps.setInt(4, (Integer)map.get("marketid"));
-				ps.setObject(5, (Integer)map.get("rid"), java.sql.Types.INTEGER);
-				ps.setInt(6, (Integer)map.get("pay_status"));
-				ps.setInt(7, (Integer)map.get("address_id"));
-				ps.setBigDecimal(8, (BigDecimal)map.get("rider_pay"));
-				ps.setObject(9, (Integer)map.get("couponid"));
-				ps.setBigDecimal(10, (BigDecimal)map.get("totalPrice"));
-				ps.setObject(11, (Integer)map.get("pay_time"), java.sql.Types.INTEGER);
-				ps.setInt(12, (Integer)map.get("service_time"));
-				ps.setInt(13, (Integer)map.get("ctime"));
-				ps.setObject(14, (BigDecimal)map.get("integral"), java.sql.Types.BIGINT);
-				ps.setInt(15, (Integer)map.get("is_appointment"));
-				ps.setBigDecimal(16, (BigDecimal)map.get("original_price"));
-				ps.setString(17, (String)map.get("out_trade_no"));
-				ps.setObject(18, (BigDecimal)map.get("coupon_price"), java.sql.Types.INTEGER);
-				ps.setObject(19, (BigDecimal)map.get("market_activity_price"), java.sql.Types.INTEGER);
-				ps.setBigDecimal(20, (BigDecimal)map.get("store_activity_price"));
-				ps.setBigDecimal(21, (BigDecimal)map.get("vip_relief"));
-				ps.setInt(22, (Integer)map.get("rider_status"));
+				ps.setString(1, (String) map.get("rider_sn"));
+				ps.setString(2, (String) map.get("order_sn"));
+				ps.setInt(3, (Integer) map.get("uid"));
+				ps.setInt(4, (Integer) map.get("marketid"));
+				ps.setObject(5, (Integer) map.get("rid"), java.sql.Types.INTEGER);
+				ps.setInt(6, (Integer) map.get("pay_status"));
+				ps.setInt(7, (Integer) map.get("address_id"));
+				ps.setBigDecimal(8, (BigDecimal) map.get("rider_pay"));
+				ps.setObject(9, (Integer) map.get("couponid"));
+				ps.setBigDecimal(10, (BigDecimal) map.get("totalPrice"));
+				ps.setObject(11, (Integer) map.get("pay_time"), java.sql.Types.INTEGER);
+				ps.setInt(12, (Integer) map.get("service_time"));
+				ps.setInt(13, (Integer) map.get("ctime"));
+				ps.setObject(14, (BigDecimal) map.get("integral"), java.sql.Types.BIGINT);
+				ps.setInt(15, (Integer) map.get("is_appointment"));
+				ps.setBigDecimal(16, (BigDecimal) map.get("original_price"));
+				ps.setString(17, (String) map.get("out_trade_no"));
+				ps.setObject(18, (BigDecimal) map.get("coupon_price"), java.sql.Types.INTEGER);
+				ps.setObject(19, (BigDecimal) map.get("market_activity_price"), java.sql.Types.INTEGER);
+				ps.setBigDecimal(20, (BigDecimal) map.get("store_activity_price"));
+				ps.setBigDecimal(21, (BigDecimal) map.get("vip_relief"));
+				ps.setInt(22, (Integer) map.get("rider_status"));
 				return ps;
 			}
 		}, keyHolder);
 		return keyHolder.getKey().intValue();
 	}
-	
-	public List<Integer> getRidBymarketId(Integer marketId) {
-		String sql = "select rid from  hm_rider_user where marketid = ?";
-		List<Integer> res = jdbcTemplate.queryForList(sql, Integer.class,new Object[] { marketId });
+
+	public List<Map<String, Object>> getRidBymarketId(Integer marketId, Integer todayTimeZone) {
+		String sql = " SELECT rid,count(rid) sum FROM hm_rider_order"
+				+ " where rid IN (SELECT rid FROM hm_rider_user where state = 1 "
+				+ "AND status=1 AND is_order = 1 AND marketid = ? ) AND rider_status in (0,1) "
+				+ "AND ctime > ? GROUP BY rid ORDER BY sum";
+		List<Map<String, Object>> res = jdbcTemplate.queryForList(sql, marketId, todayTimeZone);
 		return res;
 	}
-	
-	public  Map<String, Object>getDetailByOrderId(Integer uid,Integer orderId) {
+
+	public Map<String, Object> getDetailByOrderId(Integer uid, Integer orderId) {
 		String sql = "select out_trade_no,totalPrice from  hm_rider_order where id = ? and uid = ?";
 		Map<String, Object> resMap = null;
 		try {
-			resMap = jdbcTemplate.queryForMap(sql,orderId,uid);
+			resMap = jdbcTemplate.queryForMap(sql, orderId, uid);
 		} catch (EmptyResultDataAccessException e) {
 		}
 		return resMap;
+	}
+
+	public Map<String, Object> getROrderIdByOutTradeNo(String outTradeNo) {
+		String sql = "select id,marketid,address_id,rider_sn,uid from hm_rider_order where out_trade_no = ?";
+		Map<String, Object> resMap = null;
+		try {
+			resMap = jdbcTemplate.queryForMap(sql, outTradeNo);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return resMap;
+	}
+
+	public boolean updateROStatusToSuccess(String outTradeNo,Integer unixTime) {
+		String sql = "update hm_rider_order set pay_status = 1,pay_time = ? where out_trade_no = ? and pay_status = 0";
+		return jdbcTemplate.update(sql,unixTime, outTradeNo) > 0 ? true : false;
+	}
+
+	public boolean updateROStatusToTimeout(String outTradeNo) {
+		String sql = "update hm_rider_order set pay_status = 2 where out_trade_no = ? and pay_status = 0";
+		return jdbcTemplate.update(sql, outTradeNo) > 0 ? true : false;
+	}
+
+	public boolean updateOStatus(List<Integer> orderIds, Integer payStatus,Integer unixTime) {
+		StringBuilder orderIdsString = new StringBuilder();
+		for (Iterator iterator = orderIds.iterator(); iterator.hasNext();) {
+			Integer orderId = (Integer) iterator.next();
+			if (orderIdsString.length() == 0) {
+				orderIdsString.append(orderId);
+			} else {
+				orderIdsString.append("," + orderId);
+			}
+
+		}
+		String sql = "";
+		if (payStatus == 1) {
+			sql = "update hm_order set pay_status = ?,pay_time = ? where id in (" + orderIdsString.toString() + ")";
+			return jdbcTemplate.update(sql, payStatus,unixTime) > 0 ? true : false;
+		} else {
+			sql =  "update hm_order set pay_status = ? where id in (" + orderIdsString.toString() + ")";
+			return jdbcTemplate.update(sql, payStatus) > 0 ? true : false;
+		}
+		
+	}
+
+	public List<Integer> getOrderIdsByRoid(Integer roid) {
+		String sql = "select id from hm_order where roid = ?";
+		return jdbcTemplate.queryForList(sql, Integer.class, roid);
+	}
+
+	public void updateroRider(Integer rid,Integer rorderId) {
+		String sql = "update hm_rider_order set rid = ? where id = ?";
+		jdbcTemplate.update(sql, rid,rorderId);
 	}
 }
