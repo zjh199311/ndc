@@ -57,6 +57,14 @@ public class CartAddServlet extends HttpServlet {
 					String remark = formData.get("remark");
 					String price = formData.get("price");
 					Integer sid = Integer.valueOf(formData.get("sid"));
+					if (gid == 0 && sid == null) {
+						result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.PARAM_LOST));
+						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
+						return;
+					}
+					if (gid != 0) {
+						sid = null;
+					}
 					result = CartAddServlet.this.handle(uid, gid, amount, remark,price,sid);
 					// 返回数据
 				
