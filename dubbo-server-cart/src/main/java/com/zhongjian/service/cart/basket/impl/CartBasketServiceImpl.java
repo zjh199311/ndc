@@ -205,14 +205,9 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
             }
         }
         CartBaskerListResultDTO cartBaskerListResultDTO = new CartBaskerListResultDTO();
-        if (BigDecimal.ZERO.compareTo(totalDisPrice) < 0) {
-            cartBaskerListResultDTO.setTotalDisPrice(String.valueOf(totalDisPrice.setScale(2)));
-        } else {
-            cartBaskerListResultDTO.setTotalDisPrice(String.valueOf(totalPrice.setScale(2)));
-        }
+        cartBaskerListResultDTO.setTotalDisPrice(String.valueOf(totalDisPrice.setScale(2)));
         cartBaskerListResultDTO.setTotalPrice(String.valueOf(totalPrice.setScale(2)));
         cartBaskerListResultDTO.setCarts(findBasketBeanById);
-
         return ResultUtil.getSuccess(cartBaskerListResultDTO);
     }
 
