@@ -735,9 +735,9 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
             //预约
             if (null != cartMarketResultByAdvenceDTO.getMartketId()) {
                 cartMarketResultByAdvenceDTOList.add(cartMarketResultByAdvenceDTO);
-                cartMarketResultListDTO.setAdvence(cartMarketResultByAdvenceDTOList);
+                cartMarketResultListDTO.setAdvance(cartMarketResultByAdvenceDTOList);
             }else{
-                cartMarketResultListDTO.setAdvence(cartMarketResultByAdvenceDTOList);
+                cartMarketResultListDTO.setAdvance(cartMarketResultByAdvenceDTOList);
             }
             //打烊
             if (null != cartMarketResultByCloseDTO.getMartketId()) {

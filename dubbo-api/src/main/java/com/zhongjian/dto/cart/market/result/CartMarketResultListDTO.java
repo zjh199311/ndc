@@ -22,7 +22,7 @@ public class CartMarketResultListDTO implements Serializable{
     /**
      * 预约
      */
-    private List<CartMarketResultByAdvenceDTO> advence;
+    private List<CartMarketResultByAdvenceDTO> advance;
 
     /**
      * 打烊
