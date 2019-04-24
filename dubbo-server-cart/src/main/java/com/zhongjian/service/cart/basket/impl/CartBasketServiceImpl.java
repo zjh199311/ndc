@@ -168,7 +168,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         for (CartBasketResultDTO cartBasketResultDTO : findBasketBeanById) {
             if (FinalDatas.ZERO == cartBasketResultDTO.getGid()) {
                 cartBasketResultDTO.setFoodName("其他");
-                cartBasketResultDTO.setAmount("1");
+                cartBasketResultDTO.setAmount("1件");
                 totalPrice = totalPrice.add(new BigDecimal(cartBasketResultDTO.getPrice()));
                 cartBasketResultDTO.setPrice(cartBasketResultDTO.getPrice());
 

@@ -7,13 +7,13 @@
         <include refid="Base_Column_List"/>
         from hm_basket
         <where>
-            <if test="gid!=null and gid!=''">
+            <if test="gid!=null">
                 gid=#{gid,jdbcType=INTEGER}
             </if>
-            <if test="uid!=null and uid!=''">
+            <if test="uid!=null ">
                 AND uid=#{uid,jdbcType=INTEGER}
             </if>
-            <if test="sid!=null and sid!=''">
+            <if test="sid!=null">
                 AND sid=#{sid,jdbcType=INTEGER}
             </if>
         </where>
