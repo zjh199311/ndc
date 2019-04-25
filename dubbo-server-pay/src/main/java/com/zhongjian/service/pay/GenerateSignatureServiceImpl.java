@@ -7,16 +7,15 @@ import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.request.AlipayTradeAppPayRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.zhongjian.commoncomponent.PropUtil;
-import com.zhongjian.util.LogUtil;
-import com.zhongjian.util.PayCommonUtil;
+import com.zhongjian.dto.common.ResultUtil;
+import com.zhongjian.util.*;
 
+import org.apache.http.protocol.HTTP;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.net.URLEncoder;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.SortedMap;
+import java.util.*;
 
 @Service("generateSignatureService")
 public class GenerateSignatureServiceImpl implements GenerateSignatureService {
@@ -71,14 +70,46 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
     }
 
     @Override
-    public Map<String, String> getWxAppSignature(String out_trade_no, String totalAmount, String openId, String spbillCreateIp, Integer type) {
+    public Map<String, String> getWxAppSignature(String outTradeNo, String totalPrice, String openId, String spbillCreateIp, Integer type) {
         SortedMap<String, String> stringObjectSortedMap = null;
         try {
-            stringObjectSortedMap = PayCommonUtil.wxPublicPay(out_trade_no, totalAmount, spbillCreateIp,propUtil.getWxAppLetsId(), propUtil.getWxAppAppId(), propUtil.getWxAppKey(),propUtil.getWxAppLetsKey(), propUtil.getWxAppMchId(), propUtil.getWxAppNotifyUrl(), propUtil.getWxAppletsNotifyUrl(), propUtil.getWxAppUrl(), "倪的菜商品订单支付", openId, type);
+            stringObjectSortedMap = PayCommonUtil.wxPublicPay(outTradeNo, totalPrice, spbillCreateIp, propUtil.getWxAppLetsId(), propUtil.getWxAppAppId(), propUtil.getWxAppKey(), propUtil.getWxAppLetsKey(), propUtil.getWxAppMchId(), propUtil.getWxAppNotifyUrl(), propUtil.getWxAppletsNotifyUrl(), propUtil.getWxAppUrl(), "倪的菜商品订单支付", openId, type);
         } catch (Exception e) {
             LogUtil.info("获取签名异常", "e:" + e.getMessage());
             e.getMessage();
         }
         return stringObjectSortedMap;
+    }
+
+    @Override
+    public String getPayWxApp(String outTrandeNo, String totalPrice, String body, String spbillCreateIp) {
+        SortedMap<String, String> finalpackage = new TreeMap<>();
+        finalpackage.put("mch_id", propUtil.getWxYinHangMchId());
+        finalpackage.put("notify_url", propUtil.getWxYinHangNotifyUrl());
+        finalpackage.put("sign_type", "RSA_1_256");
+        finalpackage.put("charset", "UTF-8");
+        finalpackage.put("nonce_str", String.valueOf(new Date().getTime()));
+        finalpackage.put("sub_appid", propUtil.getWxYinHangAppid());
+        finalpackage.put("service", "pay.weixin.raw.app");
+        finalpackage.put("appid", propUtil.getWxYinHangAppid());
+        finalpackage.put("out_trade_no", outTrandeNo);
+        finalpackage.put("body", body);
+        finalpackage.put("total_fee", totalPrice);
+        finalpackage.put("mch_create_ip", spbillCreateIp);
+        finalpackage.put("version", "2.0");
+        Map<String, String> params = PayCommonUtil.paraFilter(finalpackage);
+        StringBuilder buf = new StringBuilder((params.size() + 1) * 10);
+        PayCommonUtil.buildPayParams(buf, params, false);
+        String preStr = buf.toString();
+        finalpackage.put("sign", PayCommonUtil.getSign("RSA_1_256", preStr, propUtil.getWxYinHangPrivateRsaKey()));
+        String requestXml = PayCommonUtil.getRequestXml(finalpackage);
+
+        String responseResultForBase = null;
+        try {
+            responseResultForBase = HttpClientUtil.getResponseResultForBase(propUtil.getWxYinHangUrl(), requestXml, "UTF-8", RequestTypeEnum.JSON);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return responseResultForBase;
     }
 }
