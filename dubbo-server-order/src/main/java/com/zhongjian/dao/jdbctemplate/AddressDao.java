@@ -1,11 +1,11 @@
 package com.zhongjian.dao.jdbctemplate;
 
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import com.zhongjian.dao.entity.order.address.OrderAddressBean;
 import com.zhongjian.dao.entity.order.address.OrderAddressOrderBean;
 
@@ -29,4 +29,13 @@ public class AddressDao {
 				obj.getLongitude(),obj.getLatitude(),obj.getUid(),obj.getCtime(),obj.getRiderSn());
 	}
 	
+	public void updateDefaultAdress(Integer addressId,Integer uid)  {
+		String sql = "UPDATE hm_address s,hm_address a" + 
+				" SET s.STATUS = 1,a.`status`=0 WHERE s.id = ?" + 
+				" AND s.uid = ?" + 
+				" AND s.is_delete=0" + 
+				" AND a.id != ?" + 
+				" AND a.uid = ?";
+		jdbcTemplate.update(sql,addressId,uid,addressId,uid);
+	}
 }

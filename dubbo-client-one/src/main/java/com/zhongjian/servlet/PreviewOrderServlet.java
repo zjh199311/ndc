@@ -4,12 +4,13 @@ import javax.servlet.AsyncContext;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.zhongjian.dto.cart.address.query.CartAddressQueryDTO;
+import com.zhongjian.dto.cart.address.result.CartAddressResultDTO;
 import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.common.ResultUtil;
@@ -22,6 +23,7 @@ import com.zhongjian.common.GsonUtil;
 import com.zhongjian.common.ResponseHandle;
 import com.zhongjian.common.SpringContextHolder;
 import com.zhongjian.executor.ThreadPoolExecutorSingle;
+import com.zhongjian.service.address.AddressService;
 import com.zhongjian.service.order.OrderService;
 
 import java.io.IOException;
@@ -29,17 +31,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet(value = "/v1/order/createorder", asyncSupported = true)
-public class CreateOrderServlet extends HttpServlet {
+@WebServlet(value = "/v1/order/previeworder", asyncSupported = true)
+public class PreviewOrderServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private static Logger log = Logger.getLogger(CreateOrderServlet.class);
+	private static Logger log = Logger.getLogger(PreviewOrderServlet.class);
 
 	private OrderService orderService = (OrderService) SpringContextHolder.getBean(OrderService.class);
 
+	private AddressService addressServie = (AddressService) SpringContextHolder.getBean(AddressService.class);
+	
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		Map<String, String> formData = FormDataUtil.getFormData(request);
 		AsyncContext asyncContext = request.startAsync();
@@ -54,30 +58,34 @@ public class CreateOrderServlet extends HttpServlet {
 				ThreadPoolExecutorSingle.executor.execute(() -> {
 					String result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SERVERERR));
 					try {
+						//sid逗号隔开
+						//type默认0 
+						//extra在type为2是必传
+						//isselfmention默认0
+						//status商户状态
 						Integer uid = (Integer) request.getAttribute("uid");
 						String sid = formData.get("sid");
 						String[] sidsString = sid.split(",");
-						Integer[] sids = new Integer[sidsString.length];
+						Integer[] sids = new Integer[sidsString.length];//sid数组传给service
 						for (int i = 0; i < sidsString.length; i++) {
 							sids[i] = Integer.valueOf(sidsString[i]);
 						}
-						String type = formData.get("type");
-						Integer extra = Integer.valueOf(formData.get("extra"));
-						if ("2".equals(type) && extra == null) {
+						String type = formData.get("type")==null?"0":formData.get("type");
+						String extraString = formData.get("extra");
+						if ("2".equals(type) && extraString == null) {
 							result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.PARAM_LOST));
 							ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
 							return;
 						}
-						String isSelfMention = formData.get("isselfmention");
-						Integer addressId = Integer.valueOf(formData.get("adressid"));
-						Integer unixTime = Integer.valueOf(formData.get("unixtime"));
+						Integer extra = (extraString != null)?Integer.valueOf(extraString):null;
+						String isSelfMention = formData.get("isselfmention") == null?"0":formData.get("isselfmention");
 						Integer status = Integer.valueOf(formData.get("status"));
 						if (status == 1) {
 							 result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE));
 							 ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
 							 return;
 						}
-						result = CreateOrderServlet.this.handle(uid,sids,type,extra,isSelfMention,addressId,unixTime,status);
+						result = PreviewOrderServlet.this.handle(uid,sids,type,extra,isSelfMention,status);
 						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -101,7 +109,7 @@ public class CreateOrderServlet extends HttpServlet {
 	}
 
 	private String handle(Integer uid, Integer[] sids, String type, Integer extra, String isSelfMention,
-			Integer addressId,Integer unixTime,Integer status) {
+			Integer status) {
 		if (uid == 0) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
 		}
@@ -121,8 +129,17 @@ public class CreateOrderServlet extends HttpServlet {
 		if (status == 2) {
 			isAppointment = 1;
 		}
-		Map<String, Object> reslutMap = orderService.previewOrCreateOrder(uid, sids, type, extra, isSelfMention, true, addressId, unixTime, isAppointment);
-		return GsonUtil.GsonString(ResultUtil.getSuccess(reslutMap));
+		//请求服务获取预览订单数据--start
+		String serverTime = orderService.previewOrderTime(isAppointment);
+		CartAddressQueryDTO cartAddressQueryDTO = new CartAddressQueryDTO();
+		cartAddressQueryDTO.setId(0);
+		cartAddressQueryDTO.setUid(uid);
+		CartAddressResultDTO address = addressServie.previewOrderAddress(cartAddressQueryDTO);
+		Map<String, Object> orderDetail = orderService.previewOrCreateOrder(uid, sids, type, extra, isSelfMention, false, null, null, isAppointment);
+		//请求服务获取预览订单数据--end
+		orderDetail.put("serverTime", serverTime);
+		orderDetail.put("address", address);
+		return GsonUtil.GsonString(ResultUtil.getSuccess(orderDetail));
 	}
 	
 }

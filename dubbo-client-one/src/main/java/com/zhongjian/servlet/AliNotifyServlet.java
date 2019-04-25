@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import com.alipay.api.internal.util.AlipaySignature;
 import com.zhongjian.common.SpringContextHolder;
 import com.zhongjian.component.PropUtil;
+import com.zhongjian.service.order.OrderService;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -27,6 +28,8 @@ public class AliNotifyServlet extends HttpServlet {
 	private static Logger log = Logger.getLogger(AliNotifyServlet.class);
     
 	private PropUtil propUtil = (PropUtil) SpringContextHolder.getBean(PropUtil.class);
+	
+	private OrderService orderService = (OrderService) SpringContextHolder.getBean(OrderService.class);
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -52,7 +55,7 @@ public class AliNotifyServlet extends HttpServlet {
 					if ( !app_id.equals(propUtil.getAliAppid())) {
 						printWriter.print("failure");
 					}
-					if (true) {
+					if (orderService.handleROrder(out_trade_no, total_amount)) {
 						printWriter.print("success");
 					} else {
 						printWriter.print("failure");

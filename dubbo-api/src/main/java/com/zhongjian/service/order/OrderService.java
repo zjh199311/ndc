@@ -37,8 +37,7 @@ public interface OrderService {
 	 * @param total_amount
 	 * @return orderId
 	 */
-    Integer handleROrder(String out_trade_no,String total_amount);
+    boolean handleROrder(String out_trade_no,String total_amount);
      
-
 
 }

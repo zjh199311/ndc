@@ -7,8 +7,6 @@ import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.request.AlipayTradeAppPayRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.zhongjian.commoncomponent.PropUtil;
-import com.zhongjian.dto.common.ResultDTO;
-import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.util.LogUtil;
 import com.zhongjian.util.PayCommonUtil;
 
@@ -19,7 +17,6 @@ import java.net.URLEncoder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.SortedMap;
-import java.util.UUID;
 
 @Service("generateSignatureService")
 public class GenerateSignatureServiceImpl implements GenerateSignatureService {

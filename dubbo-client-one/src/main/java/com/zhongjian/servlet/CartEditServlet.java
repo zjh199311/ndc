@@ -54,6 +54,10 @@ public class CartEditServlet extends HttpServlet {
 					Integer id= Integer.valueOf(formData.get("id"));
 					String amount = formData.get("amount");
 					String remark = formData.get("remark");
+					String newRemark = new String (remark.getBytes("ISO-8859-1"),"UTF-8");
+					System.out.println("ISO:" + newRemark);
+					 newRemark = new String (remark.getBytes("GBK"),"UTF-8");
+					System.out.println("ISO:" + newRemark);
 					result = CartEditServlet.this.handle(id,uid, amount, remark);
 						// 返回数据
 

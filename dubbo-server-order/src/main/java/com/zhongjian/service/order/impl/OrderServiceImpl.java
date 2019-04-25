@@ -14,12 +14,12 @@ import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.dto.order.order.query.OrderStatusQueryDTO;
 import com.zhongjian.service.order.OrderService;
+import com.zhongjian.task.AddressTask;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -41,12 +41,15 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 
 	@Autowired
 	private OrderDao orderDao;
-	
+
 	@Autowired
 	private AddressDao addressDao;
-	
+
 	@Autowired
 	private IntegralVipDao integralVipDao;
+
+	@Autowired
+	AddressTask addressTask;
 
 	@Override
 	@Transactional
@@ -95,8 +98,11 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		List<String> storeIds = null;
 		if (toCreateOrder) {
 			storeOrders = new HashMap<String, Object>();
+			storeOrders.put("rider_status", 0);
 			storeIds = new ArrayList<String>();
 		}
+
+		// 计算商品价格（已算商户活动）-----start
 		List<Map<String, Object>> storeList = new ArrayList<Map<String, Object>>();
 		for (int i = 0; i < sids.length; i++) {
 			Map<String, Object> storeOrderInfo = null;
@@ -176,8 +182,8 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			}
 			store.put("sid", sid);
 			store.put("sname", sname);
-			store.put("totalPrice", storeAmountBigDecimal.setScale(2).toString());
-			store.put("realPrice", actualStoreAmountBigDecimal.toString());
+			store.put("originPrice", storeAmountBigDecimal.setScale(2).toString());
+			store.put("totalPrice", actualStoreAmountBigDecimal.toString());
 			// 计算商户优惠的价格
 			if (toCreateOrder) {
 				storeActivityPrice = storeActivityPrice
@@ -207,7 +213,9 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		}
 		storesAmountString = storesAmountBigDecimal.setScale(2).toString();
 		needPay = storesAmountBigDecimal;
-		// 检测市场活动
+		// 计算商品价格（已算商户活动）-----end
+
+		// 检测市场活动--start
 		Map<String, Object> marketActivtiy = orderDao.getMarketActivtiy(marketId);
 		if (marketActivtiy != null) {
 			showMarketActivity = true;
@@ -219,7 +227,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				split = rule.split("-");
 				marketActivity = "首单买满" + split[0] + "减" + split[1];
 			} else {
-				marketActivity = "首单买满" + upLimit + "打" + (int) (Float.valueOf(rule) * 10);
+				marketActivity = "首单买满" + upLimit + "打" + (int) (Float.valueOf(rule) * 10) + "折";
 			}
 
 			// 检查首单
@@ -249,6 +257,9 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			}
 
 		}
+		// 检测市场活动--end
+
+		// 积分优惠券初始化显示----start
 		Map<String, Object> uMap = integralVipDao.getIntegralAndVipInfo(uid);
 		Integer integral = (Integer) (uMap.get("integral"));
 		integralContent = "[" + integral + "积分]可抵抗扣";
@@ -259,7 +270,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		Integer vipexpire = (Integer) (uMap.get("vip_expire"));
 		BigDecimal vipFavourable = needPay.multiply(new BigDecimal("0.05")).setScale(2, BigDecimal.ROUND_HALF_UP);
 		vipFavourRiderOrder = vipFavourable;
-		vipFavour = "￥" + vipFavourable.setScale(2).toString();
+		vipFavour = "-￥" + vipFavourable.setScale(2).toString();
 		// 判断是否是会员
 		if (vipStatus == 1 && vipexpire > (System.currentTimeMillis() / 1000)) {
 			isVIp = 1;
@@ -269,6 +280,9 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			if ("1".equals(isSelfMention)) {
 				deliverfee = "￥1";
 				deliverfeeBigDecimal = new BigDecimal("1");
+				if (toCreateOrder) {
+					storeOrders.put("rider_status", 3);
+				}
 			}
 		}
 
@@ -278,8 +292,10 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		} else {
 			couponContent = "暂无可用";
 		}
+		// 积分优惠券初始化显示----end
+
+		// 算积分或优惠券----start
 		boolean needPayNeedHandleFlag = true;
-//		算积分或优惠券
 		BigDecimal priceForIntegralorCoupon = needPay.add(deliverfeeBigDecimal);
 		priceForIntegralCoupon = priceForIntegralorCoupon.setScale(2).toString();
 		if ("1".equals(type) && integral > 0) {
@@ -307,7 +323,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			}
 			if (toCreateOrder) {
 				// 卡积分
-
+				integralVipDao.updateUserIntegral(uid, "-", integralSub.intValue());
 			}
 		}
 		if ("2".equals(type)) {
@@ -330,22 +346,27 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					// 配送券
 					deliverfeeBigDecimal = BigDecimal.ZERO;
 					deliverfee = "￥0";
+					if (toCreateOrder) {
+						storeOrders.put("couponid", extra);
+					}
 					needPayNeedHandleFlag = false;
 				}
 				if (toCreateOrder) {
-				//卡券
+					// 卡券
+					orderDao.changeCouponState(extra, 1);
 				}
 			}
 		}
+		// 算积分或优惠券----end
+
 		// 最终价格补算
 		if (needPayNeedHandleFlag) {
 			needPay = needPay.add(deliverfeeBigDecimal);
 		}
 		needPayString = "￥" + needPay.toString();
 
-		// 数据封装
-
 		// 生成订单
+		Map<String, Object> resMap = new HashMap<String, Object>();
 		if (toCreateOrder) {
 			storeOrders.put("rider_sn", "RI" + RandomUtil.getFlowNumber());
 			storeOrders.put("order_sn", orderJoint.toString());
@@ -366,19 +387,16 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			storeOrders.put("store_activity_price", storeActivityPrice);
 			storeOrders.put("vip_relief", isVIp == 1 ? vipFavourRiderOrder : BigDecimal.ZERO);
 			storeOrders.put("pay_status", 0);
-			storeOrders.put("rider_status", 0);
-				// 回调
-				// 1.支付状态变化
-				// 2.订单骑手生成
-				// 3.订单地址生成
-				// 4.积分增加(totalPrice数值)
-				// 6.发消息
-				// 7.默认市场
-				// 8.默认地址
-				// 插入骑手
-			if ("1".equals(isSelfMention)) {
-				storeOrders.put("rider_status", 3);
-			}
+			// 回调
+			// 1.支付状态变化
+			// 2.订单骑手生成
+			// 3.订单地址生成
+			// 4.积分增加(totalPrice数值)
+			// 6.发消息
+			// 7.默认市场
+			// 8.默认地址
+			// 插入骑手
+
 			Integer roid = orderDao.addHmRiderOrder(storeOrders);
 			for (String storeId : storeIds) {
 				Object sobj = storeOrders.get(storeId);
@@ -395,37 +413,70 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					}
 				}
 			}
-			Map<String, Object> resMap = new HashMap<String, Object>();
+
 			if (integralPay) {
 				handleROrder(outTradeNo, needPay.toString());
 				resMap.put("roid", roid);
 				resMap.put("status", 1);
-			}else {
+			} else {
 				resMap.put("roid", roid);
 				resMap.put("status", 0);
 			}
+
+		} else {
+			// 数据封装
+			resMap.put("isMember", isVIp);
+			resMap.put("delMemberPrice", vipFavour);
+			resMap.put("marketActivity", marketActivity);
+			resMap.put("marketActivityContent", marketActivityContent);
+			resMap.put("showMarketActivity", showMarketActivity);
+			resMap.put("deliverfee", deliverfee);
+			resMap.put("totalPrice", storesAmountString);
+			resMap.put("payTotal", needPayString);
+			resMap.put("integralCanUse", integralCanUse);
+			resMap.put("couponCanUse", couponCanUse);
+			resMap.put("integralContent", integralContent);
+			resMap.put("couponContent", couponContent);
+			resMap.put("orderList", storeList);
 		}
-		return null;
+		return resMap;
 
 	}
 
-	Integer getRidFormMarket(Integer marketId, String strategy) {
+	public Integer getRidFormMarket(Integer marketId, String strategy) {
 		if ("least".equals(strategy)) {
-		List<Map<String, Object>> ridList = orderDao.getRidBymarketId(marketId,(int) DateUtil.getTodayZeroTime());
-		if (ridList.size() == 0) {
+			List<Map<String, Object>> ridOrginList = orderDao.getRidsByMarketId(marketId);
+			if (ridOrginList.size() == 0) {
+				return -1;
+			}
+			List<Map<String, Object>> ridList = orderDao.getRidOrderNumByMarketId(marketId,
+					(int) DateUtil.getTodayZeroTime());
+			if (ridList.size() == 0) {
+				// 随机从ridOrginList取一个
+				return (Integer) (ridOrginList.get(0).get("rid"));
+			} else {
+				if (ridList.size() == ridOrginList.size()) {
+					// 取出ridList中最少的
+					return (Integer) (ridList.get(0).get("rid"));
+				} else {
+					List<Integer> list1 = new ArrayList<Integer>();
+					List<Integer> list2 = new ArrayList<Integer>();
+					for (Map<String, Object> map : ridList) {
+						list1.add((Integer) map.get("rid"));
+					}
+					for (Map<String, Object> map : ridOrginList) {
+						list2.add((Integer) map.get("rid"));
+					}
+					list2.removeAll(list1);
+					return list2.get(0);
+				}
+
+			}
+
+		} else {
 			return -1;
 		}
-		for (Map<String, Object> map : ridList) {
-			Integer sum = (Integer) map.get("sum");
-			if (sum > 0) {
-				return (Integer) map.get("rid");
-			}
-		}
-		return -1;
-		}else {
-			return -1;	
-		}
-		
+
 	}
 
 	@Override
@@ -443,7 +494,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			if (flag == false) {
 				marketId = orderShopownBean.getMarketid();
 				flag = true;
-			}else {
+			} else {
 				if (marketId != orderShopownBean.getMarketid()) {
 					resultDTO.setData(false);
 					break;
@@ -542,37 +593,44 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 
 	@Override
 	@Transactional
-	public Integer handleROrder(String out_trade_no, String total_amount) {
-		Integer rorderId = 0;
-		if (orderDao.updateROStatusToSuccess(out_trade_no,(int) System.currentTimeMillis() / 1000)) {
-			Map<String, Object> rorderDetail = orderDao.getROrderIdByOutTradeNo(out_trade_no);
-			rorderId = (Integer) rorderDetail.get("id");
-			Integer marketId = (Integer) rorderDetail.get("marketid");
-			Integer addressId = (Integer) rorderDetail.get("address_id");
-			String riderSn = (String) rorderDetail.get("rider_sn");
-			Integer uid = (Integer) rorderDetail.get("uid");
-//			List<Integer> orderIds = orderDao.getOrderIdsByRoid(rorderId);
-//			orderDao.updateOStatus(orderIds, 1 , (int) System.currentTimeMillis() / 1000);
-			Integer rid = getRidFormMarket(marketId, "least");
-			if (rid != -1) {
-				//生成骑手
-				orderDao.updateroRider(rid, rorderId);
+	public boolean handleROrder(String out_trade_no, String total_amount) {
+		int currentTime = (int) (System.currentTimeMillis() / 1000);
+		if (out_trade_no.startsWith("VQ")) {
+			return true;
+		} else {
+			if (orderDao.updateROStatusToSuccess(out_trade_no, currentTime)) {
+				Map<String, Object> rorderDetail = orderDao.getROrderIdByOutTradeNo(out_trade_no);
+				Integer rorderId = (Integer) rorderDetail.get("id");
+				Integer marketId = (Integer) rorderDetail.get("marketid");
+				Integer addressId = (Integer) rorderDetail.get("address_id");
+				String riderSn = (String) rorderDetail.get("rider_sn");
+				Integer uid = (Integer) rorderDetail.get("uid");
+				List<Integer> orderIds = orderDao.getOrderIdsByRoid(rorderId);
+				orderDao.updateOStatus(orderIds, 1, currentTime);
+				Integer rid = getRidFormMarket(marketId, "least");
+				if (rid != -1) {
+					// 生成骑手
+					orderDao.updateroRider(rid, rorderId);
+				}
+				// 生成地址
+				OrderAddressBean addressBean = addressDao.getAddressById(addressId);
+				OrderAddressOrderBean addressOrderBean = new OrderAddressOrderBean();
+				BeanUtils.copyProperties(addressBean, addressOrderBean);
+				addressOrderBean.setCtime(currentTime);
+				addressOrderBean.setRiderSn(riderSn);
+				addressDao.addOrderAddress(addressOrderBean);
+				// 增加积分
+				integralVipDao.updateUserIntegral(uid, "+", Double.valueOf(total_amount).intValue());
+				// 记录
+				Map<String, Object> integralAndVipInfo = integralVipDao.getIntegralAndVipInfo(uid);
+				Integer integral = (Integer) integralAndVipInfo.get("integral");
+				//异步处理
+				addressTask.setAddressTask(6, 16);
+				addressTask.setLateMarket(marketId, uid);
 			}
-			//生成地址
-			OrderAddressBean addressBean = addressDao.getAddressById(addressId);
-			OrderAddressOrderBean addressOrderBean = new OrderAddressOrderBean();
-			BeanUtils.copyProperties(addressBean, addressOrderBean);
-			addressOrderBean.setCtime((int) System.currentTimeMillis()/1000);
-			addressOrderBean.setRiderSn(riderSn);
-			addressDao.addOrderAddress(addressOrderBean);
-			//增加积分
-			integralVipDao.updateUserIntegral(uid, "+", Double.valueOf(total_amount).intValue());
-			//记录
+			return true; //流程走完告诉支付宝不需再回调
+
 		}
-		return rorderId;
-	}
-	public static void main(String[] args) {
-		System.out.println(new BigDecimal("2.00").toString());
 	}
 
 }

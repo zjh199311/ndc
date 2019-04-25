@@ -4,6 +4,8 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * @Author: ldd
  */
@@ -45,6 +47,7 @@ public class CartAddressResultDTO implements Serializable{
     /**
      * 默认地址
      */
+    @Expose(serialize =  false)
     private Integer status;
 
 }

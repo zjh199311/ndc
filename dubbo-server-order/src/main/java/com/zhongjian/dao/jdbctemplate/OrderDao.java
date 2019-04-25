@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JInternalFrame.JDesktopIcon;
 
 import com.zhongjian.dto.cart.storeActivity.result.CartStoreActivityResultDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,7 @@ public class OrderDao {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
+	//activity ----start
 	public CartStoreActivityResultDTO getStoreActivtiy(Integer sid, BigDecimal amount) {
 		String sql = "SELECT full,reduce,discount,type from hm_store_activity where sid="
 				+ " ? and full <= ? and `enable` = 1 and is_delete = 0 AND examine = 2 ORDER BY full DESC LIMIT 1";
@@ -53,7 +53,8 @@ public class OrderDao {
 		}
 		return resMap;
 	}
-
+	//activity ----end
+	
 	public List<Map<String, Object>> getBasketByUidAndSid(Integer sid, Integer uid) {
 		String sql = "SELECT hm_goods.price,hm_basket.amount,hm_basket.gid,hm_goods.gname,hm_goods.unit,hm_shopown.sname,"
 				+ "hm_shopown.unFavorable,hm_shopown.marketid,hm_shopown.pid,"
@@ -73,6 +74,7 @@ public class OrderDao {
 
 
 
+	//优惠券-----start
 	// 查看优惠券数量
 	public Integer getCouponsNum(Integer uid) {
 		String sql = "SELECT COUNT(1) from hm_user_coupon,hm_coupon where uid = ? and state "
@@ -93,7 +95,15 @@ public class OrderDao {
 		}
 		return resMap;
 	}
-
+	
+	
+	// 更改优惠券状态
+	public void changeCouponState(Integer couponId , Integer state) {
+		String sql = "update hm_user_coupon set state = ? where couponid = ?";
+		jdbcTemplate.update(sql,state,couponId);
+	}
+	//优惠券-----end
+	
 	// hm_cart添加
 	public void addHmCart(Map<String, Object> map) {
 		String sql = "INSERT INTO `hm_cart` (pid,gid,gname,unit,uid,price,amount,oid,sid,status,ctime,remark) VALUES (null,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -166,7 +176,7 @@ public class OrderDao {
 		return keyHolder.getKey().intValue();
 	}
 
-	public List<Map<String, Object>> getRidBymarketId(Integer marketId, Integer todayTimeZone) {
+	public List<Map<String, Object>> getRidOrderNumByMarketId(Integer marketId, Integer todayTimeZone) {
 		String sql = " SELECT rid,count(rid) sum FROM hm_rider_order"
 				+ " where rid IN (SELECT rid FROM hm_rider_user where state = 1 "
 				+ "AND status=1 AND is_order = 1 AND marketid = ? ) AND rider_status in (0,1) "
@@ -174,7 +184,12 @@ public class OrderDao {
 		List<Map<String, Object>> res = jdbcTemplate.queryForList(sql, marketId, todayTimeZone);
 		return res;
 	}
-
+	public List<Map<String, Object>> getRidsByMarketId(Integer marketId) {
+		String sql = "SELECT rid,0 as sum  FROM hm_rider_user where state = 1 "
+				+ "AND status=1 AND is_order = 1 AND marketid = ?";
+		List<Map<String, Object>> res = jdbcTemplate.queryForList(sql, marketId);
+		return res;
+	}
 	public Map<String, Object> getDetailByOrderId(Integer uid, Integer orderId) {
 		String sql = "select out_trade_no,totalPrice from  hm_rider_order where id = ? and uid = ?";
 		Map<String, Object> resMap = null;

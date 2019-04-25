@@ -590,9 +590,4 @@ public class HttpClientUtil {
         }
         return strBuffer.substring(0,strBuffer.length()-1).toString() ;
     }
-    public static void main(String[] args) throws Exception {
-        String userInfoDataStr = getResponseResultByGet(
-                "https://api.weixin.qq.com/sns/userinfo?access_token=OezXcEiiBSKSxW0eoylIeFD-DNQHSqDev3I98gYT79EwhlJKm0BZ_5CBGsrVgnymcYhdLstJjEediypNxjdR2cBvjxFNCzqejUBhZUc4v2-PQgkUSdqvhYzk55ljHrW2l74vFv-jHDW9tw1LtdKN0A&openid=oEJlGuOPfLKObs5MyFyKClsn9vuE&lang=zh_CN");
-        System.out.println(userInfoDataStr);
-    }
 }
