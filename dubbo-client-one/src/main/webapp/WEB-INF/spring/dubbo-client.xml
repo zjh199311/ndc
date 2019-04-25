@@ -46,7 +46,9 @@
 	<dubbo:reference id="hmShopownService"
 		interface="com.zhongjian.service.cart.shopown.CartShopownService"
 		version="1.0.0" />
-
+	<dubbo:reference id="addressService"
+		interface="com.zhongjian.service.address.AddressService"
+		version="1.0.0" />
 	<bean class="com.zhongjian.common.SpringContextHolder"></bean>
 	<bean id="propComponent" init-method="readProperties"
 		class="com.zhongjian.component.PropComponent"></bean>

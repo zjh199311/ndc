@@ -1,16 +1,19 @@
 package com.zhongjian;
 
 
-import java.util.List;
-import java.util.Map;
+
 
 import javax.annotation.Resource;
 
 import com.zhongjian.dao.jdbctemplate.AddressDao;
 import com.zhongjian.dao.jdbctemplate.OrderDao;
 import com.zhongjian.service.order.OrderService;
+import com.zhongjian.task.AddressTask;
+import com.zhongjian.util.TaskUtil;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -19,16 +22,21 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration({"/META-INF/spring/dubbo-server.xml"})
 public class AppTest {
     @Resource
-    OrderService orderService;
+    OrderService a;
     
     @Resource
     OrderDao orderDao;
     @Resource
     AddressDao addressDao;
     
+    @Autowired
+    AddressTask addressTask;
+    
+    
 
     @Test
     public void test() {
-    	System.out.println(addressDao.getAddressById(1));
-    }
+    	TaskUtil.start(1);
+    	addressTask.setAddressTask(6, 16);
+}
 }

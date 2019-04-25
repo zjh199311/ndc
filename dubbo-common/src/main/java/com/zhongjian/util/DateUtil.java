@@ -813,5 +813,14 @@ public class DateUtil extends DateUtils {
         Date zero = calendar.getTime();
         return zero.getTime()/1000;
     }
+
+     /**
+      * 获取unix时间戳
+      *
+      * @return
+      */
+     public static int getCurrentTime() {
+         return (int) (System.currentTimeMillis() / 1000);
+     }
 }
 

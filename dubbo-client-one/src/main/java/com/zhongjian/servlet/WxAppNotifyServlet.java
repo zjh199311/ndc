@@ -1,37 +1,22 @@
 package com.zhongjian.servlet;
 
-import javax.servlet.AsyncContext;
-import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.zhongjian.dto.cart.basket.query.CartBasketEditQueryDTO;
-import com.zhongjian.dto.common.CommonMessageEnum;
-import com.zhongjian.dto.common.ResultUtil;
-import com.zhongjian.service.cart.basket.CartBasketService;
 import com.zhongjian.util.PayCommonUtil;
 
 import org.apache.log4j.Logger;
 
-import com.alipay.api.internal.util.AlipaySignature;
-import com.zhongjian.common.GsonUtil;
-import com.zhongjian.common.ResponseHandle;
 import com.zhongjian.common.SpringContextHolder;
 import com.zhongjian.component.PropUtil;
-import com.zhongjian.executor.ThreadPoolExecutorSingle;
+import com.zhongjian.service.order.OrderService;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.TreeMap;
 
 @WebServlet(value = "/v1/notify/wxapp", asyncSupported = true)
@@ -42,6 +27,8 @@ public class WxAppNotifyServlet extends HttpServlet {
 	private static Logger log = Logger.getLogger(WxAppNotifyServlet.class);
 
 	private PropUtil propUtil = (PropUtil) SpringContextHolder.getBean(PropUtil.class);
+	
+	private OrderService orderService = (OrderService) SpringContextHolder.getBean(OrderService.class);
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -66,7 +53,7 @@ public class WxAppNotifyServlet extends HttpServlet {
 				String totalAmount = notifyMap.get("total_fee");
 				BigDecimal totalAmountBigDecimal = new BigDecimal(totalAmount);
 				String transTotalAmount = totalAmountBigDecimal.divide(new BigDecimal(100)).toString();
-				if (true) {
+				if (orderService.handleROrder(tradeNo, totalAmount)) {
 					response.getWriter().write(
 							"<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
 				}else {

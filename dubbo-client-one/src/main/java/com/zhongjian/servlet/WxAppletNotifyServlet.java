@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import com.zhongjian.common.SpringContextHolder;
 import com.zhongjian.component.PropUtil;
+import com.zhongjian.service.order.OrderService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,8 @@ public class WxAppletNotifyServlet extends HttpServlet {
 
 	private PropUtil propUtil = (PropUtil) SpringContextHolder.getBean(PropUtil.class);
 
+	private OrderService orderService = (OrderService) SpringContextHolder.getBean(OrderService.class);
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -51,7 +54,7 @@ public class WxAppletNotifyServlet extends HttpServlet {
 				String totalAmount = notifyMap.get("total_fee");
 				BigDecimal totalAmountBigDecimal = new BigDecimal(totalAmount);
 				String transTotalAmount = totalAmountBigDecimal.divide(new BigDecimal(100)).toString();
-				if (true) {
+				if (orderService.handleROrder(tradeNo, totalAmount)) {
 					response.getWriter().write(
 							"<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
 				}else {
