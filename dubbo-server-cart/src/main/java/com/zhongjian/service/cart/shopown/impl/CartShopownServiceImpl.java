@@ -298,11 +298,17 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                     }
                     //商户下的总优惠价
                     if (FinalDatas.ONE.toString().equals(shopownResultDTO.getStatus())) {
-                        shopownResultDTO.setDiscountPrice(String.valueOf(priceByClose.setScale(2)));
+                        if(BigDecimal.ZERO.compareTo(priceByClose)!=0){
+                            shopownResultDTO.setDiscountPrice(String.valueOf(priceByClose.setScale(2)));
+                        }
                     } else if (FinalDatas.ZERO.toString().equals(shopownResultDTO.getStatus())) {
-                        shopownResultDTO.setDiscountPrice(String.valueOf(priceByOpen.setScale(2)));
+                        if(BigDecimal.ZERO.compareTo(priceByOpen)!=0){
+                            shopownResultDTO.setDiscountPrice(String.valueOf(priceByOpen.setScale(2)));
+                        }
                     } else if (FinalDatas.TWO.toString().equals(shopownResultDTO.getStatus())) {
-                        shopownResultDTO.setDiscountPrice(String.valueOf(priceByAdvence.setScale(2)));
+                        if(BigDecimal.ZERO.compareTo(priceByAdvence)!=0){
+                            shopownResultDTO.setDiscountPrice(String.valueOf(priceByAdvence.setScale(2)));
+                        }
                     }
                 }
                 //商户下的总价
@@ -581,11 +587,11 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                     } else {
                         //这边则没有菜场活动价. 那么在看看是否有商家活动价.如果没有则直接给总价.
                         if (BigDecimal.ZERO.compareTo(priceByOpen) == 0) {
-                            totalDisPriceByClose = totalDisPriceByClose.add(numberByOpen);
+                            totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen);
                         } else {
-                            totalDisPriceByClose = totalDisPriceByClose.add(priceByOpen);
+                            totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen);
                         }
-                        cartMarketResultByCloseDTO.setTotalPrice(String.valueOf(totalDisPriceByClose.setScale(2)));
+                        cartMarketResultByOpenDTO.setTotalPrice(String.valueOf(totalDisPriceByOpen.setScale(2)));
                     }
                 } else {
                     cartMarketResultByCloseDTO.setMarketName(hmShopownResultDTO.getMarketName());
