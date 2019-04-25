@@ -17,7 +17,7 @@ public class CartMarketResultDTO implements Serializable {
     /**
      * 菜场id
      */
-    private Integer martketId;
+    private Integer marketId;
 
     /**
      * 菜场名称

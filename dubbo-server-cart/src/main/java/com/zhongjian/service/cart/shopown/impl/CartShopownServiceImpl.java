@@ -329,10 +329,10 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
 
                     //组装菜场DTO 如果一个菜场对应各自的商户.如果没有值则添加如果有值则判断该商户是否为该菜场旗下.
                     if (null == cartMarketResultByAdvenceDTO.getMartketId()) {
-                        cartMarketResultByAdvenceDTO.setMartketId(hmShopownResultDTO.getMartketId());
+                        cartMarketResultByAdvenceDTO.setMartketId(hmShopownResultDTO.getMarketId());
                         cartShopownResultDTOListByAdvence.add(shopownResultDTO);
                     } else {
-                        if (hmShopownResultDTO.getMartketId() == cartMarketResultByAdvenceDTO.getMartketId()) {
+                        if (hmShopownResultDTO.getMarketId() == cartMarketResultByAdvenceDTO.getMartketId()) {
                             cartShopownResultDTOListByAdvence.add(shopownResultDTO);
                         } else {
                             cartShopownResultDTOListByAdvence = new ArrayList<>();
@@ -465,10 +465,10 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
 
                     //组装菜场DTO 如果一个菜场对应各自的商户.如果没有值则添加如果有值则判断该商户是否为该菜场旗下.
                     if (null == cartMarketResultByOpenDTO.getMartketId()) {
-                        cartMarketResultByOpenDTO.setMartketId(hmShopownResultDTO.getMartketId());
+                        cartMarketResultByOpenDTO.setMartketId(hmShopownResultDTO.getMarketId());
                         cartShopownResultDTOListByOpen.add(shopownResultDTO);
                     } else {
-                        if (hmShopownResultDTO.getMartketId() == cartMarketResultByOpenDTO.getMartketId()) {
+                        if (hmShopownResultDTO.getMarketId() == cartMarketResultByOpenDTO.getMartketId()) {
                             cartShopownResultDTOListByOpen.add(shopownResultDTO);
                         } else {
                             cartShopownResultDTOListByOpen = new ArrayList<>();
@@ -602,10 +602,10 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
 
                     //组装菜场DTO 如果一个菜场对应各自的商户.如果没有值则添加如果有值则判断该商户是否为该菜场旗下.
                     if (null == cartMarketResultByCloseDTO.getMartketId()) {
-                        cartMarketResultByCloseDTO.setMartketId(hmShopownResultDTO.getMartketId());
+                        cartMarketResultByCloseDTO.setMartketId(hmShopownResultDTO.getMarketId());
                         cartShopownResultDTOListByClose.add(shopownResultDTO);
                     } else {
-                        if (hmShopownResultDTO.getMartketId() == cartMarketResultByCloseDTO.getMartketId()) {
+                        if (hmShopownResultDTO.getMarketId() == cartMarketResultByCloseDTO.getMartketId()) {
                             cartShopownResultDTOListByClose.add(shopownResultDTO);
                         } else {
                             cartShopownResultDTOListByClose = new ArrayList<>();

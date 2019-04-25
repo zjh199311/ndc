@@ -2,13 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.zhongjian.dao.entity.cart.market.CartMarketBean">
     <resultMap id="BaseMarket" type="com.zhongjian.dto.cart.market.result.CartMarketResultDTO">
-        <id column="id" property="martketId"/>
+        <id column="id" property="marketId"/>
         <result column="ename" property="marketName" jdbcType="VARCHAR"/>
         <association property="marketActivity" column="id"
                      select="com.zhongjian.dao.entity.cart.market.CartMarketActivityBean.findActitityById">
         </association>
 
-        <collection property="Shopown" column="id"
+        <collection property="Shopown" column="{marketId=id,uid=uid}"
+                    ofType="com.zhongjian.dto.cart.market.query.CartMarketQueryDTO"
                     select="com.zhongjian.dao.entity.cart.shopown.CartShopownBean.findShopownInfoByMarketId">
         </collection>
     </resultMap>
@@ -17,7 +18,8 @@
         SELECT
         DISTINCT
             (m.id),
-            m.ename
+            m.ename,
+            b.uid
         FROM
             hm_market m
         LEFT JOIN hm_shopown s ON m.id = s.marketid

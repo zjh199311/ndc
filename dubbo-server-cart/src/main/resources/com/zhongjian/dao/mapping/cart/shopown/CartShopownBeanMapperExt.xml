@@ -9,10 +9,11 @@
         <result column="status" property="status" jdbcType="VARCHAR"/>
         <result column="unFavorable" property="unFavorable" jdbcType="VARCHAR"/>
         <collection property="storeActivity"
-                    select="com.zhongjian.dao.entity.cart.store.CartStoreActivityBean.findStoreActivityBySid" column="pid">
+                    select="com.zhongjian.dao.entity.cart.store.CartStoreActivityBean.findStoreActivityBySid"
+                    column="pid">
         </collection>
     </resultMap>
-    <select id="findShopownInfoByMarketId" parameterType="java.lang.Integer" resultMap="BaseShopownMap">
+    <select id="findShopownInfoByMarketId" parameterType="com.zhongjian.dto.cart.market.query.CartMarketQueryDTO" resultMap="BaseShopownMap">
         SELECT
             DISTINCT (s.pid),
             s.sname,
@@ -21,11 +22,12 @@
             s.unFavorable
         FROM
             hm_shopown s
-        inner JOIN hm_market h ON h.id=s.marketid
-        inner join hm_goods g on g.pid = s.pid
+        INNER JOIN hm_market h ON h.id=s.marketid
+        INNER JOIN hm_goods g on g.pid = s.pid
         INNER JOIN hm_basket b ON b.sid = g.pid
         WHERE
-            s.marketid = #{martketId.jdbcType=INTEGER}
+            s.marketid = #{marketId,jdbcType=INTEGER}
+            and b.uid=#{uid,jdbcType=INTEGER}
     </select>
 
 
