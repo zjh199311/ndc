@@ -28,6 +28,7 @@ import com.zhongjian.service.order.OrderService;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -94,7 +95,7 @@ public class PreviewOrderServlet extends HttpServlet {
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
-						log.error("fail createorder: " + e.getMessage());
+						log.error("fail previeworder: " + e.getMessage());
 					}
 					asyncContext.complete();
 				});
@@ -121,9 +122,13 @@ public class PreviewOrderServlet extends HttpServlet {
 		}
 		orderStatusQueryDTO.setPids(sidList);
 		orderStatusQueryDTO.setStatus(status);
-		ResultDTO<Boolean> jungle = orderService.judgeHmShopownStatus(orderStatusQueryDTO);
-		if (jungle.getFlag() == false || (Boolean) jungle.getData() == false) {
+		ResultDTO<String> jungle = orderService.judgeHmShopownStatus(orderStatusQueryDTO);
+		if (jungle.getData().equals("1")) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE));
+		}else if (jungle.getData().equals("2")) {
+			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE_ADVANCE));
+		}else if (jungle.getData().equals("3")){
+			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE_OPEN));
 		}
 		Integer isAppointment = 0;
 		if (status == 2) {

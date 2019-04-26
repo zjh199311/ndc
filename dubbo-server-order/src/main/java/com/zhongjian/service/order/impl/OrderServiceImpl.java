@@ -232,7 +232,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 
 			// 检查首单
 			if (!orderDao.checkFirstOrderByUid(uid)) {
-				marketActivityContent = "仅限当日首单";
+				marketActivity = "仅限当日首单";
 			} else {
 				// 没有选择优惠券或积分
 				if ("0".equals(type)) {
@@ -249,10 +249,11 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 						}
 						marketActivityPrice = needSuBigDecimal;
 						marketActivityContent = "-￥" + needSuBigDecimal.setScale(2).toString();
+					}else {
+						marketActivity = "未达到满减额度";
 					}
-					marketActivityContent = "未达到满减额度";
 				} else {
-					marketActivityContent = "现金券不与菜场活动共享";
+					marketActivity = "现金券不与菜场活动共享";
 				}
 			}
 
@@ -285,18 +286,24 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				}
 			}
 		}
-
+		
+		BigDecimal priceForIntegralorCoupon = needPay.add(deliverfeeBigDecimal);
 		if (orderDao.getCouponsNum(uid) > 0) {
-			couponContent = "有优惠券可用";
+			if (orderDao.getCouponsNumCanUse(uid, priceForIntegralorCoupon) > 0) {
+				couponContent = "有优惠券可用";
+			}
+			else {
+				couponContent = "暂无可用优惠券";
+			}
 			couponCanUse = 1;
 		} else {
-			couponContent = "暂无可用";
+			couponContent = "";
 		}
 		// 积分优惠券初始化显示----end
 
 		// 算积分或优惠券----start
 		boolean needPayNeedHandleFlag = true;
-		BigDecimal priceForIntegralorCoupon = needPay.add(deliverfeeBigDecimal);
+		
 		priceForIntegralCoupon = priceForIntegralorCoupon.setScale(2).toString();
 		if ("1".equals(type) && integral > 0) {
 			BigDecimal hundredBigDecimal = new BigDecimal(100);
@@ -335,7 +342,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					if (priceForIntegralorCoupon.compareTo(payFullBigDecimal) >= 0) {
 						BigDecimal couponPrice = (BigDecimal) couponInfo.get("coupon");
 						needPay = priceForIntegralorCoupon.subtract(couponPrice);
-						couponContent = "优惠金额-￥" + couponPrice.toString();
+						couponContent = "-￥" + couponPrice.toString();
 						if (toCreateOrder) {
 							storeOrders.put("couponid", extra);
 							storeOrders.put("coupon_price", couponPrice);
@@ -431,6 +438,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			resMap.put("marketActivityContent", marketActivityContent);
 			resMap.put("showMarketActivity", showMarketActivity);
 			resMap.put("deliverfee", deliverfee);
+			resMap.put("initDeliverfee", "￥6");
 			resMap.put("totalPrice", storesAmountString);
 			resMap.put("payTotal", needPayString);
 			resMap.put("integralCanUse", integralCanUse);
@@ -438,6 +446,13 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			resMap.put("integralContent", integralContent);
 			resMap.put("couponContent", couponContent);
 			resMap.put("orderList", storeList);
+			if (isVIp == 0) {
+				resMap.put("memberContent", "会员用户专享");
+				resMap.put("riderPayContent", "会员用户专享");
+			}else {
+				resMap.put("memberContent", "会员享九五折");
+				resMap.put("riderPayContent", "");
+			}
 		}
 		return resMap;
 
@@ -481,45 +496,45 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 
 	@Override
 	// 付款时检测商户状态服务 ext增加检测是否同一市场
-	public ResultDTO<Boolean> judgeHmShopownStatus(OrderStatusQueryDTO orderStatusQueryDTO) {
-		ResultDTO<Boolean> resultDTO = new ResultDTO<Boolean>();
+	public ResultDTO<String> judgeHmShopownStatus(OrderStatusQueryDTO orderStatusQueryDTO) {
+		ResultDTO<String> resultDTO = new ResultDTO<String>();
 		List<OrderShopownBean> orderShopownBeans = this.dao.executeListMethod(orderStatusQueryDTO,
 				"selectHmShopownStatusByPids", OrderShopownBean.class);
 		// 默认返回状态匹配
 		resultDTO.setFlag(true);
-		resultDTO.setData(true);
+		resultDTO.setData("0");
 		Integer marketId = 0;
 		boolean flag = false;
+		int isAppointMentSize = 0;
+		int openSize = 0;
+		int listSize = orderShopownBeans.size();
 		for (OrderShopownBean orderShopownBean : orderShopownBeans) {
 			if (flag == false) {
 				marketId = orderShopownBean.getMarketid();
 				flag = true;
 			} else {
 				if (marketId != orderShopownBean.getMarketid()) {
-					resultDTO.setData(false);
+					resultDTO.setData("1");
 					break;
 				}
 			}
 			if (1 == orderShopownBean.getStatus()) {
-				resultDTO.setData(false);
+				resultDTO.setData("1");
 				break;
 			}
-			// 如果商户状态与传入状态不匹配，返回false
-			if (!orderStatusQueryDTO.getStatus().equals(orderShopownBean.getStatus())) {
-				resultDTO.setData(false);
-				break;
+			if (orderStatusQueryDTO.getStatus() == 0 && orderShopownBean.getStatus() != 0) {
+				isAppointMentSize ++;
 			}
-			// 如果店铺状态为预约中，但是该店铺没有开启预约 返回false
-			if (2 == orderShopownBean.getStatus() && 0 == orderShopownBean.getIsAppointment()) {
-				resultDTO.setData(false);
-				break;
+			if (orderStatusQueryDTO.getStatus() == 2 && orderShopownBean.getStatus() != 2) {
+				openSize ++;
 			}
-			// 如果店铺状态为打烊或开张并且店铺为开启预约。返回false
-			if ((1 == orderShopownBean.getStatus() || 0 == orderShopownBean.getStatus())
-					&& 1 == orderShopownBean.getIsAppointment()) {
-				resultDTO.setData(false);
-				break;
-			}
+		}
+		if (isAppointMentSize == listSize) {
+			resultDTO .setData("2");//店铺全为预约
+		}
+		
+		if (openSize == listSize) {
+			resultDTO .setData("3");//店铺全为开张
 		}
 		return resultDTO;
 	}

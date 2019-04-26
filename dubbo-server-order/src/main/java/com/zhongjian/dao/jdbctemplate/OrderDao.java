@@ -83,6 +83,14 @@ public class OrderDao {
 		return num;
 	}
 
+	// 查看优惠券数量
+	public Integer getCouponsNumCanUse(Integer uid,BigDecimal payMoney) {
+		String sql = "SELECT COUNT(1) from hm_user_coupon,hm_coupon where uid = ? and state "
+				+ "= 0 and timeout = 0 and hm_user_coupon.couponid = hm_coupon.id and hm_coupon.pay_full <= ?";
+		Integer num = jdbcTemplate.queryForObject(sql, new Object[] { uid ,payMoney}, Integer.class);
+		return num;
+	}
+	
 	// 查看优惠券
 	public Map<String, Object> getCouponInfo(Integer uid, Integer couponId) {
 		String sql = "SELECT  hm_coupon.type ,hm_coupon.pay_full,hm_coupon.coupon from hm_user_coupon,hm_coupon where hm_user_coupon.id = ? "
@@ -95,6 +103,7 @@ public class OrderDao {
 		}
 		return resMap;
 	}
+	
 	
 	
 	// 更改优惠券状态
@@ -200,6 +209,16 @@ public class OrderDao {
 		return resMap;
 	}
 
+	public Map<String, Object> getDetailByOrderId(Integer orderId) {
+		String sql = "select uid,rid from hm_rider_order where id = ?";
+		Map<String, Object> resMap = null;
+		try {
+			resMap = jdbcTemplate.queryForMap(sql, orderId);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return resMap;
+	}
+	
 	public Map<String, Object> getROrderIdByOutTradeNo(String outTradeNo) {
 		String sql = "select id,marketid,address_id,rider_sn,uid from hm_rider_order where out_trade_no = ?";
 		Map<String, Object> resMap = null;
@@ -245,6 +264,12 @@ public class OrderDao {
 	public List<Integer> getOrderIdsByRoid(Integer roid) {
 		String sql = "select id from hm_order where roid = ?";
 		return jdbcTemplate.queryForList(sql, Integer.class, roid);
+	}
+	
+	public List<Map<String, Object>> getOrderDetailByRoid(Integer roid) {
+		String sql = "select order_sn,is_appointment,pid from hm_order where roid = ?";
+		List<Map<String, Object>> resultList = jdbcTemplate.queryForList(sql, new Object[] {roid});
+		return resultList;
 	}
 
 	public void updateroRider(Integer rid,Integer rorderId) {

@@ -5,6 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * @Author: ldd
@@ -42,6 +43,7 @@ public class CartAddressResultDTO implements Serializable{
     /**
      * 收货人门牌号
      */
+    @SerializedName(value = "house_number")
     private String houseNumber;
 
     /**

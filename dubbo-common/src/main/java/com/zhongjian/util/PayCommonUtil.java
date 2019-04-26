@@ -2,7 +2,6 @@ package com.zhongjian.util;
 
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -39,14 +38,14 @@ public class PayCommonUtil {
     }
 
     /**
-     * 微信公众号支付
+     * 微信小程序或app支付
      *
      * @param tradeNo    订单号
      * @param totalPrice 支付金额
      * @return -
-     * @Param type 0微信支付 1小程序支付 2.银行微信支付
+     * @Param type 0微信支付 1小程序支付 
      */
-    public static SortedMap<String, String> wxPublicPay(String tradeNo, String totalPrice, String spbillCreateId, String wxAppAppletsId, String wxAppAppId, String wxAppKey, String WxAppletsKey, String wxAppMchId, String wxAppNotifyUrl, String wxAppletsNotifyUrl, String wxAppUrl, String body, String openid, Integer type) throws Exception {
+    public static SortedMap<String, String> wxAppOrAppletsPay(String tradeNo, String totalPrice, String spbillCreateId, String wxAppAppletsId, String wxAppAppId, String wxAppKey, String WxAppletsKey, String wxAppMchId, String wxAppNotifyUrl, String wxAppletsNotifyUrl, String wxAppUrl, String body, String openid, Integer type) throws Exception {
         Map<String, String> map = weixinAppPrePay(tradeNo, totalPrice, spbillCreateId, wxAppAppId, wxAppAppletsId, wxAppMchId, wxAppNotifyUrl, wxAppletsNotifyUrl, wxAppUrl, wxAppKey, WxAppletsKey, body, type, openid);
         SortedMap<String, String> finalpackage = new TreeMap<>();
         if (0 == type) {
@@ -71,6 +70,8 @@ public class PayCommonUtil {
     }
 
     /**
+     * 微信小程序或app支付生成prepay_id
+     * 
      * @param outTradeNo
      * @param totalPrice
      * @param spbillCreateId

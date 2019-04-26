@@ -14,7 +14,6 @@ import com.zhongjian.dto.cart.address.query.CartAddressQueryDTO;
 import com.zhongjian.service.address.AddressService;
 import com.zhongjian.service.cart.basket.CartBasketService;
 import com.zhongjian.service.cart.shopown.CartShopownService;
-import com.zhongjian.service.message.MessagePushService;
 import com.zhongjian.service.user.UserService;
 import com.zhongjian.util.DateUtil;
 import org.junit.Test;
@@ -38,8 +37,6 @@ public class AppTest {
     @Resource
     private AddressService addressService;
 
-    @Resource
-    private MessagePushService messagePushService;
 
 
     @Resource
@@ -169,14 +166,6 @@ public class AppTest {
 
 
         addressService.updateUserMarketIdById(cartAddressQueryDTO);
-    }
-
-    @Test
-    public void message(){
-
-
-        String  [] pid={"11111","22222","3333"};
-        messagePushService.messagePush("8bd78jf97d4j","525270d2d59bb798",pid);
     }
 
 }

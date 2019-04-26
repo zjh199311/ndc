@@ -36,22 +36,11 @@ public class MessageReqDTO implements Serializable {
     private Integer type;
 
 
-    private Integer roleType;
-
     /**
      * 请参考下方消息示例说明中对应消息的body字段，最大长度5000字符，为一个JSON串
      */
     private String body;
 
-    /**
-     * 为接受消息的字段
-     */
-    private String msg;
-
-    /**
-     * 为接受消息的内容
-     */
-    private String content;
     /**
      * 发消息时特殊指定的行为选项,JSON格式，可用于指定消息的漫游，存云端历史，发送方多端同步，推送，消息抄送等特殊行为;option中字段不填时表示默认值 ，option示例:
      * <p>

@@ -18,7 +18,7 @@ public interface OrderService {
      * @param orderStatusQueryDTO
      * @return
      */
-    ResultDTO<Boolean> judgeHmShopownStatus(OrderStatusQueryDTO orderStatusQueryDTO);
+    ResultDTO<String> judgeHmShopownStatus(OrderStatusQueryDTO orderStatusQueryDTO);
 
     /**
      * 获取预约时间

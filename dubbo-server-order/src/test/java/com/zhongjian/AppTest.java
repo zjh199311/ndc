@@ -3,10 +3,14 @@ package com.zhongjian;
 
 
 
+import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 import com.zhongjian.dao.jdbctemplate.AddressDao;
 import com.zhongjian.dao.jdbctemplate.OrderDao;
+import com.zhongjian.dao.jdbctemplate.UserDao;
 import com.zhongjian.service.order.OrderService;
 import com.zhongjian.task.AddressTask;
 import com.zhongjian.util.TaskUtil;
@@ -31,12 +35,17 @@ public class AppTest {
     
     @Autowired
     AddressTask addressTask;
-    
+    @Autowired
+    UserDao userDao;
     
 
     @Test
     public void test() {
-    	TaskUtil.start(1);
-    	addressTask.setAddressTask(6, 16);
+    	List<Map<String, Object>> reList = orderDao.getOrderDetailByRoid(421);
+    	for (Map<String, Object> map : reList) {
+			System.out.println((String) map.get("order_sn"));
+			System.out.println((Integer) map.get("is_appointment"));
+		}
+    	
 }
 }

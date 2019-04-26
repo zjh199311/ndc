@@ -51,7 +51,6 @@ import com.google.gson.JsonObject;
 //jvm http connetions for single url 
 public class HttpConnectionPoolUtil {
 
-	private static String HOSTNAME = null;
 	private static final int CONNECT_TIMEOUT = 10000;// 设置连接建立的超时时间为10s
 	private static final int CONNECTION_REQUEST_TIMEOUT = 10000;
 	private static final int SOCKET_TIMEOUT = 10000;
@@ -79,13 +78,6 @@ public class HttpConnectionPoolUtil {
 	public static CloseableHttpClient getHttpClient(String url) {
 
 		String hostName = url.split("/")[2];
-		if (HOSTNAME == null) {
-			HOSTNAME = hostName;
-		}else if (!HOSTNAME.equals(hostName)) {
-			System.out.println("该连接池已经绑定了一个ip或域名");
-			return null;
-		}
-		
 		int port = 80;
 		if (hostName.contains(":")) {
 			String[] args = hostName.split(":");

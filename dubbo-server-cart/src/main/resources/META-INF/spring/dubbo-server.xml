@@ -53,7 +53,7 @@
     <!-- server start -->
     <dubbo:service interface="com.zhongjian.service.cart.basket.CartBasketService" ref="hmBasketService" version="1.0.0"/>
     <dubbo:service interface="com.zhongjian.service.cart.shopown.CartShopownService" ref="hmShopownService" version="1.0.0"/>
-    <dubbo:service interface="com.zhongjian.service.user.UserService" ref="userService" version="1.0.0"/> <dubbo:service interface="com.zhongjian.service.user.UserService" ref="userService" version="1.0.0"/>   
+    <dubbo:service interface="com.zhongjian.service.user.UserService" ref="userService" version="1.0.0"/>
      <dubbo:service interface="com.zhongjian.service.address.AddressService" ref="addressService" version="1.0.0"/> 
     
              

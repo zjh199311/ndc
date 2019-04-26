@@ -4,7 +4,6 @@ import javax.servlet.AsyncContext;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -113,9 +112,13 @@ public class CreateOrderServlet extends HttpServlet {
 		}
 		orderStatusQueryDTO.setPids(sidList);
 		orderStatusQueryDTO.setStatus(status);
-		ResultDTO<Boolean> jungle = orderService.judgeHmShopownStatus(orderStatusQueryDTO);
-		if (jungle.getFlag() == false || (Boolean) jungle.getData() == false) {
+		ResultDTO<String> jungle = orderService.judgeHmShopownStatus(orderStatusQueryDTO);
+		if (jungle.getData().equals("1")) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE));
+		}else if (jungle.getData().equals("2")) {
+			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE_ADVANCE));
+		}else if (jungle.getData().equals("3")){
+			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE_OPEN));
 		}
 		Integer isAppointment = 0;
 		if (status == 2) {

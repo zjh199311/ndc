@@ -7,7 +7,7 @@ import com.zhongjian.dao.jdbctemplate.AddressDao;
 import com.zhongjian.localservice.addressService;
 
 @Service
-public class adressServiceImpl implements addressService{
+public class AdressServiceImpl implements addressService{
 
 	@Autowired
 	AddressDao addressDao;
