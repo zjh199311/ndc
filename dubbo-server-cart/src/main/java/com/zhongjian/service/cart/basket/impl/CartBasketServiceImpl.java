@@ -168,7 +168,8 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         for (CartBasketResultDTO cartBasketResultDTO : findBasketBeanById) {
             if (FinalDatas.ZERO == cartBasketResultDTO.getGid()) {
                 cartBasketResultDTO.setFoodName("其他");
-                cartBasketResultDTO.setAmount("1件");
+                cartBasketResultDTO.setAmount("1");
+                cartBasketResultDTO.setUnit("件");
                 totalPrice = totalPrice.add(new BigDecimal(cartBasketResultDTO.getPrice()));
                 cartBasketResultDTO.setPrice(cartBasketResultDTO.getPrice());
 
@@ -205,7 +206,9 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
             }
         }
         CartBaskerListResultDTO cartBaskerListResultDTO = new CartBaskerListResultDTO();
-        cartBaskerListResultDTO.setTotalDisPrice(String.valueOf(totalDisPrice.setScale(2)));
+        if(BigDecimal.ZERO.compareTo(totalDisPrice)!=0){
+            cartBaskerListResultDTO.setTotalDisPrice(String.valueOf(totalDisPrice.setScale(2)));
+        }
         cartBaskerListResultDTO.setTotalPrice(String.valueOf(totalPrice.setScale(2)));
         cartBaskerListResultDTO.setCarts(findBasketBeanById);
         return ResultUtil.getSuccess(cartBaskerListResultDTO);
@@ -259,6 +262,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         cartParamDTO.setId(cartBasketEditQueryDTO.getId());
         cartParamDTO.setUid(cartBasketEditQueryDTO.getUid());
         CartBasketBean cartBasketBean = this.dao.executeSelectOneMethod(cartParamDTO, "selectBasketInfoById", CartBasketBean.class);
+        LogUtil.info("食品信息","cartBasketBean{}"+cartBasketBean);
         //根据主键id查询得到gid 如果为0则为其他.根据价格修改. 如果不是0则根据数量修改
         if (FinalDatas.ZERO == cartBasketBean.getGid()) {
             if (StringUtils.isBlank(cartBasketEditQueryDTO.getPrice())) {
