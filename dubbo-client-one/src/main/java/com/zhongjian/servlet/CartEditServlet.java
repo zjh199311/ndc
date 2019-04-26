@@ -54,13 +54,9 @@ public class CartEditServlet extends HttpServlet {
 					Integer id= Integer.valueOf(formData.get("id"));
 					String amount = formData.get("amount");
 					String remark = formData.get("remark");
-					String newRemark = new String (remark.getBytes("ISO-8859-1"),"UTF-8");
-					System.out.println("ISO:" + newRemark);
-					 newRemark = new String (remark.getBytes("GBK"),"UTF-8");
-					System.out.println("ISO:" + newRemark);
-					result = CartEditServlet.this.handle(id,uid, amount, remark);
+					String price = formData.get("price");					
+					result = CartEditServlet.this.handle(id,uid, amount, remark,price);
 						// 返回数据
-
 						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
 					} catch (Exception e) {
 						try {
@@ -82,7 +78,7 @@ public class CartEditServlet extends HttpServlet {
 
 	}
 
-	private String handle(Integer id, Integer uid, String amount, String remark) {
+	private String handle(Integer id, Integer uid, String amount, String remark,String price) {
 		if (uid == 0) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
 		}
@@ -91,6 +87,7 @@ public class CartEditServlet extends HttpServlet {
 		cartBasketEditQueryDTO.setId(id);
 		cartBasketEditQueryDTO.setAmount(amount);
 		cartBasketEditQueryDTO.setRemark(remark);
+		cartBasketEditQueryDTO.setPrice(price);
 		return GsonUtil.GsonString(hmBasketService.editInfo(cartBasketEditQueryDTO));
 	}
 }
