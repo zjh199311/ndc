@@ -262,6 +262,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         cartParamDTO.setId(cartBasketEditQueryDTO.getId());
         cartParamDTO.setUid(cartBasketEditQueryDTO.getUid());
         CartBasketBean cartBasketBean = this.dao.executeSelectOneMethod(cartParamDTO, "selectBasketInfoById", CartBasketBean.class);
+        LogUtil.info("食品信息","cartBasketBean{}"+cartBasketBean);
         //根据主键id查询得到gid 如果为0则为其他.根据价格修改. 如果不是0则根据数量修改
         if (FinalDatas.ZERO == cartBasketBean.getGid()) {
             if (StringUtils.isBlank(cartBasketEditQueryDTO.getPrice())) {
