@@ -17,6 +17,8 @@ public class AddressTask extends TaskBase{
 	@Autowired
 	private UserService userService;
 	
+
+	
 	public void setAddressTask(Integer id,Integer uid) {
 		execute(new Runnable() {
 			@Override
@@ -35,4 +37,6 @@ public class AddressTask extends TaskBase{
 		});
 	}
 
+
+	
 }

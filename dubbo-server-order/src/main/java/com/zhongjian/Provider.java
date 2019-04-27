@@ -8,6 +8,7 @@ public class Provider {
 	  public static void main(String[] args) throws Exception {
 	        ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[]{"META-INF/spring/dubbo-server.xml"});
 	        context.start();
+	        //开启异步任务
 	        TaskUtil.start(1);
 	        Object lock = new Object(); 
 	        synchronized(lock){

@@ -15,6 +15,7 @@ import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.dto.order.order.query.OrderStatusQueryDTO;
 import com.zhongjian.service.order.OrderService;
 import com.zhongjian.task.AddressTask;
+import com.zhongjian.task.OrderTask;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,9 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 
 	@Autowired
 	AddressTask addressTask;
+	
+	@Autowired
+	OrderTask orderTask;
 
 	@Override
 	@Transactional
@@ -63,6 +67,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		Integer couponCanUse = 0;
 		// 积分描述
 		String integralContent = "";
+		String integralPriceString = "";
 		// 优惠券描述
 		String couponContent = "";
 		Integer marketId = 0;
@@ -182,8 +187,8 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			}
 			store.put("sid", sid);
 			store.put("sname", sname);
-			store.put("originPrice", storeAmountBigDecimal.setScale(2).toString());
-			store.put("totalPrice", actualStoreAmountBigDecimal.toString());
+			store.put("originPrice", "￥" + storeAmountBigDecimal.setScale(2).toString());
+			store.put("totalPrice", "￥" + actualStoreAmountBigDecimal.toString());
 			// 计算商户优惠的价格
 			if (toCreateOrder) {
 				storeActivityPrice = storeActivityPrice
@@ -263,7 +268,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		// 积分优惠券初始化显示----start
 		Map<String, Object> uMap = integralVipDao.getIntegralAndVipInfo(uid);
 		Integer integral = (Integer) (uMap.get("integral"));
-		integralContent = "[" + integral + "积分]可抵抗扣";
+		integralContent = "共" + integral + "积分";
 		if (integral > 0) {
 			integralCanUse = 1;
 		}
@@ -271,7 +276,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		Integer vipexpire = (Integer) (uMap.get("vip_expire"));
 		BigDecimal vipFavourable = needPay.multiply(new BigDecimal("0.05")).setScale(2, BigDecimal.ROUND_HALF_UP);
 		vipFavourRiderOrder = vipFavourable;
-		vipFavour = "-￥" + vipFavourable.setScale(2).toString();
+		vipFavour = vipFavourable.setScale(2).toString();
 		// 判断是否是会员
 		if (vipStatus == 1 && vipexpire > (System.currentTimeMillis() / 1000)) {
 			isVIp = 1;
@@ -312,7 +317,8 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			BigDecimal integralPrice = integralBigDecimal.divide(hundredBigDecimal);
 
 			if (priceForIntegralorCoupon.compareTo(integralPrice) > 0) {
-				integralContent = "[余" + integral + "积分] -" + "￥" + integralPrice.setScale(2).toString();
+				integralContent = "共" + integral + "积分,可抵扣" +  integral + "积分";
+				integralPriceString =   "-￥" + integralPrice.setScale(2).toString();
 				needPay = priceForIntegralorCoupon.subtract(integralPrice);
 				if (toCreateOrder) {
 					integralSub = integralBigDecimal;
@@ -320,7 +326,8 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				needPayNeedHandleFlag = false;
 			} else {
 				// 全积分支付
-				integralContent = "[余" + integral + "积分] -" + "￥" + priceForIntegralorCoupon.setScale(2).toString();
+				integralContent = "共" + integral + "积分，可抵扣" + priceForIntegralorCoupon.multiply(hundredBigDecimal) + "积分";
+				integralPriceString =  "-￥" + priceForIntegralorCoupon.setScale(2).toString();
 				needPay = BigDecimal.ZERO;
 				if (toCreateOrder) {
 					integralPay = true;
@@ -370,7 +377,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		if (needPayNeedHandleFlag) {
 			needPay = needPay.add(deliverfeeBigDecimal);
 		}
-		needPayString = "￥" + needPay.toString();
+		needPayString =  needPay.toString();
 
 		// 生成订单
 		Map<String, Object> resMap = new HashMap<String, Object>();
@@ -433,23 +440,26 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		} else {
 			// 数据封装
 			resMap.put("isMember", isVIp);
-			resMap.put("delMemberPrice", vipFavour);
 			resMap.put("marketActivity", marketActivity);
 			resMap.put("marketActivityContent", marketActivityContent);
 			resMap.put("showMarketActivity", showMarketActivity);
-			resMap.put("deliverfee", deliverfee);
-			resMap.put("initDeliverfee", "￥6");
-			resMap.put("totalPrice", storesAmountString);
+			resMap.put("fee", deliverfee);
+			resMap.put("originalfee", "￥6");
+			resMap.put("totalPrice", "￥" + storesAmountString);
 			resMap.put("payTotal", needPayString);
 			resMap.put("integralCanUse", integralCanUse);
 			resMap.put("couponCanUse", couponCanUse);
 			resMap.put("integralContent", integralContent);
 			resMap.put("couponContent", couponContent);
 			resMap.put("orderList", storeList);
+			resMap.put("integralPrice", integralPriceString);
+			resMap.put("marketTime", "07:00-18:30");
 			if (isVIp == 0) {
 				resMap.put("memberContent", "会员用户专享");
 				resMap.put("riderPayContent", "会员用户专享");
+				resMap.put("delMemberPrice", "开通会员，预计最高可为您节省" + vipFavour + "元");
 			}else {
+				resMap.put("delMemberPrice", "-￥" + vipFavour);
 				resMap.put("memberContent", "会员享九五折");
 				resMap.put("riderPayContent", "");
 			}
@@ -639,9 +649,13 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				// 记录
 				Map<String, Object> integralAndVipInfo = integralVipDao.getIntegralAndVipInfo(uid);
 				Integer integral = (Integer) integralAndVipInfo.get("integral");
+				if (integral != null) {
+					integralVipDao.addIntegralLog(uid, integral, 0, currentTime);
+				}
 				//异步处理
 				addressTask.setAddressTask(6, 16);
 				addressTask.setLateMarket(marketId, uid);
+				orderTask.handleOrderPush(rorderId);
 			}
 			return true; //流程走完告诉支付宝不需再回调
 

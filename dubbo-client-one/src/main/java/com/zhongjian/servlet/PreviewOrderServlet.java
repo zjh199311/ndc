@@ -78,7 +78,10 @@ public class PreviewOrderServlet extends HttpServlet {
 							ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
 							return;
 						}
-						Integer extra = (extraString != null)?Integer.valueOf(extraString):null;
+						Integer extra = null;
+						if ("2".equals(type)) {
+							extra = Integer.valueOf(extraString);
+						}
 						String isSelfMention = formData.get("isselfmention") == null?"0":formData.get("isselfmention");
 						Integer status = Integer.valueOf(formData.get("status"));
 						if (status == 1) {

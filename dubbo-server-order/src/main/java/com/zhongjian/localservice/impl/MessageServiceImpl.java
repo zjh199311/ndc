@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.http.client.methods.HttpPost;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zhongjian.common.constant.FinalDatas;
@@ -21,6 +22,7 @@ import com.zhongjian.util.HttpConnectionPoolUtil;
 import com.zhongjian.util.LogUtil;
 import com.zhongjian.util.MapUtil;
 
+@Service
 public class MessageServiceImpl implements MessageService {
 
 	@Autowired
@@ -56,6 +58,9 @@ public class MessageServiceImpl implements MessageService {
 			Integer isAppointment = (Integer) sOrder.get("is_appointment");
 			Integer pid = (Integer) sOrder.get("pid");
 			String shopAccid = userDao.getShopAccidById(pid);
+			if (!"".equals(shopAccid)) {
+				pushMessageToSids(shopAccid,orderSn,isAppointment);
+			}
 		}
 	   
 		
@@ -90,13 +95,17 @@ public class MessageServiceImpl implements MessageService {
 		messagePush(rmessageDTO);
 	}
 
-	// 发消息给用户
-	private void pushMessageToSids(String sAccid) {
+	// 发消息给商户
+	private void pushMessageToSids(String sAccid,String orderSn,Integer isAppointment) {
 		MessageReqDTO smessageDTO = new MessageReqDTO();
 		smessageDTO.setOpe(0);
 		smessageDTO.setType(100);
 		smessageDTO.setTo(sAccid);
 		smessageDTO.setOption("{\"push\":false,\"roam\":true,\"history\":false,\"sendersync\":true, \"route\":false}");
+		smessageDTO.setPushcontent("");
+		String body = "{\"type\" : 1000, \"data\" : {\"type\":" + isAppointment + ",\"order_sn\":" + "\"" + orderSn + "\"" + "}}";
+		smessageDTO.setBody(body);
+		messagePush(smessageDTO);
 	}
 
 	public void messagePush(MessageReqDTO messageReqDTO) {

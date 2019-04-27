@@ -39,4 +39,9 @@ public class IntegralVipDao {
 		jdbcTemplate.update(updateSql, newIntegral,uid);
 	}
 	
+	public void addIntegralLog(Integer uid, Integer integral , Integer type,Integer ctime) {
+		String sql = "INSERT INTO `hm_integral_log` (integral,uid,type,ctime) VALUES (?, ?, ?, ?)";
+		jdbcTemplate.update(sql,integral,uid,type,ctime);
+	}
+	
 }
