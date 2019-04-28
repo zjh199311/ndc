@@ -11,6 +11,7 @@ import com.zhongjian.dto.cart.basket.query.CartBasketDelQueryDTO;
 import com.zhongjian.dto.cart.basket.query.CartBasketEditQueryDTO;
 import com.zhongjian.dto.cart.basket.query.CartBasketListQueryDTO;
 import com.zhongjian.dto.cart.address.query.CartAddressQueryDTO;
+import com.zhongjian.dto.user.query.UserQueryDTO;
 import com.zhongjian.service.address.AddressService;
 import com.zhongjian.service.cart.basket.CartBasketService;
 import com.zhongjian.service.cart.shopown.CartShopownService;
@@ -166,6 +167,16 @@ public class AppTest {
 
 
         addressService.updateUserMarketIdById(cartAddressQueryDTO);
+    }
+
+    @Test
+    public void coupon(){
+        UserQueryDTO userQueryDTO = new UserQueryDTO();
+        userQueryDTO.setUid(25);
+        userQueryDTO.setPrice("70");
+        userQueryDTO.setMarketId(119);
+
+        userService.getCouponByUid(userQueryDTO);
     }
 
 }

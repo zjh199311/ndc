@@ -22,6 +22,38 @@
     <update id="updateMarketIdById" parameterType="com.zhongjian.dto.cart.address.query.CartAddressQueryDTO">
         update hm_user set late_marketid=#{marketId,jdbcType=INTEGER}
     </update>
+
+    <resultMap id="BaseCoupon" type="com.zhongjian.dto.user.result.UserCopResultDTO">
+        <id column="id" property="uid" jdbcType="INTEGER"/>
+        <result column="pay_full" property="payFull" jdbcType="VARCHAR"/>
+        <result column="coupon" property="coupon" jdbcType="VARCHAR"/>
+        <result column="start_time" property="start_time" jdbcType="INTEGER"/>
+        <result column="end_time" property="end_time" jdbcType="INTEGER"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="marketid" property="marketId" jdbcType="VARCHAR"/>
+
+    </resultMap>
+    <select id="findCouponByUid" parameterType="java.lang.Integer" resultMap="BaseCoupon">
+            SELECT
+                c.pay_full,
+                c.coupon,
+                uc.id,
+                uc.start_time,
+                uc.end_time,
+                c.type,
+                c.marketid
+            FROM
+                hm_coupon c,
+                hm_user_coupon uc
+            WHERE
+                uc.state = 0
+            AND c.timeout = 0
+            AND uc.uid = #{uid,jdbcType=INTEGER}
+            AND c.id = uc.couponid
+            order by pay_full desc
+    </select>
+
+
 </mapper>
 
 

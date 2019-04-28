@@ -1,6 +1,10 @@
 package com.zhongjian.service.user;
 
+import com.zhongjian.dto.user.query.UserQueryDTO;
+import com.zhongjian.dto.user.result.UserCopResultDTO;
 import com.zhongjian.dto.user.result.UserResultDTO;
+
+import java.util.List;
 
 public interface UserService {
 	/**
@@ -16,5 +20,17 @@ public interface UserService {
 	 * @return
 	 */
 	UserResultDTO getUserBeanById(Integer id);
+
+
+	/**
+	 * 根据uid查询优惠卷信息.
+	 * @param userQueryDTO
+	 * @return
+	 */
+	List<UserCopResultDTO> getCouponByUid(UserQueryDTO userQueryDTO);
+
+
+
+
 
 }
