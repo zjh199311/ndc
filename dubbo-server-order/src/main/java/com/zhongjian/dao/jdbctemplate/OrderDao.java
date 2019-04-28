@@ -106,10 +106,15 @@ public class OrderDao {
 	
 	
 	
-	// 更改优惠券状态
-	public void changeCouponState(Integer couponId , Integer state) {
-		String sql = "update hm_user_coupon set state = ? where couponid = ?";
-		jdbcTemplate.update(sql,state,couponId);
+	// 更改优惠券状态为已使用
+	public void changeCouponToOne(Integer couponId) {
+		String sql = "update hm_user_coupon set state = 1 where couponid = ? and state = 0";
+		jdbcTemplate.update(sql,couponId);
+	}
+	// 更改优惠券状态为未使用
+	public void changeCouponToZero(Integer couponId) {
+		String sql = "update hm_user_coupon set state = 0 where couponid = ? and state = 1";
+		jdbcTemplate.update(sql,couponId);
 	}
 	//优惠券-----end
 	
@@ -200,7 +205,7 @@ public class OrderDao {
 		return res;
 	}
 	public Map<String, Object> getDetailByOrderId(Integer uid, Integer orderId) {
-		String sql = "select out_trade_no,totalPrice from  hm_rider_order where id = ? and uid = ?";
+		String sql = "select out_trade_no,totalPrice from  hm_rider_order where id = ? and uid = ? and pay_status = 0";
 		Map<String, Object> resMap = null;
 		try {
 			resMap = jdbcTemplate.queryForMap(sql, orderId, uid);

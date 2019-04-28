@@ -4,11 +4,11 @@ import java.util.Map;
 
 public interface GenerateSignatureService {
 
-    String getAliSignature(String out_trade_no, String totalAmount);
+    String getAliSignature(String out_trade_no, String totalAmount, String subject);
 
-    Map<String, String> getWxAppSignature(String outTradeNo, String totalPrice, String openId, String spbillCreateIp, Integer type);
+    Map<String, String> getWxAppSignature(String outTradeNo, String totalPrice, String openId, String spbillCreateIp, Integer type,String body);
 
-    String getPayWxApp(String outTrandeNo, String totalPrice, String body, String spbillCreateIp);
+    String getYinHangWxApp(String outTrandeNo, String totalPrice,  String spbillCreateIp,String body);
 
 
 }

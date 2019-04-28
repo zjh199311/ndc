@@ -9,9 +9,7 @@ import com.zhongjian.dao.jdbctemplate.AddressDao;
 import com.zhongjian.dao.jdbctemplate.IntegralVipDao;
 import com.zhongjian.dao.jdbctemplate.OrderDao;
 import com.zhongjian.dto.cart.storeActivity.result.CartStoreActivityResultDTO;
-import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultDTO;
-import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.dto.order.order.query.OrderStatusQueryDTO;
 import com.zhongjian.service.order.OrderService;
 import com.zhongjian.task.AddressTask;
@@ -220,6 +218,9 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		needPay = storesAmountBigDecimal;
 		// 计算商品价格（已算商户活动）-----end
 
+		//市场开始后结束时间
+		
+		
 		// 检测市场活动--start
 		Map<String, Object> marketActivtiy = orderDao.getMarketActivtiy(marketId);
 		if (marketActivtiy != null) {
@@ -367,7 +368,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				}
 				if (toCreateOrder) {
 					// 卡券
-					orderDao.changeCouponState(extra, 1);
+					orderDao.changeCouponToOne(extra);
 				}
 			}
 		}
@@ -454,6 +455,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			resMap.put("orderList", storeList);
 			resMap.put("integralPrice", integralPriceString);
 			resMap.put("marketTime", "07:00-18:30");
+			resMap.put("marketid", marketId);
 			if (isVIp == 0) {
 				resMap.put("memberContent", "会员用户专享");
 				resMap.put("riderPayContent", "会员用户专享");
@@ -610,6 +612,10 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 	public Map<String, Object> getOutTradeNoAndAmount(Integer uid, Integer orderId, String business) {
 		if (business.equals("RIO")) {
 			Map<String, Object> orderInfo = orderDao.getDetailByOrderId(uid, orderId);
+			if (orderInfo != null) {
+				orderInfo.put("body", "倪的菜商品订单支付");
+				orderInfo.put("subject", "订单总价");
+			}
 			return orderInfo;
 		} else {
 			return null;

@@ -33,6 +33,9 @@ public class IntegralVipDao {
 		Integer newIntegral = 0;
 		if ("+".equals(option)) {
 			newIntegral = currentIntegral + integral;
+			if (newIntegral < 0) {
+				throw new RuntimeException("积分不可以减为负");
+			}
 		}else {
 			newIntegral = currentIntegral - integral;
 		}
@@ -43,5 +46,4 @@ public class IntegralVipDao {
 		String sql = "INSERT INTO `hm_integral_log` (integral,uid,type,ctime) VALUES (?, ?, ?, ?)";
 		jdbcTemplate.update(sql,integral,uid,type,ctime);
 	}
-	
 }

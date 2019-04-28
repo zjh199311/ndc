@@ -53,7 +53,7 @@ public class WxAppNotifyServlet extends HttpServlet {
 				String totalAmount = notifyMap.get("total_fee");
 				BigDecimal totalAmountBigDecimal = new BigDecimal(totalAmount);
 				String transTotalAmount = totalAmountBigDecimal.divide(new BigDecimal(100)).toString();
-				if (orderService.handleROrder(tradeNo, totalAmount)) {
+				if (orderService.handleROrder(tradeNo, transTotalAmount)) {
 					response.getWriter().write(
 							"<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
 				}else {

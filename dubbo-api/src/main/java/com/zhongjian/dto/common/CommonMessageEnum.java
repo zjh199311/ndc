@@ -23,6 +23,7 @@ public enum CommonMessageEnum {
     SHOP_CHANGE("商户状态变化", 12001),
     SHOP_CHANGE_OPEN("商户状态变化为开张", 12000),
     SHOP_CHANGE_ADVANCE("商户状态变化为预约", 12002),
+    ORDER_CHANGE("订单状态变化", 12002),
     SERVERERR("服务异常", 20000),
     NO_PERMISION("您没有权限执行此操作", 50000),
     ;

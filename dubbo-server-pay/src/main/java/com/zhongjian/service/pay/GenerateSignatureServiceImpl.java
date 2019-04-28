@@ -7,14 +7,15 @@ import com.alipay.api.domain.AlipayTradeAppPayModel;
 import com.alipay.api.request.AlipayTradeAppPayRequest;
 import com.alipay.api.response.AlipayTradeAppPayResponse;
 import com.zhongjian.commoncomponent.PropUtil;
-import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.util.*;
 
-import org.apache.http.protocol.HTTP;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
+import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Service("generateSignatureService")
@@ -24,14 +25,13 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
     private PropUtil propUtil;
 
     @Override
-    public String getAliSignature(String out_trade_no, String totalAmount) {
-        String orderTypeString = "订单支付";
+    public String getAliSignature(String out_trade_no, String totalAmount,String subject) {
         //生成签名
         Map<String, String> orderMap = new LinkedHashMap<String, String>(); // 订单实体
         /****** 2.商品参数封装开始 *****/ // 手机端用
         // 商户订单号，商户网站订单系统中唯一订单号，必填
         orderMap.put("out_trade_no", out_trade_no);
-        orderMap.put("subject", orderTypeString);
+        orderMap.put("subject", subject);
         // 付款金额，必填
         orderMap.put("total_amount", totalAmount);
         // 商品描述，可空
@@ -70,10 +70,10 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
     }
 
     @Override
-    public Map<String, String> getWxAppSignature(String outTradeNo, String totalPrice, String openId, String spbillCreateIp, Integer type) {
+    public Map<String, String> getWxAppSignature(String outTradeNo, String totalPrice, String openId, String spbillCreateIp, Integer type,String body) {
         SortedMap<String, String> stringObjectSortedMap = null;
         try {
-            stringObjectSortedMap = PayCommonUtil.wxAppOrAppletsPay(outTradeNo, totalPrice, spbillCreateIp, propUtil.getWxAppLetsId(), propUtil.getWxAppAppId(), propUtil.getWxAppKey(), propUtil.getWxAppLetsKey(), propUtil.getWxAppMchId(), propUtil.getWxAppNotifyUrl(), propUtil.getWxAppletsNotifyUrl(), propUtil.getWxAppUrl(), "倪的菜商品订单支付", openId, type);
+            stringObjectSortedMap = PayCommonUtil.wxAppOrAppletsPay(outTradeNo, totalPrice, spbillCreateIp, propUtil.getWxAppLetsId(), propUtil.getWxAppAppId(), propUtil.getWxAppKey(), propUtil.getWxAppLetsKey(), propUtil.getWxAppMchId(), propUtil.getWxAppNotifyUrl(), propUtil.getWxAppletsNotifyUrl(), propUtil.getWxAppUrl(), body, openId, type);
         } catch (Exception e) {
             LogUtil.info("获取签名异常", "e:" + e.getMessage());
             e.getMessage();
@@ -82,7 +82,7 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
     }
 
     @Override
-    public String getPayWxApp(String outTrandeNo, String totalPrice, String body, String spbillCreateIp) {
+    public String getYinHangWxApp(String outTrandeNo, String totalPrice,  String spbillCreateIp,String body) {
         SortedMap<String, String> finalpackage = new TreeMap<>();
         finalpackage.put("mch_id", propUtil.getWxYinHangMchId());
         finalpackage.put("notify_url", propUtil.getWxYinHangNotifyUrl());
@@ -94,7 +94,9 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
         finalpackage.put("appid", propUtil.getWxYinHangAppid());
         finalpackage.put("out_trade_no", outTrandeNo);
         finalpackage.put("body", body);
-        finalpackage.put("total_fee", totalPrice);
+        BigDecimal total = new BigDecimal(totalPrice).multiply(new BigDecimal(100));
+        DecimalFormat df = new DecimalFormat("0");
+        finalpackage.put("total_fee", df.format(total));
         finalpackage.put("mch_create_ip", spbillCreateIp);
         finalpackage.put("version", "2.0");
         Map<String, String> params = PayCommonUtil.paraFilter(finalpackage);
@@ -107,6 +109,8 @@ public class GenerateSignatureServiceImpl implements GenerateSignatureService {
         String responseResultForBase = null;
         try {
             responseResultForBase = HttpClientUtil.getResponseResultForBase(propUtil.getWxYinHangUrl(), requestXml, "UTF-8", RequestTypeEnum.JSON);
+            Map<String, String> result = PayCommonUtil.xmlToMap(responseResultForBase);
+            return result.get("pay_info");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -27,7 +27,6 @@ public class AppTest {
 
     @Test
     public void test() {
-    	System.out.println(generateSignatureService.getAliSignature(UUID.randomUUID().toString(), "1"));
     }
 
 }

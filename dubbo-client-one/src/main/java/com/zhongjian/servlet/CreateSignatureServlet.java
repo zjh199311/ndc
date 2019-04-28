@@ -4,7 +4,6 @@ import javax.servlet.AsyncContext;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +20,7 @@ import com.zhongjian.common.SpringContextHolder;
 import com.zhongjian.executor.ThreadPoolExecutorSingle;
 import com.zhongjian.service.order.OrderService;
 import com.zhongjian.service.pay.GenerateSignatureService;
+import com.zhongjian.service.user.UserService;
 
 import java.io.IOException;
 import java.util.Map;
@@ -34,6 +34,8 @@ public class CreateSignatureServlet extends HttpServlet {
 
 	private OrderService orderService = (OrderService) SpringContextHolder.getBean(OrderService.class);
 
+	private UserService userService = (UserService) SpringContextHolder.getBean(UserService.class);
+	
 	private GenerateSignatureService generateSignatureService = (GenerateSignatureService) SpringContextHolder
 			.getBean(GenerateSignatureService.class);
 
@@ -105,21 +107,30 @@ public class CreateSignatureServlet extends HttpServlet {
 		}
 		Map<String, Object> orderDetail = orderService.getOutTradeNoAndAmount(uid, orderId, busniess);
 		if (orderDetail == null) {
-			return GsonUtil.GsonString(ResultUtil.getFail(null));
+			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.ORDER_CHANGE));
 		} else {
 			String out_trade_no = (String) orderDetail.get("out_trade_no");
-			String totalPrice = orderDetail.get("totalPrice").toString();
+			String totalPrice = String.valueOf(orderDetail.get("totalPrice"));
+			String body = (String) orderDetail.get("body");
+			String subject = (String) orderDetail.get("subject");
 			if (payType == 0) {
-
-				return generateSignatureService.getAliSignature(out_trade_no, totalPrice);
+				//支付宝
+				return  GsonUtil.GsonString(ResultUtil.getSuccess(generateSignatureService.getAliSignature(out_trade_no, totalPrice,subject)));
 			} else if (payType == 1) {
+				//微信app支付
 				return GsonUtil.GsonString(
-						generateSignatureService.getWxAppSignature(out_trade_no, totalPrice, "", realIp, 0));
+						ResultUtil.getSuccess(generateSignatureService.getWxAppSignature(out_trade_no, totalPrice, "", realIp, 0,body)));
 			} else if (payType == 2) {
+				//小程序支付
+				String appletsOpenid = userService.getUserBeanById(uid).getAppletsOpenid();
+				if (appletsOpenid == null) {
+					return GsonUtil.GsonString(ResultUtil.getFail(null));
+				}
 				return GsonUtil.GsonString(
-						generateSignatureService.getWxAppSignature(out_trade_no, totalPrice, openId, realIp, 1));
+						ResultUtil.getSuccess(generateSignatureService.getWxAppSignature(out_trade_no, totalPrice, appletsOpenid, realIp, 1,body)));
 			} else {
-				return GsonUtil.GsonString(ResultUtil.getFail(null));
+				//微信银行支付
+				return generateSignatureService.getYinHangWxApp(out_trade_no, totalPrice, realIp,body);
 			}
 		}
 	}

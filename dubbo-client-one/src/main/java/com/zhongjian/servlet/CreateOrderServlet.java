@@ -61,11 +61,17 @@ public class CreateOrderServlet extends HttpServlet {
 							sids[i] = Integer.valueOf(sidsString[i]);
 						}
 						String type = formData.get("type");
-						Integer extra = Integer.valueOf(formData.get("extra"));
-						if ("2".equals(type) && extra == null) {
+						String extraString = formData.get("extra");
+						
+						if ("2".equals(type) && extraString == null) {
 							result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.PARAM_LOST));
 							ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
+							asyncContext.complete();
 							return;
+						}
+						Integer extra = null;
+						if ("2".equals(type)) {
+							extra = Integer.valueOf(extraString);
 						}
 						String isSelfMention = formData.get("isselfmention");
 						Integer addressId = Integer.valueOf(formData.get("adressid"));
@@ -74,6 +80,7 @@ public class CreateOrderServlet extends HttpServlet {
 						if (status == 1) {
 							 result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE));
 							 ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
+							 asyncContext.complete();
 							 return;
 						}
 						result = CreateOrderServlet.this.handle(uid,sids,type,extra,isSelfMention,addressId,unixTime,status);
@@ -126,6 +133,9 @@ public class CreateOrderServlet extends HttpServlet {
 		}
 		Map<String, Object> reslutMap = orderService.previewOrCreateOrder(uid, sids, type, extra, isSelfMention, true, addressId, unixTime, isAppointment);
 		return GsonUtil.GsonString(ResultUtil.getSuccess(reslutMap));
+	}
+	public static void main(String[] args) {
+		System.out.println(Integer.valueOf(null));
 	}
 	
 }

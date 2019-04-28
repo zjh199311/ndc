@@ -28,7 +28,6 @@ import com.zhongjian.service.order.OrderService;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +75,7 @@ public class PreviewOrderServlet extends HttpServlet {
 						if ("2".equals(type) && extraString == null) {
 							result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.PARAM_LOST));
 							ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
+							asyncContext.complete();
 							return;
 						}
 						Integer extra = null;
@@ -87,6 +87,7 @@ public class PreviewOrderServlet extends HttpServlet {
 						if (status == 1) {
 							 result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE));
 							 ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
+							 asyncContext.complete();
 							 return;
 						}
 						result = PreviewOrderServlet.this.handle(uid,sids,type,extra,isSelfMention,status);
