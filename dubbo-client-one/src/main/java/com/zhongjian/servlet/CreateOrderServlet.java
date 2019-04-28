@@ -74,7 +74,7 @@ public class CreateOrderServlet extends HttpServlet {
 							extra = Integer.valueOf(extraString);
 						}
 						String isSelfMention = formData.get("isselfmention");
-						Integer addressId = Integer.valueOf(formData.get("adressid"));
+						Integer addressId = Integer.valueOf(formData.get("addressid"));
 						Integer unixTime = Integer.valueOf(formData.get("unixtime"));
 						Integer status = Integer.valueOf(formData.get("status"));
 						if (status == 1) {
