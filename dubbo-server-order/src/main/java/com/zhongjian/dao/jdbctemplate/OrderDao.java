@@ -43,16 +43,6 @@ public class OrderDao {
 		return cartStoreActivityResultDTO;
 	}
 
-	public Map<String, Object> getMarketActivtiy(Integer marketId) {
-		String sql = "SELECT type,rule,up_limit from hm_market_activity where marketid = ? and `status` = 1";
-		Map<String, Object> resMap = null;
-		try {
-			resMap = jdbcTemplate.queryForMap(sql, marketId);
-		} catch (EmptyResultDataAccessException e) {
-			// hmStoreActivityResultDTO = null;
-		}
-		return resMap;
-	}
 	//activity ----end
 	
 	public List<Map<String, Object>> getBasketByUidAndSid(Integer sid, Integer uid) {
@@ -72,6 +62,12 @@ public class OrderDao {
 		return num > 0 ? false : true;
 	}
 
+	public boolean checkCouponOrderByUid(Integer uid) {
+		String sql = "SELECT COUNT(1) FROM hm_rider_order where uid = ? AND ctime > ? AND (pay_status = 0 or pay_status = 1) AND couponid is not null";
+		Integer num = jdbcTemplate.queryForObject(sql, new Object[] { uid, DateUtil.getTodayZeroTime() },
+				Integer.class);
+		return num > 0 ? false : true;
+	}
 
 
 	//优惠券-----start

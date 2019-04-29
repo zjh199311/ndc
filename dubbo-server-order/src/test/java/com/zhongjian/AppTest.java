@@ -9,11 +9,11 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import com.zhongjian.dao.jdbctemplate.AddressDao;
+import com.zhongjian.dao.jdbctemplate.MarketDao;
 import com.zhongjian.dao.jdbctemplate.OrderDao;
 import com.zhongjian.dao.jdbctemplate.UserDao;
 import com.zhongjian.service.order.OrderService;
 import com.zhongjian.task.AddressTask;
-import com.zhongjian.util.TaskUtil;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +34,9 @@ public class AppTest {
     AddressDao addressDao;
     
     @Autowired
+    MarketDao marketDao;
+    
+    @Autowired
     AddressTask addressTask;
     @Autowired
     UserDao userDao;
@@ -41,11 +44,15 @@ public class AppTest {
 
     @Test
     public void test() {
-    	List<Map<String, Object>> reList = orderDao.getOrderDetailByRoid(421);
-    	for (Map<String, Object> map : reList) {
-			System.out.println((String) map.get("order_sn"));
-			System.out.println((Integer) map.get("is_appointment"));
+    	Map<String, Object> startAndEnd = marketDao.getStartAndEnd(118);
+    	if (startAndEnd == null) {
+			System.out.println("------------------null-------------------");
+		}else {
+			if (startAndEnd.get("starttime") == null) {
+				System.out.println("------------------null-------------------");
+			}
+			String aString= startAndEnd.get("starttime") + "-" +  startAndEnd.get("endtime");
+			System.out.println(aString);
 		}
-    	
 }
 }

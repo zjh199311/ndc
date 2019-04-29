@@ -7,6 +7,7 @@ import com.zhongjian.dao.entity.order.shopown.OrderShopownBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
 import com.zhongjian.dao.jdbctemplate.AddressDao;
 import com.zhongjian.dao.jdbctemplate.IntegralVipDao;
+import com.zhongjian.dao.jdbctemplate.MarketDao;
 import com.zhongjian.dao.jdbctemplate.OrderDao;
 import com.zhongjian.dto.cart.storeActivity.result.CartStoreActivityResultDTO;
 import com.zhongjian.dto.common.ResultDTO;
@@ -47,6 +48,9 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 	@Autowired
 	private IntegralVipDao integralVipDao;
 
+	@Autowired
+	private MarketDao marketDao;
+	
 	@Autowired
 	AddressTask addressTask;
 	
@@ -222,7 +226,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		
 		
 		// 检测市场活动--start
-		Map<String, Object> marketActivtiy = orderDao.getMarketActivtiy(marketId);
+		Map<String, Object> marketActivtiy = marketDao.getMarketActivtiy(marketId);
 		if (marketActivtiy != null) {
 			showMarketActivity = true;
 			String rule = (String) marketActivtiy.get("rule");
@@ -293,15 +297,18 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			}
 		}
 		
+		boolean todayCouponUse = orderDao.checkCouponOrderByUid(uid);
+		
 		BigDecimal priceForIntegralorCoupon = needPay.add(deliverfeeBigDecimal);
 		if (orderDao.getCouponsNum(uid) > 0) {
-			if (orderDao.getCouponsNumCanUse(uid, priceForIntegralorCoupon) > 0) {
+			if (todayCouponUse && orderDao.getCouponsNumCanUse(uid, priceForIntegralorCoupon) > 0) {
 				couponContent = "有优惠券可用";
-			}
-			else {
+				couponCanUse = 1;
+			}else if (todayCouponUse) {
 				couponContent = "暂无可用优惠券";
+			}else {
+				couponContent = "暂无可用（每日一张）";
 			}
-			couponCanUse = 1;
 		} else {
 			couponContent = "";
 		}
@@ -341,7 +348,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				integralVipDao.updateUserIntegral(uid, "-", integralSub.intValue());
 			}
 		}
-		if ("2".equals(type)) {
+		if ("2".equals(type) && todayCouponUse) {
 			Map<String, Object> couponInfo = orderDao.getCouponInfo(uid, extra);
 			if (couponInfo != null) {
 				BigDecimal payFullBigDecimal = (BigDecimal) couponInfo.get("pay_full");
@@ -454,8 +461,16 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			resMap.put("couponContent", couponContent);
 			resMap.put("orderList", storeList);
 			resMap.put("integralPrice", integralPriceString);
-			resMap.put("marketTime", "07:00-18:30");
 			resMap.put("marketid", marketId);
+			Map<String, Object> startAndEnd = marketDao.getStartAndEnd(marketId);
+			Object starttime = startAndEnd.get("starttime");
+			Object endtime = startAndEnd.get("endtime");
+			if (starttime == null || endtime == null) {
+				resMap.put("marketTime", "07:00-18:30");
+			}else {
+				resMap.put("marketTime", starttime + "-" +  endtime);
+			}
+			resMap.put("priceForCoupon", priceForIntegralCoupon);
 			if (isVIp == 0) {
 				resMap.put("memberContent", "会员用户专享");
 				resMap.put("riderPayContent", "会员用户专享");

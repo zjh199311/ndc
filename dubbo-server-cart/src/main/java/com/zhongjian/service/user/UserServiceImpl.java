@@ -1,12 +1,13 @@
 package com.zhongjian.service.user;
 
-import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.zhongjian.dao.entity.cart.user.UserBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
 import com.zhongjian.dto.user.query.UserQueryDTO;
 import com.zhongjian.dto.user.result.UserCopResultDTO;
 import com.zhongjian.dto.user.result.UserResultDTO;
-import com.zhongjian.util.StringUtil;
+import com.zhongjian.util.StringUtil;import javassist.expr.NewArray;
+
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -48,17 +49,20 @@ public class UserServiceImpl extends HmBaseService<UserBean, Integer> implements
         Iterator<UserCopResultDTO> iterator = findCouponByUid.iterator();
         while (iterator.hasNext()) {
             UserCopResultDTO userCopResultDTO = iterator.next();
-            userCopResultDTO.setState(0);
+            userCopResultDTO.setState(1);
             if (flag) {
-                if (new BigDecimal(userQueryDTO.getPrice()).compareTo(new BigDecimal(userCopResultDTO.getPayFull())) > 0) {
-                    flag = false;
+                if (new BigDecimal(userQueryDTO.getPrice()).compareTo(userCopResultDTO.getPayFull()) >= 0) {
+                	userCopResultDTO.setState(0);
                 } else {
-                    userCopResultDTO.setState(1);
-                }
+                	flag = false;
+				}
             }
             userCopResultDTO.setContent("满"+userCopResultDTO.getPayFull()+"元可用(每天限用一张)");
-            String startTime = sdf.format(new Date(userCopResultDTO.getStart_time()));
-            String endTime = sdf.format(new Date(userCopResultDTO.getEnd_time()));
+            String startTime = sdf.format(new Date((long) userCopResultDTO.getStart_time() * 1000));
+            String endTime = sdf.format(new Date((long) userCopResultDTO.getEnd_time() * 1000));
+            userCopResultDTO.setEnd_time(null);
+            userCopResultDTO.setStart_time(null);
+            userCopResultDTO.setPayFull(null);
             userCopResultDTO.setStartTime(startTime);
             userCopResultDTO.setEndTime(endTime);
             if (!StringUtil.isBlank(userCopResultDTO.getMarketId())) {
@@ -77,7 +81,6 @@ public class UserServiceImpl extends HmBaseService<UserBean, Integer> implements
                 continue;
             }
         }
-        System.out.println(JSONObject.toJSONString(findCouponByUid));
         return findCouponByUid;
     }
 }

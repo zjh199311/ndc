@@ -3,7 +3,10 @@ package com.zhongjian.dto.user.result;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
+
+import com.google.gson.annotations.Expose;
 
 /**
  * @Author: ldd
@@ -22,21 +25,24 @@ public class UserCopResultDTO implements Serializable {
     /**
      * 满减值
      */
-    private String payFull;
+    @Expose(serialize =  false)
+    private BigDecimal payFull;
 
     /**
      * 优惠金额
      */
-    private String coupon;
+    private BigDecimal coupon;
 
     /**
      * 开始时间
      */
+    @Expose(serialize =  false)
     private Integer start_time;
 
     /**
      * 结束时间
      */
+    @Expose(serialize =  false)
     private Integer end_time;
 
     /**
