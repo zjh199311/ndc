@@ -58,14 +58,14 @@ public class UserServiceImpl extends HmBaseService<UserBean, Integer> implements
 				}
             }
             userCopResultDTO.setContent("满"+userCopResultDTO.getPayFull()+"元可用(每天限用一张)");
-            String startTime = sdf.format(new Date((long) userCopResultDTO.getStart_time() * 1000));
-            String endTime = sdf.format(new Date((long) userCopResultDTO.getEnd_time() * 1000));
-            userCopResultDTO.setEnd_time(null);
-            userCopResultDTO.setStart_time(null);
+            String startTime = sdf.format(new Date((long) userCopResultDTO.getStarttime() * 1000));
+            String endTime = sdf.format(new Date((long) userCopResultDTO.getEndtime() * 1000));
+            userCopResultDTO.setEndtime(null);
+            userCopResultDTO.setStarttime(null);
             userCopResultDTO.setPayFull(null);
-            userCopResultDTO.setStartTime(startTime);
-            userCopResultDTO.setEndTime(endTime);
-            if (!StringUtil.isBlank(userCopResultDTO.getMarketId())) {
+            userCopResultDTO.setStart_Time(startTime);
+            userCopResultDTO.setEnd_Time(endTime);
+            if (userQueryDTO.getMarketId() != null && !StringUtil.isBlank(userCopResultDTO.getMarketId())) {
                 String[] split = userCopResultDTO.getMarketId().split("\\|");
                 Boolean flagtwo = true;
                 for (String s : split) {

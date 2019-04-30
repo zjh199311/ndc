@@ -20,7 +20,7 @@ public class UserCopResultDTO implements Serializable {
     /**
      * 主键id
      */
-    private Integer uid;
+    private Integer id;
 
     /**
      * 满减值
@@ -37,23 +37,23 @@ public class UserCopResultDTO implements Serializable {
      * 开始时间
      */
     @Expose(serialize =  false)
-    private Integer start_time;
+    private Integer starttime;
 
     /**
      * 结束时间
      */
     @Expose(serialize =  false)
-    private Integer end_time;
+    private Integer endtime;
 
     /**
      * 开始时间
      */
-    private String startTime;
+    private String start_Time;
 
     /**
      * 结束时间
      */
-    private String endTime;
+    private String end_Time;
 
 
 

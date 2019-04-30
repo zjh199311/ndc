@@ -56,7 +56,11 @@ public class GetCouponsServlet extends HttpServlet {
 						Integer uid = (Integer) request.getAttribute("uid");
 						ServletRequest request2 = asyncContext.getRequest();
 						String price = request2.getParameter("price");
-						Integer marketId = Integer.valueOf(request2.getParameter("marketid"));
+						Integer marketId = null;
+						String marketIdString = request2.getParameter("marketid");
+						if (marketIdString != null) {
+							marketId = Integer.valueOf(marketIdString);
+						}
 						result = GetCouponsServlet.this.handle(uid, marketId,price);
 						// 返回数据
 						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);

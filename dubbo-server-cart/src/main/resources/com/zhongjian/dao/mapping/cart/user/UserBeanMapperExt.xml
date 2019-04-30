@@ -24,11 +24,11 @@
     </update>
 
     <resultMap id="BaseCoupon" type="com.zhongjian.dto.user.result.UserCopResultDTO">
-        <id column="id" property="uid" jdbcType="INTEGER"/>
+        <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="pay_full" property="payFull" jdbcType="DECIMAL"/>
         <result column="coupon" property="coupon" jdbcType="DECIMAL"/>
-        <result column="start_time" property="start_time" jdbcType="INTEGER"/>
-        <result column="end_time" property="end_time" jdbcType="INTEGER"/>
+        <result column="start_time" property="starttime" jdbcType="INTEGER"/>
+        <result column="end_time" property="endtime" jdbcType="INTEGER"/>
         <result column="type" property="type" jdbcType="INTEGER"/>
         <result column="marketid" property="marketId" jdbcType="VARCHAR"/>
 
