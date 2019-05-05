@@ -13,6 +13,10 @@ import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.dto.order.order.query.OrderStatusQueryDTO;
+import com.zhongjian.exception.NDCException;
+import com.zhongjian.exception.NDCException.CouponException;
+import com.zhongjian.exception.NDCException.DeleteBasketExcpetion;
+import com.zhongjian.exception.NDCException.IntegralException;
 
 import org.apache.log4j.Logger;
 
@@ -62,7 +66,7 @@ public class CreateOrderServlet extends HttpServlet {
 						}
 						String type = formData.get("type");
 						String extraString = formData.get("extra");
-						
+
 						if ("2".equals(type) && extraString == null) {
 							result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.PARAM_LOST));
 							ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
@@ -78,12 +82,13 @@ public class CreateOrderServlet extends HttpServlet {
 						Integer unixTime = Integer.valueOf(formData.get("unixtime"));
 						Integer status = Integer.valueOf(formData.get("status"));
 						if (status == 1) {
-							 result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE));
-							 ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
-							 asyncContext.complete();
-							 return;
+							result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE));
+							ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
+							asyncContext.complete();
+							return;
 						}
-						result = CreateOrderServlet.this.handle(uid,sids,type,extra,isSelfMention,addressId,unixTime,status);
+						result = CreateOrderServlet.this.handle(uid, sids, type, extra, isSelfMention, addressId,
+								unixTime, status);
 						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -107,35 +112,46 @@ public class CreateOrderServlet extends HttpServlet {
 	}
 
 	private String handle(Integer uid, Integer[] sids, String type, Integer extra, String isSelfMention,
-			Integer addressId,Integer unixTime,Integer status) {
+			Integer addressId, Integer unixTime, Integer status) {
 		if (uid == 0) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
 		}
-		//check shop status
+		// check shop status
 		OrderStatusQueryDTO orderStatusQueryDTO = new OrderStatusQueryDTO();
 		List<Integer> sidList = new ArrayList<Integer>();
 		for (int i = 0; i < sids.length; i++) {
-		 sidList.add(sids[i]);	
+			sidList.add(sids[i]);
 		}
 		orderStatusQueryDTO.setPids(sidList);
 		orderStatusQueryDTO.setStatus(status);
 		ResultDTO<String> jungle = orderService.judgeHmShopownStatus(orderStatusQueryDTO);
 		if (jungle.getData().equals("1")) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE));
-		}else if (jungle.getData().equals("2")) {
+		} else if (jungle.getData().equals("2")) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE_ADVANCE));
-		}else if (jungle.getData().equals("3")){
+		} else if (jungle.getData().equals("3")) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE_OPEN));
 		}
 		Integer isAppointment = 0;
 		if (status == 2) {
 			isAppointment = 1;
 		}
-		Map<String, Object> reslutMap = orderService.previewOrCreateOrder(uid, sids, type, extra, isSelfMention, true, addressId, unixTime, isAppointment);
+		Map<String, Object> reslutMap = null;
+		try {
+			reslutMap = orderService.previewOrCreateOrder(uid, sids, type, extra, isSelfMention, true, addressId,
+					unixTime, isAppointment);
+		} catch (NDCException e) {
+			if (e instanceof DeleteBasketExcpetion) {
+				return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.ORDER_ALREADYCREATE));
+			}
+			else if (e instanceof IntegralException) {
+				return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_INTEGRAL_ERR));
+			}else if (e instanceof CouponException) {
+				return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_COUPON_ERR));
+			}
+		}
+
 		return GsonUtil.GsonString(ResultUtil.getSuccess(reslutMap));
 	}
-	public static void main(String[] args) {
-		System.out.println(Integer.valueOf(null));
-	}
-	
+
 }

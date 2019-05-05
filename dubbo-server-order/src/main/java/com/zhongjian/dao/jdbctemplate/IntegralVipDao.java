@@ -33,11 +33,14 @@ public class IntegralVipDao {
 		Integer newIntegral = 0;
 		if ("+".equals(option)) {
 			newIntegral = currentIntegral + integral;
+		}else {
+			newIntegral = currentIntegral - integral;
 			if (newIntegral < 0) {
 				throw new RuntimeException("积分不可以减为负");
 			}
-		}else {
-			newIntegral = currentIntegral - integral;
+			if (newIntegral > currentIntegral) {
+				throw new RuntimeException("用户Id:" + uid + "存在异常行为");
+			}
 		}
 		jdbcTemplate.update(updateSql, newIntegral,uid);
 	}

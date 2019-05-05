@@ -12,6 +12,7 @@ import com.zhongjian.dao.jdbctemplate.OrderDao;
 import com.zhongjian.dto.cart.storeActivity.result.CartStoreActivityResultDTO;
 import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.order.order.query.OrderStatusQueryDTO;
+import com.zhongjian.exception.NDCException;
 import com.zhongjian.service.order.OrderService;
 import com.zhongjian.task.AddressTask;
 import com.zhongjian.task.OrderTask;
@@ -58,9 +59,9 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 	OrderTask orderTask;
 
 	@Override
-	@Transactional
+	@Transactional(rollbackFor=NDCException.class) 
 	public Map<String, Object> previewOrCreateOrder(Integer uid, Integer[] sids, String type, Integer extra,
-			String isSelfMention, boolean toCreateOrder, Integer addressId, Integer unixTime, Integer isAppointment) {
+			String isSelfMention, boolean toCreateOrder, Integer addressId, Integer unixTime, Integer isAppointment) throws NDCException {
 		Integer isVIp = 0;
 		String vipFavour = "";
 		String deliverfee = "￥6";
@@ -345,7 +346,12 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			}
 			if (toCreateOrder) {
 				// 卡积分
-				integralVipDao.updateUserIntegral(uid, "-", integralSub.intValue());
+				try {
+					integralVipDao.updateUserIntegral(uid, "-", integralSub.intValue());
+				} catch (RuntimeException e) {
+					throw new NDCException.IntegralException();
+				}
+				
 			}
 		}
 		if ("2".equals(type) && todayCouponUse) {
@@ -375,7 +381,9 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				}
 				if (toCreateOrder) {
 					// 卡券
-					orderDao.changeCouponToOne(extra);
+					if (!orderDao.changeCouponToOne(extra)) {
+						throw new NDCException.CouponException();
+					}
 				}
 			}
 		}
@@ -432,10 +440,16 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					for (Map<String, Object> cart : cartList) {
 						cart.put("oid", oid);
 						orderDao.addHmCart(cart);
+						String smallOrderSn = (String) sInfo.get("order_sn");
+						orderDao.addOrderDetail(cart, smallOrderSn);
 					}
 				}
 			}
-
+			
+			//删除购物车
+			if (!orderDao.deleteBasketBySid(sids, uid)) {
+				throw new NDCException.DeleteBasketExcpetion();
+			}
 			if (integralPay) {
 				handleROrder(outTradeNo, needPay.toString());
 				resMap.put("roid", roid);
@@ -542,12 +556,12 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			} else {
 				if (marketId != orderShopownBean.getMarketid()) {
 					resultDTO.setData("1");
-					break;
+					return resultDTO;
 				}
 			}
 			if (1 == orderShopownBean.getStatus()) {
 				resultDTO.setData("1");
-				break;
+				return resultDTO;
 			}
 			if (orderStatusQueryDTO.getStatus() == 0 && orderShopownBean.getStatus() != 0) {
 				isAppointMentSize ++;
@@ -556,14 +570,21 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				openSize ++;
 			}
 		}
+		if (isAppointMentSize == 0 && openSize == 0) {
+			return resultDTO;//状态监测通过
+		}
 		if (isAppointMentSize == listSize) {
 			resultDTO .setData("2");//店铺全为预约
+			return resultDTO;
 		}
 		
 		if (openSize == listSize) {
 			resultDTO .setData("3");//店铺全为开张
+			return resultDTO;
 		}
+		resultDTO.setData("1");
 		return resultDTO;
+		
 	}
 
 	@Override
@@ -668,9 +689,10 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				// 增加积分
 				integralVipDao.updateUserIntegral(uid, "+", Double.valueOf(total_amount).intValue());
 				// 记录
-				Map<String, Object> integralAndVipInfo = integralVipDao.getIntegralAndVipInfo(uid);
-				Integer integral = (Integer) integralAndVipInfo.get("integral");
-				if (integral != null) {
+				Map<String, Object> orderInfo = orderDao.getDetailByOrderId(rorderId);
+				Object integralObj =  orderInfo.get("integral");
+				if (integralObj != null) {
+					Integer integral = (Integer) integralObj;
 					integralVipDao.addIntegralLog(uid, integral, 0, currentTime);
 				}
 				//异步处理
@@ -681,6 +703,29 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			return true; //流程走完告诉支付宝不需再回调
 
 		}
+	}
+
+	@Override
+	@Transactional
+	public boolean cancelOrder(Integer orderId) {
+		if (orderDao.updateROStatusToTimeout(orderId)) {
+			List<Integer> orderIds = orderDao.getOrderIdsByRoid(orderId);
+			orderDao.updateOStatus(orderIds, 2, 0);
+			Map<String, Object> orderInfo = orderDao.getDetailByOrderId(orderId);
+			Object integralObj =  orderInfo.get("integral");
+			Object couponIdObj =  orderInfo.get("couponid");
+			Integer uid = (Integer) orderInfo.get("uid");
+			if (integralObj != null) {
+				Integer integral = (Integer) integralObj;
+				integralVipDao.updateUserIntegral(uid, "+", integral);
+			}
+			if (couponIdObj != null) {
+				Integer couponId = (Integer) couponIdObj;
+				orderDao.changeCouponToZero(couponId);
+			}
+			return true;
+		}
+		return false;
 	}
 
 }

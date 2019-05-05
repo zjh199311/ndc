@@ -15,6 +15,7 @@ import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.dto.order.order.query.OrderStatusQueryDTO;
+import com.zhongjian.exception.NDCException;
 
 import org.apache.log4j.Logger;
 
@@ -114,7 +115,7 @@ public class PreviewOrderServlet extends HttpServlet {
 	}
 
 	private String handle(Integer uid, Integer[] sids, String type, Integer extra, String isSelfMention,
-			Integer status) {
+			Integer status) throws NDCException {
 		if (uid == 0) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
 		}

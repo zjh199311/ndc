@@ -1,12 +1,11 @@
 package com.zhongjian.service.user;
 
-import com.google.gson.Gson;
 import com.zhongjian.dao.entity.cart.user.UserBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
 import com.zhongjian.dto.user.query.UserQueryDTO;
 import com.zhongjian.dto.user.result.UserCopResultDTO;
 import com.zhongjian.dto.user.result.UserResultDTO;
-import com.zhongjian.util.StringUtil;import javassist.expr.NewArray;
+import com.zhongjian.util.StringUtil;
 
 import org.springframework.stereotype.Service;
 

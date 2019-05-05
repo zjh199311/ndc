@@ -4,13 +4,14 @@ import java.util.Map;
 
 import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.order.order.query.OrderStatusQueryDTO;
+import com.zhongjian.exception.NDCException;
 
 public interface OrderService {
 
     //type 1选用积分 extra=null 2选用优惠券 extra = couponId
     Map<String, Object> previewOrCreateOrder(Integer uid, Integer sids[], String type,
                                              Integer extra, String isSelfMention, boolean toCreateOrder,
-                                             Integer addressId, Integer unixTime, Integer isAppointment);
+                                             Integer addressId, Integer unixTime, Integer isAppointment) throws NDCException;
 
     /**
      * 判断所有商铺是不是指定状态
@@ -38,6 +39,8 @@ public interface OrderService {
 	 * @return orderId
 	 */
     boolean handleROrder(String out_trade_no,String total_amount);
+    
+    boolean cancelOrder(Integer orderId);
      
 
 }

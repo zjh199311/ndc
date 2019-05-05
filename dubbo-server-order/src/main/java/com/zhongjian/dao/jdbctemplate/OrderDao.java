@@ -54,6 +54,20 @@ public class OrderDao {
 		List<Map<String, Object>> resultList = jdbcTemplate.queryForList(sql, new Object[] { uid, sid });
 		return resultList;
 	}
+	
+    //delete baskets
+	public boolean deleteBasketBySid(Integer[] sids,Integer uid) {
+		StringBuilder sidString = new StringBuilder();
+		for (Integer sid : sids) {
+			if (sidString.length() == 0) {
+				sidString.append(sid);
+			} else {
+				sidString.append("," + sid);
+			}
+		}
+		String sql = "DELETE FROM hm_basket WHERE sid in (" + sidString + ") AND uid = ?";
+		return jdbcTemplate.update(sql,  uid) > 0 ? true : false;
+	}
 
 	public boolean checkFirstOrderByUid(Integer uid) {
 		String sql = "SELECT COUNT(1) FROM hm_rider_order where uid = ? AND ctime  > ? AND (pay_status = 0 or pay_status = 1)";
@@ -103,14 +117,14 @@ public class OrderDao {
 	
 	
 	// 更改优惠券状态为已使用
-	public void changeCouponToOne(Integer couponId) {
-		String sql = "update hm_user_coupon set state = 1 where couponid = ? and state = 0";
-		jdbcTemplate.update(sql,couponId);
+	public boolean changeCouponToOne(Integer couponId) {
+		String sql = "update hm_user_coupon set state = 1 where id = ? and state = 0";
+		return jdbcTemplate.update(sql,couponId)>0?true:false;
 	}
 	// 更改优惠券状态为未使用
-	public void changeCouponToZero(Integer couponId) {
-		String sql = "update hm_user_coupon set state = 0 where couponid = ? and state = 1";
-		jdbcTemplate.update(sql,couponId);
+	public boolean changeCouponToZero(Integer couponId) {
+		String sql = "update hm_user_coupon set state = 0 where id = ? and state = 1";
+		return jdbcTemplate.update(sql,couponId)>0?true:false;
 	}
 	//优惠券-----end
 	
@@ -122,6 +136,12 @@ public class OrderDao {
 				map.get("remark") == null ? "" : map.get("remark"));
 	}
 
+	// hm_order_detail添加
+	public void addOrderDetail(Map<String, Object> map,String smallOrderSn) {
+		String sql = "INSERT INTO `hm_order_detail` (order_sn,amount,gid,price,oid) VALUES ( ?, ?, ?, ?, ?)";
+		jdbcTemplate.update(sql, smallOrderSn,map.get("amount"), map.get("gid"),map.get("price"), map.get("oid"));
+	}
+	
 	// hm_order添加
 	public Integer addHmOrder(Map<String, Object> map) {
 		String sql = "INSERT INTO `hm_order` (order_sn,pid,uid,marketid,total,payment,integral,"
@@ -211,7 +231,7 @@ public class OrderDao {
 	}
 
 	public Map<String, Object> getDetailByOrderId(Integer orderId) {
-		String sql = "select uid,rid from hm_rider_order where id = ?";
+		String sql = "select uid,rid,couponid,integral from hm_rider_order where id = ?";
 		Map<String, Object> resMap = null;
 		try {
 			resMap = jdbcTemplate.queryForMap(sql, orderId);
@@ -235,9 +255,9 @@ public class OrderDao {
 		return jdbcTemplate.update(sql,unixTime, outTradeNo) > 0 ? true : false;
 	}
 
-	public boolean updateROStatusToTimeout(String outTradeNo) {
-		String sql = "update hm_rider_order set pay_status = 2 where out_trade_no = ? and pay_status = 0";
-		return jdbcTemplate.update(sql, outTradeNo) > 0 ? true : false;
+	public boolean updateROStatusToTimeout(Integer orderId) {
+		String sql = "update hm_rider_order set pay_status = 2 where id = ? and pay_status = 0";
+		return jdbcTemplate.update(sql, orderId) > 0 ? true : false;
 	}
 
 	public boolean updateOStatus(List<Integer> orderIds, Integer payStatus,Integer unixTime) {
