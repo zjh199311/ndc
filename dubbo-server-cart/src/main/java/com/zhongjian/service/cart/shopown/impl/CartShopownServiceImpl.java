@@ -551,7 +551,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                                     totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen);
                                                 }
                                             } else {
-                                                totalDisPriceByOpen = totalDisPriceByClose.add(priceByOpen);
+                                                totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen);
                                             }
                                         } else {
                                             if (flagByOpen) {
