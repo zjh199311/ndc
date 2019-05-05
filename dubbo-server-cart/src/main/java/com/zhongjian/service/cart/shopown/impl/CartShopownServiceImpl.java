@@ -3,6 +3,7 @@ package com.zhongjian.service.cart.shopown.impl;
 import com.alibaba.dubbo.common.utils.StringUtils;
 import com.zhongjian.common.constant.FinalDatas;
 import com.zhongjian.dao.cart.CartParamDTO;
+import com.zhongjian.common.constant.CountDTO;
 import com.zhongjian.dao.entity.cart.basket.CartBasketBean;
 import com.zhongjian.dao.entity.cart.goods.CartGoodsBean;
 import com.zhongjian.dao.entity.cart.market.CartMarketBean;
@@ -32,6 +33,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: ldd
@@ -755,4 +757,31 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
         }
         return ResultUtil.getSuccess(cartMarketResultListDTO);
     }
+
+    @Override
+    public ResultDTO<Object> deleteGoodsOnShelves(Integer uid, Boolean flag) {
+        //如果传来的flag为true,则删除购物车中已下架的商品.  如果传来的flag为false,则每调用10次删除一次购物车下架的商品
+        if (null == uid) {
+            return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
+        }
+        if (true == flag) {
+            this.hmBasketBeanDAO.executeDeleteMethod(uid, "deleteGoodsOnShelves");
+        }
+        if (false == flag) {
+            Map<String, Integer> map = CountDTO.map;
+            Integer integer = map.get(uid.toString());
+            if (integer == null) {
+                map.put(uid.toString(), 1);
+            } else if (integer != null && integer >= 10) {
+                this.hmBasketBeanDAO.executeDeleteMethod(uid, "deleteGoodsOnShelves");
+                map.put(uid.toString(), 1);
+            } else {
+                integer++;
+                map.put(uid.toString(), integer);
+            }
+        }
+        return ResultUtil.getSuccess(null);
+    }
 }
+
+

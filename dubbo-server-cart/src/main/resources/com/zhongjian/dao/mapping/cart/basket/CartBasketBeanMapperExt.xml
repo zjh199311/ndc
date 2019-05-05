@@ -91,5 +91,16 @@
         </foreach>
     </delete>
 
+    <delete id="deleteGoodsOnShelves" parameterType="java.lang.Integer">
+          DELETE b.*
+            FROM
+                hm_basket b
+            LEFT JOIN hm_goods g ON b.gid = g.id
+            WHERE
+                b.uid = 32718
+            AND g.state = 1
+            OR g.is_delete = 1
+    </delete>
+
 
 </mapper>
