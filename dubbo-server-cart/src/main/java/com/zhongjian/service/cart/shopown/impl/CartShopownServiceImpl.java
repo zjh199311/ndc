@@ -759,11 +759,8 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
     }
 
     @Override
-    public ResultDTO<Object> deleteGoodsOnShelves(Integer uid, Boolean flag) {
+    public void deleteGoodsOnShelves(Integer uid, Boolean flag) {
         //如果传来的flag为true,则删除购物车中已下架的商品.  如果传来的flag为false,则每调用10次删除一次购物车下架的商品
-        if (null == uid) {
-            return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
-        }
         if (true == flag) {
             this.hmBasketBeanDAO.executeDeleteMethod(uid, "deleteGoodsOnShelves");
         }
@@ -771,16 +768,15 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
             Map<String, Integer> map = CountDTO.map;
             Integer integer = map.get(uid.toString());
             if (integer == null) {
-                map.put(uid.toString(), 1);
-            } else if (integer != null && integer >= 10) {
                 this.hmBasketBeanDAO.executeDeleteMethod(uid, "deleteGoodsOnShelves");
                 map.put(uid.toString(), 1);
+            } else if (integer != null && integer >= 10) {
+                map.put(uid.toString(), null);
             } else {
                 integer++;
                 map.put(uid.toString(), integer);
             }
         }
-        return ResultUtil.getSuccess(null);
     }
 }
 
