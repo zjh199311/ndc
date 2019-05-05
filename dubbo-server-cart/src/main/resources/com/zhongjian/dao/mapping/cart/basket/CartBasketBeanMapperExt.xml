@@ -97,9 +97,8 @@
                 hm_basket b
             LEFT JOIN hm_goods g ON b.gid = g.id
             WHERE
-                b.uid = 32718
-            AND g.state = 1
-            OR g.is_delete = 1
+                b.uid = #{uid,jdbcType=INTEGER}
+            AND (g.state = 1 OR g.is_delete = 1)
     </delete>
 
 

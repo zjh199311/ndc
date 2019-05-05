@@ -12,5 +12,12 @@ public interface CartShopownService {
      */
     ResultDTO<Object> queryList(Integer uid);
 
-
+    /**
+     * 根据uid删除已下架的商品
+     *
+     * @param uid
+     * @param flag
+     * @return
+     */
+    ResultDTO<Object> deleteGoodsOnShelves(Integer uid, Boolean flag);
 }
