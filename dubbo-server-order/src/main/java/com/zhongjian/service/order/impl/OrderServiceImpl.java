@@ -688,6 +688,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				addressDao.addOrderAddress(addressOrderBean);
 				// 增加积分
 				integralVipDao.updateUserIntegral(uid, "+", Double.valueOf(total_amount).intValue());
+				integralVipDao.addIntegralLog(uid, Double.valueOf(total_amount).intValue(),4, currentTime);
 				// 记录
 				Map<String, Object> orderInfo = orderDao.getDetailByOrderId(rorderId);
 				Object integralObj =  orderInfo.get("integral");

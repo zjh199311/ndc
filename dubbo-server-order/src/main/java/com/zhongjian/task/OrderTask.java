@@ -14,7 +14,7 @@ public class OrderTask extends TaskBase {
 	MessageService messageService;
 	
 	public void handleOrderPush(Integer orderId) {
-		execute(new Runnable() {
+		executeTask(new Runnable() {
 			@Override
 			public void run() {
 				messageService.messagePush(orderId);

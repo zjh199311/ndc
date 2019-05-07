@@ -20,7 +20,7 @@ public class AddressTask extends TaskBase{
 
 	
 	public void setAddressTask(Integer id,Integer uid) {
-		execute(new Runnable() {
+		executeTask(new Runnable() {
 			@Override
 			public void run() {
 				addressService.updateDefaultAdress(id, uid);
@@ -29,7 +29,7 @@ public class AddressTask extends TaskBase{
 	}
 	
 	public void setLateMarket(Integer marketId,Integer uid) {
-		execute(new Runnable() {
+		executeTask(new Runnable() {
 			@Override
 			public void run() {
 				userService.updateUserMarketIdById(marketId, uid);
