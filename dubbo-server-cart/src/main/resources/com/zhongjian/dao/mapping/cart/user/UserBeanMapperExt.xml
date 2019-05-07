@@ -50,7 +50,7 @@
             AND c.timeout = 0
             AND uc.uid = #{uid,jdbcType=INTEGER}
             AND c.id = uc.couponid
-            order by pay_full desc
+            order by pay_full
     </select>
 
 

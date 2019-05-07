@@ -48,12 +48,12 @@ public class UserCopResultDTO implements Serializable {
     /**
      * 开始时间
      */
-    private String start_Time;
+    private String start_time;
 
     /**
      * 结束时间
      */
-    private String end_Time;
+    private String end_time;
 
 
 

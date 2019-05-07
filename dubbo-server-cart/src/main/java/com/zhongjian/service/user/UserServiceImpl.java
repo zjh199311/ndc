@@ -62,8 +62,8 @@ public class UserServiceImpl extends HmBaseService<UserBean, Integer> implements
             userCopResultDTO.setEndtime(null);
             userCopResultDTO.setStarttime(null);
             userCopResultDTO.setPayFull(null);
-            userCopResultDTO.setStart_Time(startTime);
-            userCopResultDTO.setEnd_Time(endTime);
+            userCopResultDTO.setStart_time(startTime);
+            userCopResultDTO.setEnd_time(endTime);
             if (userQueryDTO.getMarketId() != null && !StringUtil.isBlank(userCopResultDTO.getMarketId())) {
                 String[] split = userCopResultDTO.getMarketId().split("\\|");
                 Boolean flagtwo = true;

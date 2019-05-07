@@ -19,5 +19,5 @@ public interface CartShopownService {
      * @param flag
      * @return
      */
-    ResultDTO<Object> deleteGoodsOnShelves(Integer uid, Boolean flag);
+    void deleteGoodsOnShelves(Integer uid, Boolean flag);
 }
