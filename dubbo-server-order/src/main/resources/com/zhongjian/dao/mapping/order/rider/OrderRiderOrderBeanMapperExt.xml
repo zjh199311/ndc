@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.order.rider.OrderRiderOrderBean">
+
+    <select id="findRiderOrder" resultType="java.lang.Integer">
+        SELECT
+        id
+        FROM
+        hm_rider_order
+        WHERE
+        FROM_UNIXTIME(ctime, '%Y-%m-%d %H:%i:%s') &gt; DATE_SUB(
+        FROM_UNIXTIME(
+        UNIX_TIMESTAMP(),
+        '%Y-%m-%d %H:%i:%s'
+        ),
+        INTERVAL 30 MINUTE
+        )
+        AND FROM_UNIXTIME(ctime, '%Y-%m-%d %H:%i:%s') &lt; DATE_SUB(
+        FROM_UNIXTIME(
+        UNIX_TIMESTAMP(),
+        '%Y-%m-%d %H:%i:%s'
+        ),
+        INTERVAL 15 MINUTE
+        )
+        AND pay_status = 0
+    </select>
+</mapper>
