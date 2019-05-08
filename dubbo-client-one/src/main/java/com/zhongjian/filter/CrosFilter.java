@@ -70,6 +70,7 @@ public class CrosFilter implements Filter {
 		httpResponse.setHeader("Access-Control-Allow-Origin", "*");
 		httpResponse.setHeader("Access-Control-Allow-Headers", "Content-Type");
 		httpResponse.setHeader("Access-Control-Allow-Methods", "*");
+        request.setCharacterEncoding("UTF-8");
 		// add login_token jungle
 		if (request.getParameter("login_token") != null) {
 			request.setAttribute("uid", userService.getUidByLoginToken(request.getParameter("login_token")));
