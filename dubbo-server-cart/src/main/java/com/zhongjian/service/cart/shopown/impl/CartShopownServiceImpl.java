@@ -34,6 +34,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @Author: ldd
@@ -771,7 +772,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                 this.hmBasketBeanDAO.executeDeleteMethod(uid, "deleteGoodsOnShelves");
                 map.put(uid.toString(), 1);
             } else if (integer != null && integer >= 10) {
-                map.put(uid.toString(), null);
+                map.remove(uid.toString());
             } else {
                 integer++;
                 map.put(uid.toString(), integer);
