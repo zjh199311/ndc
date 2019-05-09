@@ -78,12 +78,18 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
             if (StringUtils.isBlank(cartBasketEditQueryDTO.getPrice())) {
                 return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
             }
+            if (new BigDecimal(cartBasketEditQueryDTO.getPrice()).compareTo(BigDecimal.ZERO) < 0) {
+                return ResultUtil.getFail(CommonMessageEnum.FAIL);
+            }
             if (null == cartBasketEditQueryDTO.getSid()) {
                 return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
             }
         } else {
-            if (null == cartBasketEditQueryDTO.getAmount() || BigDecimal.ZERO.equals(new BigDecimal(cartBasketEditQueryDTO.getAmount()))) {
+            if (null == cartBasketEditQueryDTO.getAmount()) {
                 return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
+            }
+            if (new BigDecimal(cartBasketEditQueryDTO.getAmount()).compareTo(BigDecimal.ZERO) < 0) {
+                return ResultUtil.getFail(CommonMessageEnum.FAIL);
             }
         }
         //根据前端传入的商品id去查询pid,
@@ -206,7 +212,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
             }
         }
         CartBaskerListResultDTO cartBaskerListResultDTO = new CartBaskerListResultDTO();
-        if(BigDecimal.ZERO.compareTo(totalDisPrice)!=0){
+        if (BigDecimal.ZERO.compareTo(totalDisPrice) != 0) {
             cartBaskerListResultDTO.setTotalDisPrice(String.valueOf(totalDisPrice.setScale(2)));
         }
         cartBaskerListResultDTO.setTotalPrice(String.valueOf(totalPrice.setScale(2)));
@@ -262,11 +268,11 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         cartParamDTO.setId(cartBasketEditQueryDTO.getId());
         cartParamDTO.setUid(cartBasketEditQueryDTO.getUid());
         CartBasketBean cartBasketBean = this.dao.executeSelectOneMethod(cartParamDTO, "selectBasketInfoById", CartBasketBean.class);
-        LogUtil.info("食品信息","cartBasketBean{}"+cartBasketBean);
+        LogUtil.info("食品信息", "cartBasketBean{}" + cartBasketBean);
         //根据主键id查询得到gid 如果为0则为其他.根据价格修改. 如果不是0则根据数量修改
         if (FinalDatas.ZERO == cartBasketBean.getGid()) {
-            if (StringUtils.isBlank(cartBasketEditQueryDTO.getPrice())) {
-                return ResultUtil.getFail(null);
+            if (StringUtils.isBlank(cartBasketEditQueryDTO.getPrice()) || new BigDecimal(cartBasketEditQueryDTO.getPrice()).compareTo(BigDecimal.ZERO) < 0) {
+                return ResultUtil.getFail(CommonMessageEnum.FAIL);
             } else {
                 BigDecimal bigDecimal = new BigDecimal(cartBasketEditQueryDTO.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP);
                 cartBasketBean.setPrice(bigDecimal);
@@ -283,10 +289,12 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
                 return ResultUtil.getSuccess(CommonMessageEnum.SUCCESS);
             }
         } else {
-            if (StringUtils.isBlank(cartBasketEditQueryDTO.getAmount())) {
+            if (StringUtils.isBlank(cartBasketEditQueryDTO.getAmount()) || new BigDecimal(cartBasketEditQueryDTO.getAmount()).compareTo(BigDecimal.ZERO) < 0) {
                 return ResultUtil.getFail(CommonMessageEnum.PARAM_LOST);
             }
         }
+        //根据前端传入的商品id去查询价格,
+        CartGoodsBean cartGoodsBean = this.hmGoodsBeanDAO.selectByPrimaryKey(cartBasketBean.getGid());
         //如果是页面上的减号判断如果传来的值为0则是删除操作.
         if (BigDecimal.ZERO.equals(new BigDecimal(cartBasketEditQueryDTO.getAmount()))) {
             CartBasketDelQueryDTO cartBasketDelQueryDTO = new CartBasketDelQueryDTO();
@@ -296,8 +304,9 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
             return dto;
         } else {
             //总价
-            BigDecimal totalprice = cartBasketBean.getUnitprice().multiply(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
+            BigDecimal totalprice = cartGoodsBean.getPrice().multiply(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
             cartBasketBean.setPrice(totalprice);
+            cartBasketBean.setUnitprice(cartGoodsBean.getPrice());
             cartBasketBean.setAmount(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
             if (StringUtil.isBlank(cartBasketEditQueryDTO.getRemark())) {
                 cartBasketBean.setRemark("");
