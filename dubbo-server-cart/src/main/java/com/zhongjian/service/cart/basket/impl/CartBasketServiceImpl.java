@@ -296,7 +296,7 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         //根据前端传入的商品id去查询价格,
         CartGoodsBean cartGoodsBean = this.hmGoodsBeanDAO.selectByPrimaryKey(cartBasketBean.getGid());
         //如果是页面上的减号判断如果传来的值为0则是删除操作.
-        if (BigDecimal.ZERO.equals(new BigDecimal(cartBasketEditQueryDTO.getAmount()))) {
+        if (BigDecimal.ZERO.compareTo(new BigDecimal(cartBasketEditQueryDTO.getAmount()))==0) {
             CartBasketDelQueryDTO cartBasketDelQueryDTO = new CartBasketDelQueryDTO();
             cartBasketDelQueryDTO.setId(cartBasketEditQueryDTO.getId());
             cartBasketDelQueryDTO.setUid(cartBasketBean.getUid());
