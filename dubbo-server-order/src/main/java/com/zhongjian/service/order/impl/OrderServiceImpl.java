@@ -142,6 +142,10 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					sname = (String) map.get("sname");// 商户名
 					sid = map.get("pid").toString();
 					unFavorable = (int) map.get("unFavorable");
+					//显示不参与满减
+					if (unFavorable != 0) {
+						sname = sname + "（不参与市场满减）";
+					}
 					flag = false;
 				}
 
@@ -280,9 +284,13 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		}
 		Integer vipStatus = (Integer) (uMap.get("vip_status"));
 		Integer vipexpire = (Integer) (uMap.get("vip_expire"));
-		BigDecimal vipFavourable = needPay.multiply(new BigDecimal("0.05")).setScale(2, BigDecimal.ROUND_HALF_UP);
+		BigDecimal vipFavourMoney = new BigDecimal("200");
+		if (needPay.compareTo(vipFavourMoney) < 0) {
+			vipFavourMoney = needPay;
+		}
+		BigDecimal vipFavourable = vipFavourMoney.multiply(new BigDecimal("0.05")).setScale(2, BigDecimal.ROUND_HALF_UP);
 		vipFavourRiderOrder = vipFavourable;
-		vipFavour = vipFavourable.setScale(2).toString();
+		vipFavour = vipFavourable.add(new BigDecimal("5")).setScale(2).toString();
 		// 判断是否是会员
 		if (vipStatus == 1 && vipexpire > (System.currentTimeMillis() / 1000)) {
 			isVIp = 1;

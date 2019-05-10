@@ -13,7 +13,7 @@
         UNIX_TIMESTAMP(),
         '%Y-%m-%d %H:%i:%s'
         ),
-        INTERVAL 30 MINUTE
+        INTERVAL 60 MINUTE
         )
         AND FROM_UNIXTIME(ctime, '%Y-%m-%d %H:%i:%s') &lt; DATE_SUB(
         FROM_UNIXTIME(

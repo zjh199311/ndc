@@ -98,7 +98,7 @@
             LEFT JOIN hm_goods g ON b.gid = g.id
             WHERE
                 b.uid = #{uid,jdbcType=INTEGER}
-            AND (g.state = 1 OR g.is_delete = 1 OR g.state IS NULL)
+            AND (g.state = 1 OR g.is_delete = 1 OR (g.state IS NULL AND b.gid != 0))
     </delete>
 
 
