@@ -1,21 +1,11 @@
 package com.zhongjian.common;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
-import org.bson.Document;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
 import com.zhongjian.commoncomponent.PropUtil;
 
 /*
@@ -37,30 +27,13 @@ public class mogoClientSingleFactory {
 		builder.socketTimeout(0);
 		MongoClientOptions myOptions = builder.build();
 		PropUtil propUtil = (PropUtil) SpringContextHolder.getBean(PropUtil.class);
-		if (StringUtils.isBlank(propUtil.getMongoPassword())||StringUtils.isBlank(propUtil.getMongoUserName())) {
+		if (StringUtils.isBlank(propUtil.getMongoPassword()) || StringUtils.isBlank(propUtil.getMongoUserName())) {
 			mongoClient = new MongoClient(new ServerAddress(propUtil.getMongoIp(), propUtil.getMongoPort()), myOptions);
 		} else {
-			MongoCredential credential = MongoCredential.createCredential(propUtil.getMongoUserName(), propUtil.getMongodbName(), propUtil.getMongoPassword().toCharArray());
+			MongoCredential credential = MongoCredential.createCredential(propUtil.getMongoUserName(),
+					propUtil.getMongodbName(), propUtil.getMongoPassword().toCharArray());
 			mongoClient = new MongoClient(new ServerAddress(propUtil.getMongoIp(), propUtil.getMongoPort()), credential,
 					myOptions);
 		}
-		MongoDatabase db = mongoClient.getDatabase("nidcai");
-		MongoCollection<Document> collection = db.getCollection("vipSetting");
-		Document filter = new Document();
-		filter.append("effectTime", "year").append("enabled", true);
-		List<Document> results = new ArrayList<Document>();
-		FindIterable<Document> iterables = collection.find(filter);
-		MongoCursor<Document> cursor = iterables.iterator();
-		while (cursor.hasNext()) {
-			results.add(cursor.next());
-		}
-		List<HashMap<String, String>> listMap = new ArrayList<HashMap<String, String>>();
-		for (Iterator<Document> iterator = results.iterator(); iterator.hasNext();) {
-			Document document = iterator.next();
-			HashMap<String, String> map = new HashMap<>();
-			map.put("time", (String) document.get("limitOne"));
-			map.put("event", (String) document.get("limitDay"));
-		}
-		System.out.println(listMap);
 	}
 }

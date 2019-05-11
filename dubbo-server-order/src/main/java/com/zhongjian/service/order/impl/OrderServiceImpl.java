@@ -452,10 +452,10 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				}
 			}
 			
-			//删除购物车
-			if (!orderDao.deleteBasketBySid(sids, uid)) {
-				throw new NDCException.DeleteBasketExcpetion();
-			}
+//			//删除购物车
+//			if (!orderDao.deleteBasketBySid(sids, uid)) {
+//				throw new NDCException.DeleteBasketExcpetion();
+//			}
 			if (integralPay) {
 				handleROrder(outTradeNo, needPay.toString());
 				resMap.put("roid", roid);

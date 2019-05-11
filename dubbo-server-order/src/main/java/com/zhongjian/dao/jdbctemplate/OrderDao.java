@@ -112,14 +112,14 @@ public class OrderDao extends MongoDBDaoBase{
 	// 查看优惠券
 	public Map<String, Object> getCouponInfo(Integer uid, Integer couponId) {
 		String sql = "SELECT uc.price,uc.coupon mongoid from hm_user_coupon uc where"
-				+ " uc.uid = ? and uc.state = 0";
+				+ " uc.uid = ? and uc.id = ? and uc.state = 0";
 		Map<String, Object> resMap = null;
 		try {
-			resMap = jdbcTemplate.queryForMap(sql, couponId, uid);
+			resMap = jdbcTemplate.queryForMap(sql, uid, couponId);
 		} catch (EmptyResultDataAccessException e) {
 			return resMap;
 		}
-		String couponMongoId = (String) resMap.get("coupon");
+		String couponMongoId = (String) resMap.get("mongoid");
 		MongoCollection<Document> collection = getCollection("nidcai", "coupon");
 		Document filter = new Document();
 		filter.append("_id",new ObjectId(couponMongoId));
@@ -131,8 +131,8 @@ public class OrderDao extends MongoDBDaoBase{
 		}
 		for (Iterator<Document> iterator = results.iterator(); iterator.hasNext();) {
 			Document document = iterator.next();
-			resMap.put("pay_full", (String) document.get("payFull"));
-			resMap.put("type", (String) document.get("type"));
+			resMap.put("pay_full",new BigDecimal((Double) document.get("payFull")));
+			resMap.put("type",document.get("type"));
 			break;
 		}
 		return resMap;

@@ -25,32 +25,25 @@
 
     <resultMap id="BaseCoupon" type="com.zhongjian.dto.user.result.UserCopResultDTO">
         <id column="id" property="id" jdbcType="INTEGER"/>
-        <result column="pay_full" property="payFull" jdbcType="DECIMAL"/>
         <result column="coupon" property="coupon" jdbcType="DECIMAL"/>
+        <result column="mongoid" property="mongoId" jdbcType="VARCHAR"/>
         <result column="start_time" property="starttime" jdbcType="INTEGER"/>
         <result column="end_time" property="endtime" jdbcType="INTEGER"/>
-        <result column="type" property="type" jdbcType="INTEGER"/>
-        <result column="marketid" property="marketId" jdbcType="VARCHAR"/>
 
     </resultMap>
     <select id="findCouponByUid" parameterType="java.lang.Integer" resultMap="BaseCoupon">
             SELECT
-                c.pay_full,
-                c.coupon,
+                uc.price coupon,
+                uc.coupon mongoid,
                 uc.id,
                 uc.start_time,
-                uc.end_time,
-                c.type,
-                c.marketid
+                uc.end_time
             FROM
-                hm_coupon c,
                 hm_user_coupon uc
             WHERE
                 uc.state = 0
-            AND c.timeout = 0
             AND uc.uid = #{uid,jdbcType=INTEGER}
-            AND c.id = uc.couponid
-            order by pay_full
+            order by uc.end_time asc,uc.price desc
     </select>
 
 

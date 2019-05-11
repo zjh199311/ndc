@@ -25,7 +25,6 @@ public class UserCopResultDTO implements Serializable {
     /**
      * 满减值
      */
-    @Expose(serialize =  false)
     private BigDecimal payFull;
 
     /**
@@ -36,13 +35,11 @@ public class UserCopResultDTO implements Serializable {
     /**
      * 开始时间
      */
-    @Expose(serialize =  false)
     private Integer starttime;
 
     /**
      * 结束时间
      */
-    @Expose(serialize =  false)
     private Integer endtime;
 
     /**
@@ -77,7 +74,9 @@ public class UserCopResultDTO implements Serializable {
      */
     private String content;
 
-
+    private String mongoId;
+    
+    private String reason;
 
 
 }
