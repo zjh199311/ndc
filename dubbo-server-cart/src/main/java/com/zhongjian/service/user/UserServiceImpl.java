@@ -6,7 +6,6 @@ import com.zhongjian.dao.jdbctemplate.CouponDao;
 import com.zhongjian.dto.user.query.UserQueryDTO;
 import com.zhongjian.dto.user.result.UserCopResultDTO;
 import com.zhongjian.dto.user.result.UserResultDTO;
-import com.zhongjian.util.StringUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
