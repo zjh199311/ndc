@@ -309,14 +309,12 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		boolean todayCouponUse = orderDao.checkCouponOrderByUid(uid);
 		
 		BigDecimal priceForIntegralorCoupon = needPay.add(deliverfeeBigDecimal);
-		if (orderDao.getCouponsNum(uid) > 0) {
-			if (todayCouponUse && orderDao.getCouponsNumCanUse(uid, priceForIntegralorCoupon) > 0) {
-				couponContent = "有优惠券可用";
+		if (orderDao.getCouponsNumCanUse(uid) > 0) {
+			if (todayCouponUse) {
+				couponContent = "有可用优惠券";
 				couponCanUse = 1;
-			}else if (todayCouponUse) {
-				couponContent = "暂无可用优惠券";
 			}else {
-				couponContent = "暂无可用（每日一张）";
+				couponContent = "每日一张限用一张";
 			}
 		} else {
 			couponContent = "";
@@ -369,7 +367,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				Integer couponType = (Integer) couponInfo.get("type");
 				if (couponType == 0) {
 					if (priceForIntegralorCoupon.compareTo(payFullBigDecimal) >= 0) {
-						BigDecimal couponPrice = (BigDecimal) couponInfo.get("coupon");
+						BigDecimal couponPrice = (BigDecimal) couponInfo.get("price");
 						needPay = priceForIntegralorCoupon.subtract(couponPrice);
 						couponContent = "-￥" + couponPrice.toString();
 						if (toCreateOrder) {

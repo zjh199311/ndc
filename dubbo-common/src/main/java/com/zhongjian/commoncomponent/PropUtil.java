@@ -4,7 +4,6 @@ import javax.annotation.PostConstruct;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 
@@ -51,8 +50,12 @@ public class PropUtil {
         setWxYinHangPublicRsaKey((String) propComponent.getMap().get("pay.wxYinHang.publicRsaKey"));
         setWxYinHangSignType((String) propComponent.getMap().get("pay.wxYinHang.signType"));
         setWxYinHangUrl((String) propComponent.getMap().get("pay.wxYinHang.url"));
-
-
+        
+        setMongoIp((String) propComponent.getMap().get("mogodb.datasource.ip"));
+        setMongoPort(Integer.valueOf((String) propComponent.getMap().get("mogodb.datasource.port")));
+        setMongoUserName((String) propComponent.getMap().get("mogodb.datasource.username"));
+        setMongoPassword((String) propComponent.getMap().get("mogodb.datasource.password"));
+        setMongodbName((String) propComponent.getMap().get("mogodb.datasource.dbname"));
 
     }
 
@@ -89,6 +92,13 @@ public class PropUtil {
     private String wxYinHangNotifyUrl;
     private String wxYinHangPublicRsaKey;
     private String wxYinHangPrivateRsaKey;
+    
+    private String mongoIp;
+    private Integer mongoPort;
+    private String mongoUserName;
+    private String mongodbName;
+    private String mongoPassword;
+
 
 
 }

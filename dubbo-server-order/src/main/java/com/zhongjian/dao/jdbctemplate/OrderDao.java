@@ -5,12 +5,20 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.zhongjian.dao.MongoDBDaoBase;
 import com.zhongjian.dto.cart.storeActivity.result.CartStoreActivityResultDTO;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -24,7 +32,7 @@ import org.springframework.stereotype.Repository;
 import com.zhongjian.util.DateUtil;
 
 @Repository
-public class OrderDao {
+public class OrderDao extends MongoDBDaoBase{
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -85,31 +93,47 @@ public class OrderDao {
 
 
 	//优惠券-----start
-	// 查看优惠券数量
-	public Integer getCouponsNum(Integer uid) {
-		String sql = "SELECT COUNT(1) from hm_user_coupon,hm_coupon where uid = ? and state "
-				+ "= 0 and timeout = 0 and hm_user_coupon.couponid = hm_coupon.id";
-		Integer num = jdbcTemplate.queryForObject(sql, new Object[] { uid }, Integer.class);
-		return num;
-	}
+//	// 查看优惠券数量
+//	public Integer getCouponsNum(Integer uid) {
+//		String sql = "SELECT COUNT(1) from hm_user_coupon,hm_coupon where uid = ? and state "
+//				+ "= 0 and timeout = 0 and hm_user_coupon.couponid = hm_coupon.id";
+//		Integer num = jdbcTemplate.queryForObject(sql, new Object[] { uid }, Integer.class);
+//		return num;
+//	}
 
 	// 查看优惠券数量
-	public Integer getCouponsNumCanUse(Integer uid,BigDecimal payMoney) {
-		String sql = "SELECT COUNT(1) from hm_user_coupon,hm_coupon where uid = ? and state "
-				+ "= 0 and timeout = 0 and hm_user_coupon.couponid = hm_coupon.id and hm_coupon.pay_full <= ?";
-		Integer num = jdbcTemplate.queryForObject(sql, new Object[] { uid ,payMoney}, Integer.class);
+	public Integer getCouponsNumCanUse(Integer uid) {
+		String sql = "SELECT COUNT(1) from hm_user_coupon where uid = ? and state = 0";
+		Integer num = jdbcTemplate.queryForObject(sql, new Object[] { uid}, Integer.class);
 		return num;
 	}
 	
+	
 	// 查看优惠券
 	public Map<String, Object> getCouponInfo(Integer uid, Integer couponId) {
-		String sql = "SELECT  hm_coupon.type ,hm_coupon.pay_full,hm_coupon.coupon from hm_user_coupon,hm_coupon where hm_user_coupon.id = ? "
-				+ "and hm_user_coupon.couponid = hm_coupon.id and hm_user_coupon.uid = ? "
-				+ "and hm_user_coupon.state = 0 and hm_coupon.timeout = 0 ";
+		String sql = "SELECT uc.price,uc.coupon mongoid from hm_user_coupon uc where"
+				+ " uc.uid = ? and uc.state = 0";
 		Map<String, Object> resMap = null;
 		try {
 			resMap = jdbcTemplate.queryForMap(sql, couponId, uid);
 		} catch (EmptyResultDataAccessException e) {
+			return resMap;
+		}
+		String couponMongoId = (String) resMap.get("coupon");
+		MongoCollection<Document> collection = getCollection("nidcai", "coupon");
+		Document filter = new Document();
+		filter.append("_id",new ObjectId(couponMongoId));
+		List<Document> results = new ArrayList<Document>();
+		FindIterable<Document> iterables = collection.find(filter);
+		MongoCursor<Document> cursor = iterables.iterator();
+		while (cursor.hasNext()) {
+			results.add(cursor.next());
+		}
+		for (Iterator<Document> iterator = results.iterator(); iterator.hasNext();) {
+			Document document = iterator.next();
+			resMap.put("pay_full", (String) document.get("payFull"));
+			resMap.put("type", (String) document.get("type"));
+			break;
 		}
 		return resMap;
 	}

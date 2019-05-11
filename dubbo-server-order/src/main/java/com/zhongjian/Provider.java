@@ -6,6 +6,7 @@ import com.zhongjian.util.TaskUtil;
 
 public class Provider {
 	public static void main(String[] args) throws Exception {
+		
 		// 开启异步任务
 		TaskUtil.startTask(1);
 		// 开启定时任务
