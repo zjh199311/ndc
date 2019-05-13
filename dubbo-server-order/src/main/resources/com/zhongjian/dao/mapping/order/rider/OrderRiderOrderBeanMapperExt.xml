@@ -20,7 +20,7 @@
         UNIX_TIMESTAMP(),
         '%Y-%m-%d %H:%i:%s'
         ),
-        INTERVAL 15 MINUTE
+        INTERVAL 2 MINUTE
         )
         AND pay_status = 0
     </select>
