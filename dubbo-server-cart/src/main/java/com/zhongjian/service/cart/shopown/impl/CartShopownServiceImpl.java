@@ -150,7 +150,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
             boolean flagByAdvence = true;
 
             for (CartShopownResultDTO shopownResultDTO : cartShopownResultDTOS) {
-                shopownResultDTO.setPicture("/"+shopownResultDTO.getPicture());
+                shopownResultDTO.setPicture("/" + shopownResultDTO.getPicture());
                 //将所有开张的优惠价格相加.
                 BigDecimal priceByOpen = BigDecimal.ZERO;
                 //将所有预约的优惠价格相加
@@ -281,17 +281,17 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                             //优惠价
                             BigDecimal reduce = new BigDecimal(cartStoreActivityResultDTO.getReduce());
                             if (FinalDatas.ONE.toString().equals(shopownResultDTO.getStatus())) {
-                                if (numberByClose.compareTo(new BigDecimal(cartStoreActivityResultDTO.getFull())) == 1) {
+                                if (numberByClose.compareTo(new BigDecimal(cartStoreActivityResultDTO.getFull())) >= 0) {
                                     priceByClose = numberByClose.subtract(reduce);
                                     break;
                                 }
                             } else if (FinalDatas.ZERO.toString().equals(shopownResultDTO.getStatus())) {
-                                if (numberByOpen.compareTo(new BigDecimal(cartStoreActivityResultDTO.getFull())) == 1) {
+                                if (numberByOpen.compareTo(new BigDecimal(cartStoreActivityResultDTO.getFull())) >= 0) {
                                     priceByOpen = numberByOpen.subtract(reduce);
                                     break;
                                 }
                             } else {
-                                if (numberByAdvence.compareTo(new BigDecimal(cartStoreActivityResultDTO.getFull())) == 1) {
+                                if (numberByAdvence.compareTo(new BigDecimal(cartStoreActivityResultDTO.getFull())) >= 0) {
                                     priceByAdvence = numberByAdvence.subtract(reduce);
                                     break;
                                 }
@@ -347,11 +347,21 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                     if (null != hmMarketActivityResult) {
                         if (!StringUtils.isBlank(hmMarketActivityResult.getRule())) {
                             if (FinalDatas.ZERO.equals(hmMarketActivityResult.getType())) {
-                                String[] split = hmMarketActivityResult.getRule().split("-");
+                                String[] split1 = hmMarketActivityResult.getRule().split(",");
                                 stringbuider = new StringBuilder();
-                                stringbuider.append("首单购买满").append(split[0]).append("减").append(split[1]);
-                                cartMarketResultByAdvenceDTO.setRule(stringbuider.toString());
-                                cartMarketResultByAdvenceDTO.setStatus(hmMarketActivityResult.getStatus());
+                                for (String s : split1) {
+                                    String[] split = s.split("-");
+                                    stringbuider.append("满").append(split[0]).append("减").append(split[1]).append(",");
+                                    cartMarketResultByAdvenceDTO.setRule(stringbuider.toString());
+                                    cartMarketResultByAdvenceDTO.setStatus(hmMarketActivityResult.getStatus());
+                                }
+
+                                //去除末尾逗号
+                                String marketBuider = stringbuider.toString();
+                                if (!StringUtil.isBlank(marketBuider) && (",".equals(stringbuider.toString().substring(marketBuider.length() - 1, marketBuider.length())))) {
+                                    String activityMsg = stringbuider.toString().substring(0, stringbuider.toString().length() - 1);
+                                    cartMarketResultByAdvenceDTO.setRule("首单购买" + activityMsg.toString());
+                                }
                             }
                             if (FinalDatas.ONE.equals(hmMarketActivityResult.getType())) {
                                 stringbuider = new StringBuilder();
@@ -409,12 +419,16 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                         if (BigDecimal.ZERO.compareTo(priceByAdvence) < 0) {
                                             if (flagByAdvence) {
                                                 marketByAdvence = marketByAdvence.add(numberByAdvence);
-                                                String[] split = hmMarketActivityResult.getRule().split("-");
-                                                if (marketByAdvence.compareTo(new BigDecimal(split[0])) >= 0) {
-                                                    totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence.subtract(new BigDecimal(split[1])));
-                                                    flagByAdvence = false;
-                                                } else {
-                                                    totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence);
+                                                String[] split1 = hmMarketActivityResult.getRule().split(",");
+                                                for (int i = split1.length - 1; i >= 0; i--) {
+                                                    String[] split = split1[i].split("-");
+                                                    if (marketByAdvence.compareTo(new BigDecimal(split[0])) >= 0) {
+                                                        totalDisPriceByAdvence= totalDisPriceByAdvence.add(priceByAdvence.subtract(new BigDecimal(split[1])));
+                                                        flagByAdvence = false;
+                                                        break;
+                                                    } else {
+                                                        totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence);
+                                                    }
                                                 }
                                             } else {
                                                 totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence);
@@ -422,12 +436,16 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                         } else {
                                             if (flagByAdvence) {
                                                 marketByAdvence = marketByAdvence.add(numberByAdvence);
-                                                String[] split = hmMarketActivityResult.getRule().split("-");
-                                                if (marketByAdvence.compareTo(new BigDecimal(split[0])) >= 0) {
-                                                    totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence.subtract(new BigDecimal(split[1])));
-                                                    flagByAdvence = false;
-                                                } else {
-                                                    totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence);
+                                                String[] split1 = hmMarketActivityResult.getRule().split(",");
+                                                for (int i = split1.length - 1; i >= 0; i--) {
+                                                    String[] split = split1[i].split("-");
+                                                    if (marketByAdvence.compareTo(new BigDecimal(split[0])) >= 0) {
+                                                        totalDisPriceByAdvence= totalDisPriceByAdvence.add(numberByAdvence.subtract(new BigDecimal(split[1])));
+                                                        flagByAdvence = false;
+                                                        break;
+                                                    } else {
+                                                        totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence);
+                                                    }
                                                 }
                                             } else {
                                                 totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence);
@@ -484,11 +502,22 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                         if (!StringUtils.isBlank(hmMarketActivityResult.getRule())) {
 
                             if (FinalDatas.ZERO.equals(hmMarketActivityResult.getType())) {
-                                String[] split = hmMarketActivityResult.getRule().split("-");
+                                String[] split1 = hmMarketActivityResult.getRule().split(",");
                                 stringbuider = new StringBuilder();
-                                stringbuider.append("首单购买满").append(split[0]).append("减").append(split[1]);
-                                cartMarketResultByOpenDTO.setRule(stringbuider.toString());
-                                cartMarketResultByOpenDTO.setStatus(hmMarketActivityResult.getStatus());
+                                for (String s : split1) {
+                                    String[] split = s.split("-");
+                                    stringbuider.append("满").append(split[0]).append("减").append(split[1]).append(",");
+                                    cartMarketResultByOpenDTO.setRule(stringbuider.toString());
+                                    cartMarketResultByOpenDTO.setStatus(hmMarketActivityResult.getStatus());
+                                }
+
+                                //去除末尾逗号
+                                String marketBuider = stringbuider.toString();
+                                if (!StringUtil.isBlank(marketBuider) && (",".equals(stringbuider.toString().substring(marketBuider.length() - 1, marketBuider.length())))) {
+                                    String activityMsg = stringbuider.toString().substring(0, stringbuider.toString().length() - 1);
+                                    cartMarketResultByOpenDTO.setRule("首单购买" + activityMsg.toString());
+                                }
+
                             }
                             if (FinalDatas.ONE.equals(hmMarketActivityResult.getType())) {
                                 stringbuider = new StringBuilder();
@@ -546,12 +575,16 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                         if (BigDecimal.ZERO.compareTo(priceByOpen) < 0) {
                                             if (flagByOpen) {
                                                 marketByOpen = marketByOpen.add(numberByOpen);
-                                                String[] split = hmMarketActivityResult.getRule().split("-");
-                                                if (marketByOpen.compareTo(new BigDecimal(split[0])) >= 0) {
-                                                    totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen.subtract(new BigDecimal(split[1])));
-                                                    flagByOpen = false;
-                                                } else {
-                                                    totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen);
+                                                String[] split1 = hmMarketActivityResult.getRule().split(",");
+                                                for (int i = split1.length - 1; i >= 0; i--) {
+                                                    String[] split = split1[i].split("-");
+                                                    if (marketByOpen.compareTo(new BigDecimal(split[0])) >= 0) {
+                                                        totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen.subtract(new BigDecimal(split[1])));
+                                                        flagByOpen = false;
+                                                        break;
+                                                    } else {
+                                                        totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen);
+                                                    }
                                                 }
                                             } else {
                                                 totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen);
@@ -559,12 +592,16 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                         } else {
                                             if (flagByOpen) {
                                                 marketByOpen = marketByOpen.add(numberByOpen);
-                                                String[] split = hmMarketActivityResult.getRule().split("-");
-                                                if (marketByOpen.compareTo(new BigDecimal(split[0])) >= 0) {
-                                                    totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen.subtract(new BigDecimal(split[1])));
-                                                    flagByOpen = false;
-                                                } else {
-                                                    totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen);
+                                                String[] split1 = hmMarketActivityResult.getRule().split(",");
+                                                for (int i = split1.length - 1; i >= 0; i--) {
+                                                    String[] split = split1[i].split("-");
+                                                    if (marketByOpen.compareTo(new BigDecimal(split[0])) >= 0) {
+                                                        totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen.subtract(new BigDecimal(split[1])));
+                                                        flagByOpen = false;
+                                                        break;
+                                                    } else {
+                                                        totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen);
+                                                    }
                                                 }
                                             } else {
                                                 totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen);
@@ -620,11 +657,21 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                     if (null != hmMarketActivityResult) {
                         if (!StringUtils.isBlank(hmMarketActivityResult.getRule())) {
                             if (FinalDatas.ZERO.equals(hmMarketActivityResult.getType())) {
-                                String[] split = hmMarketActivityResult.getRule().split("-");
+                                String[] split1 = hmMarketActivityResult.getRule().split(",");
                                 stringbuider = new StringBuilder();
-                                stringbuider.append("首单购买满").append(split[0]).append("减").append(split[1]);
-                                cartMarketResultByCloseDTO.setRule(stringbuider.toString());
-                                cartMarketResultByCloseDTO.setStatus(hmMarketActivityResult.getStatus());
+                                for (String s : split1) {
+                                    String[] split = s.split("-");
+                                    stringbuider.append("满").append(split[0]).append("减").append(split[1]).append(",");
+                                    cartMarketResultByCloseDTO.setRule(stringbuider.toString());
+                                    cartMarketResultByCloseDTO.setStatus(hmMarketActivityResult.getStatus());
+                                }
+
+                                //去除末尾逗号
+                                String marketBuider = stringbuider.toString();
+                                if (!StringUtil.isBlank(marketBuider) && (",".equals(stringbuider.toString().substring(marketBuider.length() - 1, marketBuider.length())))) {
+                                    String activityMsg = stringbuider.toString().substring(0, stringbuider.toString().length() - 1);
+                                    cartMarketResultByCloseDTO.setRule("首单购买" + activityMsg.toString());
+                                }
                             }
                             if (FinalDatas.ONE.equals(hmMarketActivityResult.getType())) {
                                 stringbuider = new StringBuilder();
@@ -682,12 +729,16 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                         if (BigDecimal.ZERO.compareTo(priceByClose) < 0) {
                                             if (flagByClose) {
                                                 marketByClose = marketByClose.add(numberByClose);
-                                                String[] split = hmMarketActivityResult.getRule().split("-");
-                                                if (marketByClose.compareTo(new BigDecimal(split[0])) >= 0) {
-                                                    totalDisPriceByClose = totalDisPriceByClose.add(priceByClose.subtract(new BigDecimal(split[1])));
-                                                    flagByClose = false;
-                                                } else {
-                                                    totalDisPriceByClose = totalDisPriceByClose.add(priceByClose);
+                                                String[] split1 = hmMarketActivityResult.getRule().split(",");
+                                                for (int i = split1.length - 1; i >= 0; i--) {
+                                                    String[] split = split1[i].split("-");
+                                                    if (marketByClose.compareTo(new BigDecimal(split[0])) >= 0) {
+                                                        totalDisPriceByClose = totalDisPriceByClose.add(priceByClose.subtract(new BigDecimal(split[1])));
+                                                        flagByClose = false;
+                                                        break;
+                                                    } else {
+                                                        totalDisPriceByClose = totalDisPriceByClose.add(priceByClose);
+                                                    }
                                                 }
                                             } else {
                                                 totalDisPriceByClose = totalDisPriceByClose.add(priceByClose);
@@ -695,12 +746,16 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                         } else {
                                             if (flagByClose) {
                                                 marketByClose = marketByClose.add(numberByClose);
-                                                String[] split = hmMarketActivityResult.getRule().split("-");
-                                                if (marketByClose.compareTo(new BigDecimal(split[0])) >= 0) {
-                                                    totalDisPriceByClose = totalDisPriceByClose.add(numberByClose.subtract(new BigDecimal(split[1])));
-                                                    flagByClose = false;
-                                                } else {
-                                                    totalDisPriceByClose = totalDisPriceByClose.add(numberByClose);
+                                                String[] split1 = hmMarketActivityResult.getRule().split(",");
+                                                for (int i = split1.length - 1; i >= 0; i--) {
+                                                    String[] split = split1[i].split("-");
+                                                    if (marketByClose.compareTo(new BigDecimal(split[0])) >= 0) {
+                                                        totalDisPriceByClose = totalDisPriceByClose.add(numberByClose.subtract(new BigDecimal(split[1])));
+                                                        flagByClose = false;
+                                                        break;
+                                                    } else {
+                                                        totalDisPriceByClose = totalDisPriceByClose.add(numberByClose);
+                                                    }
                                                 }
                                             } else {
                                                 totalDisPriceByClose = totalDisPriceByClose.add(numberByClose);
