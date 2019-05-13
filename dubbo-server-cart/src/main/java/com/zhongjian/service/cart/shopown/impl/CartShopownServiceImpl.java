@@ -426,8 +426,6 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                                         totalDisPriceByAdvence= totalDisPriceByAdvence.add(priceByAdvence.subtract(new BigDecimal(split[1])));
                                                         flagByAdvence = false;
                                                         break;
-                                                    } else {
-                                                        totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence);
                                                     }
                                                 }
                                             } else {
@@ -443,8 +441,6 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                                         totalDisPriceByAdvence= totalDisPriceByAdvence.add(numberByAdvence.subtract(new BigDecimal(split[1])));
                                                         flagByAdvence = false;
                                                         break;
-                                                    } else {
-                                                        totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence);
                                                     }
                                                 }
                                             } else {
@@ -582,8 +578,6 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                                         totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen.subtract(new BigDecimal(split[1])));
                                                         flagByOpen = false;
                                                         break;
-                                                    } else {
-                                                        totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen);
                                                     }
                                                 }
                                             } else {
@@ -599,8 +593,6 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                                         totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen.subtract(new BigDecimal(split[1])));
                                                         flagByOpen = false;
                                                         break;
-                                                    } else {
-                                                        totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen);
                                                     }
                                                 }
                                             } else {
@@ -736,8 +728,6 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                                         totalDisPriceByClose = totalDisPriceByClose.add(priceByClose.subtract(new BigDecimal(split[1])));
                                                         flagByClose = false;
                                                         break;
-                                                    } else {
-                                                        totalDisPriceByClose = totalDisPriceByClose.add(priceByClose);
                                                     }
                                                 }
                                             } else {
@@ -753,8 +743,6 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                                         totalDisPriceByClose = totalDisPriceByClose.add(numberByClose.subtract(new BigDecimal(split[1])));
                                                         flagByClose = false;
                                                         break;
-                                                    } else {
-                                                        totalDisPriceByClose = totalDisPriceByClose.add(numberByClose);
                                                     }
                                                 }
                                             } else {
