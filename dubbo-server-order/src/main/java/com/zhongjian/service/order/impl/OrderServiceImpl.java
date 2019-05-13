@@ -64,8 +64,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			String isSelfMention, boolean toCreateOrder, Integer addressId, Integer unixTime, Integer isAppointment) throws NDCException {
 		Integer isVIp = 0;
 		String vipFavour = "";
-		String deliverfee = "￥6";
-		BigDecimal deliverfeeBigDecimal = new BigDecimal("6");
+		
 		Integer integralCanUse = 0;
 		Integer couponCanUse = 0;
 		// 积分描述
@@ -99,6 +98,18 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		// vip优惠
 		BigDecimal vipFavourRiderOrder = BigDecimal.ZERO;
 
+		//会员折扣
+		Double memberDiscount = 0.95;
+		//会员运费折扣
+		Double memberDeliverfeeDiscount = 0.5;
+		//会员单笔limit
+		Double limitOne = 200d; 
+		Double limitDayRelief = 10d;
+		String memberDeliverfee = "3";
+		//会员自提费
+		String memberSelfMentionDeliverfee = "1";
+		String deliverfee = "6";
+		BigDecimal deliverfeeBigDecimal = new BigDecimal("6");
 		int createTime = (int) (System.currentTimeMillis() / 1000);
 		// 小订单拼接
 		StringBuilder orderJoint = new StringBuilder();
@@ -109,7 +120,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			storeOrders.put("rider_status", 0);
 			storeIds = new ArrayList<String>();
 		}
-
+		
 		// 计算商品价格（已算商户活动）-----start
 		List<Map<String, Object>> storeList = new ArrayList<Map<String, Object>>();
 		for (int i = 0; i < sids.length; i++) {
@@ -283,23 +294,49 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			integralCanUse = 1;
 		}
 		Integer vipStatus = (Integer) (uMap.get("vip_status"));
-		Integer vipexpire = (Integer) (uMap.get("vip_expire"));
-		BigDecimal vipFavourMoney = new BigDecimal("200");
-		if (needPay.compareTo(vipFavourMoney) < 0) {
-			vipFavourMoney = needPay;
+		//动态获取VIP参数 --start
+		Map<String, Object> config = getConfigByUidAndStatus(uid,vipStatus);
+		limitDayRelief = config.get("limitDayRelief") == null?limitDayRelief:(Double) config.get("limitDayRelief");
+		limitOne = config.get("limitOne") == null?limitOne:(Double) config.get("limitOne");
+		memberDiscount = config.get("discount") == null?memberDiscount:(Double) config.get("discount");
+		memberDeliverfeeDiscount =config.get("riderDiscount") == null?memberDeliverfeeDiscount:(Double) config.get("riderDiscount");
+		
+		//动态获取VIP参数 --end
+		memberDeliverfee = new BigDecimal(deliverfee).multiply(new BigDecimal(memberDeliverfeeDiscount)).stripTrailingZeros().toString();
+		BigDecimal subtract = new BigDecimal(1).subtract(new BigDecimal(memberDiscount));
+		Double canFavourOne = subtract.multiply(new BigDecimal(limitOne)).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+		Double vipRelief = orderDao.getVipRelief(uid, (int) DateUtil.getTodayZeroTime());
+		if (vipRelief == null) {
+			vipRelief = 0.00;
 		}
-		BigDecimal vipFavourable = vipFavourMoney.multiply(new BigDecimal("0.05")).setScale(2, BigDecimal.ROUND_HALF_UP);
+		Double canFavourDay = limitDayRelief - vipRelief; 
+		if (canFavourDay < 0.00) {
+			canFavourDay = 0.00;
+		}
+		BigDecimal vipFavourMoney = BigDecimal.ZERO;
+		if (canFavourDay < canFavourOne) {
+			vipFavourMoney = new BigDecimal(canFavourDay);
+		}else {
+			vipFavourMoney = new BigDecimal(canFavourOne);
+		}
+
+		BigDecimal vipFavourable = vipFavourMoney.multiply(needPay).setScale(2, BigDecimal.ROUND_HALF_UP);
+		if (vipFavourable.compareTo(vipFavourMoney) == 1) {
+			vipFavourable = vipFavourMoney;
+		}
+		
 		vipFavourRiderOrder = vipFavourable;
 		vipFavour = vipFavourable.add(new BigDecimal("5")).setScale(2).toString();
 		// 判断是否是会员
-		if (vipStatus == 1 && vipexpire > (System.currentTimeMillis() / 1000)) {
+		if (vipStatus == 1) {
 			isVIp = 1;
 			needPay = needPay.subtract(vipFavourable);
-			deliverfeeBigDecimal = new BigDecimal("3");
-			deliverfee = "￥3";
+			deliverfee = "￥" + memberDeliverfee;
+			deliverfeeBigDecimal = new BigDecimal(memberDeliverfee);
+			
 			if ("1".equals(isSelfMention)) {
-				deliverfee = "￥1";
-				deliverfeeBigDecimal = new BigDecimal("1");
+				deliverfee = "￥" +  memberSelfMentionDeliverfee;
+				deliverfeeBigDecimal = new BigDecimal(memberSelfMentionDeliverfee);
 				if (toCreateOrder) {
 					storeOrders.put("rider_status", 3);
 				}
@@ -703,7 +740,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					integralVipDao.addIntegralLog(uid, integral, 0, currentTime);
 				}
 				//异步处理
-				addressTask.setAddressTask(6, 16);
+				addressTask.setAddressTask(uid, addressId);
 				addressTask.setLateMarket(marketId, uid);
 				orderTask.handleOrderPush(rorderId);
 			}
@@ -734,5 +771,13 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		}
 		return false;
 	}
-
+	
+	private Map<String, Object> getConfigByUidAndStatus(Integer uid,Integer vipStatus) {
+		if (vipStatus == 0) {
+			return integralVipDao.getDefualtVipConfig();
+		}else {
+			//如果是会员
+			return integralVipDao.getVipConfigByUid();
+		}
+	}
 }

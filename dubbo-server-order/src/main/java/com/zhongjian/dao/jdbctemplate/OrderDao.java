@@ -321,4 +321,11 @@ public class OrderDao extends MongoDBDaoBase{
 		String sql = "update hm_rider_order set rid = ? where id = ?";
 		jdbcTemplate.update(sql, rid,rorderId);
 	}
+	
+	// 查看优惠券数量
+	public Double getVipRelief(Integer uid, Integer todayTimeZone) {
+		String sql = "SELECT SUM(vip_relief) FROM hm_rider_order WHERE uid = ? AND (pay_status = 0 OR pay_status = 1) AND ctime > ?";
+		Double num = jdbcTemplate.queryForObject(sql, new Object[] { uid,todayTimeZone}, Double.class);
+		return num;
+	}
 }
