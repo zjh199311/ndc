@@ -96,7 +96,11 @@ public class IntegralVipDao extends MongoDBDaoBase{
 	
 	public Map<String, Object> getVipConfigByUid(Integer uid) {
 		final String sql = "SELECT vip from hm_vip_order  WHERE uid = ? AND pay_status = 1 ORDER BY ctime DESC LIMIT 1 ";
-		String vipType = jdbcTemplate.queryForObject(sql, new Object[] { uid }, String.class);
+		String vipType = null;
+		try {
+			vipType = jdbcTemplate.queryForObject(sql, new Object[] { uid }, String.class);
+		} catch (EmptyResultDataAccessException e) {
+		}
 		Map<String, Object> resMap = null;
 		if (vipType == null) {
 			//default
