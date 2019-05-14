@@ -763,7 +763,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					integralVipDao.addIntegralLog(uid, integral, 0, currentTime);
 				}
 				// 异步处理
-				addressTask.setAddressTask(uid, addressId);
+				addressTask.setAddressTask(addressId,uid);
 				addressTask.setLateMarket(marketId, uid);
 				orderTask.handleOrderPush(rorderId);
 			}
