@@ -86,12 +86,5 @@ public class IdWorkerUtil{
         return System.currentTimeMillis();
     }
 
-    //---------------测试---------------
-    public static void main(String[] args) {
-        IdWorkerUtil worker = new IdWorkerUtil(1,1,1);
-        for (int i = 0; i < 30; i++) {
-            System.out.println(worker.nextId());
-        }
-    }
 
 }

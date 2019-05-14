@@ -56,7 +56,10 @@ public class PropUtil {
         setMongoUserName((String) propComponent.getMap().get("mogodb.datasource.username"));
         setMongoPassword((String) propComponent.getMap().get("mogodb.datasource.password"));
         setMongodbName((String) propComponent.getMap().get("mogodb.datasource.dbname"));
-
+        
+        setOriginalfee((String) propComponent.getMap().get("order.fee.originalfee"));
+        setMemberDeliverfee((String) propComponent.getMap().get("order.fee.memberdeliverfee"));
+        setSelfmentionDeliverfee((String) propComponent.getMap().get("order.fee.selfmentiondeliverfee"));
     }
 
     private String yxUrl;
@@ -98,7 +101,9 @@ public class PropUtil {
     private String mongoUserName;
     private String mongodbName;
     private String mongoPassword;
-
-
+    
+    private String originalfee;
+    private String memberDeliverfee;
+    private String selfmentionDeliverfee;
 
 }
