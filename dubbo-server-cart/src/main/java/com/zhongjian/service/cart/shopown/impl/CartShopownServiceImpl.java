@@ -424,13 +424,17 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                                 for (int i = split1.length - 1; i >= 0; i--) {
                                                     String[] split = split1[i].split("-");
                                                     if (marketByAdvence.compareTo(new BigDecimal(split[0])) >= 0) {
-                                                        totalDisPriceByAdvence= totalDisPriceByAdvence.add(priceByAdvence.subtract(new BigDecimal(split[1])));
+                                                        totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence.subtract(new BigDecimal(split[1])));
                                                         flagByAdvence = false;
                                                         break;
                                                     }
                                                 }
-                                                if(BigDecimal.ZERO.compareTo(totalDisPriceByAdvence)>=0){
+                                                if (BigDecimal.ZERO.compareTo(totalDisPriceByAdvence) >= 0) {
                                                     totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence);
+                                                }else {
+                                                    if (flagByAdvence) {
+                                                        totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence);
+                                                    }
                                                 }
                                             } else {
                                                 totalDisPriceByAdvence = totalDisPriceByAdvence.add(priceByAdvence);
@@ -442,13 +446,17 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                                 for (int i = split1.length - 1; i >= 0; i--) {
                                                     String[] split = split1[i].split("-");
                                                     if (marketByAdvence.compareTo(new BigDecimal(split[0])) >= 0) {
-                                                        totalDisPriceByAdvence= totalDisPriceByAdvence.add(numberByAdvence.subtract(new BigDecimal(split[1])));
+                                                        totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence.subtract(new BigDecimal(split[1])));
                                                         flagByAdvence = false;
                                                         break;
                                                     }
                                                 }
-                                                if(BigDecimal.ZERO.compareTo(totalDisPriceByAdvence)>=0){
+                                                if (BigDecimal.ZERO.compareTo(totalDisPriceByAdvence) >= 0) {
                                                     totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence);
+                                                }else {
+                                                    if (flagByAdvence) {
+                                                        totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence);
+                                                    }
                                                 }
                                             } else {
                                                 totalDisPriceByAdvence = totalDisPriceByAdvence.add(numberByAdvence);
@@ -588,11 +596,13 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                                         break;
                                                     }
                                                 }
-                                                if(BigDecimal.ZERO.compareTo(totalDisPriceByOpen)>=0){
+                                                if (BigDecimal.ZERO.compareTo(totalDisPriceByOpen) >= 0) {
                                                     totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen);
                                                 }
                                             } else {
-                                                totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen);
+                                                if (flagByOpen) {
+                                                    totalDisPriceByOpen = totalDisPriceByOpen.add(priceByOpen);
+                                                }
                                             }
                                         } else {
                                             if (flagByOpen) {
@@ -606,8 +616,12 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                                         break;
                                                     }
                                                 }
-                                                if(BigDecimal.ZERO.compareTo(totalDisPriceByOpen)>=0){
+                                                if (BigDecimal.ZERO.compareTo(totalDisPriceByOpen) >= 0) {
                                                     totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen);
+                                                } else {
+                                                    if (flagByOpen) {
+                                                        totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen);
+                                                    }
                                                 }
                                             } else {
                                                 totalDisPriceByOpen = totalDisPriceByOpen.add(numberByOpen);
@@ -745,8 +759,13 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                                         break;
                                                     }
                                                 }
-                                                if(BigDecimal.ZERO.compareTo(totalDisPriceByClose)>=0){
+
+                                                if (BigDecimal.ZERO.compareTo(totalDisPriceByClose) >= 0) {
                                                     totalDisPriceByClose = totalDisPriceByClose.add(priceByClose);
+                                                } else {
+                                                    if (flagByClose) {
+                                                        totalDisPriceByClose = totalDisPriceByClose.add(priceByClose);
+                                                    }
                                                 }
                                             } else {
                                                 totalDisPriceByClose = totalDisPriceByClose.add(priceByClose);
@@ -763,8 +782,12 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                                         break;
                                                     }
                                                 }
-                                                if(BigDecimal.ZERO.compareTo(totalDisPriceByClose)>=0){
+                                                if (BigDecimal.ZERO.compareTo(totalDisPriceByClose) >= 0) {
                                                     totalDisPriceByClose = totalDisPriceByClose.add(numberByClose);
+                                                } else {
+                                                    if (flagByClose) {
+                                                        totalDisPriceByClose = totalDisPriceByClose.add(numberByClose);
+                                                    }
                                                 }
                                             } else {
                                                 totalDisPriceByClose = totalDisPriceByClose.add(numberByClose);
