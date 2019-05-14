@@ -106,11 +106,13 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		// 会员单笔limit
 		Double limitOne = 200d;
 		Double limitDayRelief = 10d;
+		//config获取
 		String memberDeliverfee = "3";
-		// 会员自提费
 		String memberSelfMentionDeliverfee = "1";
-		String deliverfee = "6";
-		BigDecimal deliverfeeBigDecimal = new BigDecimal("6");
+		String originalfee = "6";
+		
+ 		String deliverfee = originalfee;
+		BigDecimal deliverfeeBigDecimal = new BigDecimal(originalfee);
 		int createTime = (int) (System.currentTimeMillis() / 1000);
 		// 小订单拼接
 		StringBuilder orderJoint = new StringBuilder();
@@ -342,13 +344,12 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			vipFavourMoney = new BigDecimal(canFavourOne);
 		}
 
-		BigDecimal vipFavourable = vipFavourMoney.multiply(needPay).setScale(2, BigDecimal.ROUND_HALF_UP);
+		BigDecimal vipFavourable = subtract.multiply(needPay).setScale(2, BigDecimal.ROUND_HALF_UP);
 		if (vipFavourable.compareTo(vipFavourMoney) == 1) {
 			vipFavourable = vipFavourMoney;
 		}
 
 		vipFavourRiderOrder = vipFavourable;
-		vipFavour = vipFavourable.add(new BigDecimal("5")).setScale(2).toString();
 		// 判断是否是会员
 		if (vipStatus == 1) {
 			isVIp = 1;
@@ -532,7 +533,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			resMap.put("marketActivityContent", marketActivityContent);
 			resMap.put("showMarketActivity", showMarketActivity);
 			resMap.put("fee", deliverfee);
-			resMap.put("originalfee", "￥6");
+			resMap.put("originalfee", originalfee);
 			resMap.put("totalPrice", "￥" + storesAmountString);
 			resMap.put("payTotal", needPayString);
 			resMap.put("integralCanUse", integralCanUse);
@@ -554,8 +555,11 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			if (isVIp == 0) {
 				resMap.put("memberContent", "会员用户专享");
 				resMap.put("riderPayContent", "会员用户专享");
+				BigDecimal maxDeliverFeeFavor = new BigDecimal(originalfee).subtract(new BigDecimal(memberSelfMentionDeliverfee));
+				vipFavour = vipFavourable.add(maxDeliverFeeFavor).setScale(2).toString();
 				resMap.put("delMemberPrice", "开通会员，预计最高可为您节省" + vipFavour + "元");
 			} else {
+				vipFavour = vipFavourable.setScale(2).toString();
 				resMap.put("delMemberPrice", "-￥" + vipFavour);
 				resMap.put("memberContent", "会员享九五折");
 				resMap.put("riderPayContent", "");
