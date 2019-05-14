@@ -401,13 +401,13 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				needPayNeedHandleFlag = false;
 			} else {
 				// 全积分支付
-				integralContent = "共" + integral + "积分，可抵扣" + priceForIntegralorCoupon.multiply(hundredBigDecimal)
+				integralContent = "共" + integral + "积分，可抵扣" + priceForIntegralorCoupon.multiply(hundredBigDecimal).setScale(0,BigDecimal.ROUND_HALF_UP)
 						+ "积分";
-				integralPriceString = "-￥" + priceForIntegralorCoupon.setScale(2,BigDecimal.ROUND_HALF_UP).toString();
+				integralPriceString = "-￥" + priceForIntegralorCoupon.setScale(2,BigDecimal.ROUND_HALF_UP);
 				needPay = BigDecimal.ZERO;
 				if (toCreateOrder) {
 					integralPay = true;
-					integralSub = priceForIntegralorCoupon.multiply(hundredBigDecimal);
+					integralSub = priceForIntegralorCoupon.multiply(hundredBigDecimal).setScale(0,BigDecimal.ROUND_HALF_UP);
 				}
 				needPayNeedHandleFlag = false;
 			}
@@ -460,7 +460,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		if (needPayNeedHandleFlag) {
 			needPay = needPay.add(deliverfeeBigDecimal);
 		}
-		needPayString = needPay.toString();
+		needPayString = needPay.setScale(2,BigDecimal.ROUND_HALF_UP).toString();
 
 		// 生成订单
 		Map<String, Object> resMap = new HashMap<String, Object>();
