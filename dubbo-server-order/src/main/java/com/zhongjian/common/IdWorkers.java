@@ -11,7 +11,7 @@ public class IdWorkers {
 
 	private IdWorkerUtil riderOrderIdWork = null;
 	
-	private IdWorkerUtil OrderIdWork = null;
+	private IdWorkerUtil orderIdWork = null;
 	
 	private IdWorkerUtil outTradeIdWork = null;
 	
@@ -21,7 +21,7 @@ public class IdWorkers {
 	public IdWorkerUtil getRiderOrderIdWork() {
 		if (riderOrderIdWork == null) {
 			synchronized(this) {
-				if (OrderIdWork == null) {
+				if (riderOrderIdWork == null) {
 					riderOrderIdWork = new IdWorkerUtil(Integer.valueOf(propUtil.getWorkerId()),Integer.valueOf( propUtil.getDatacenterId()), 0L);
 				}
 				}
@@ -31,14 +31,14 @@ public class IdWorkers {
 		
 	
 	public IdWorkerUtil getOrderIdWork() {
-		if (OrderIdWork == null) {
+		if (orderIdWork == null) {
 			synchronized(this) {
-				if (OrderIdWork == null) {
-					OrderIdWork = new IdWorkerUtil(Integer.valueOf(propUtil.getWorkerId()),Integer.valueOf( propUtil.getDatacenterId()), 0L);
+				if (orderIdWork == null) {
+					orderIdWork = new IdWorkerUtil(Integer.valueOf(propUtil.getWorkerId()),Integer.valueOf( propUtil.getDatacenterId()), 0L);
 				}
 				}
 			}
-			return OrderIdWork;
+			return orderIdWork;
 		}
 	
 	
