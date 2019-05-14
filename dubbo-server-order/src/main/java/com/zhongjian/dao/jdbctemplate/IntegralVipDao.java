@@ -1,6 +1,5 @@
 package com.zhongjian.dao.jdbctemplate;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -95,26 +94,44 @@ public class IntegralVipDao extends MongoDBDaoBase{
 		return resMap;
 	}
 	
-	public Map<String, Object> getVipConfigByUid() {
-		MongoCollection<Document> collection = getCollection("nidcai", "vipSetting");
-		Document filter = new Document();
-		filter.append("effectTime","year");
-		filter.append("enabled",true);
-		List<Document> results = new ArrayList<Document>();
-		FindIterable<Document> iterables = collection.find(filter);
-		MongoCursor<Document> cursor = iterables.iterator();
-		while (cursor.hasNext()) {
-			results.add(cursor.next());
+	public Map<String, Object> getVipConfigByUid(Integer uid) {
+		final String sql = "SELECT vip from hm_vip_order  WHERE uid = ? AND pay_status = 1 ORDER BY ctime DESC LIMIT 1 ";
+		String vipType = jdbcTemplate.queryForObject(sql, new Object[] { uid }, String.class);
+		Map<String, Object> resMap = null;
+		if (vipType == null) {
+			//default
+			resMap = getDefualtVipConfig();
+		}else {
+			resMap = new HashMap<String, Object>();
+			MongoCollection<Document> collection = getCollection("nidcai", "vipSetting");
+			Document filter = new Document();
+			filter.append("_id",new ObjectId(vipType));
+			List<Document> results = new ArrayList<Document>();
+			FindIterable<Document> iterables = collection.find(filter);
+			MongoCursor<Document> cursor = iterables.iterator();
+			while (cursor.hasNext()) {
+				results.add(cursor.next());
+			}
+			for (Iterator<Document> iterator = results.iterator(); iterator.hasNext();) {
+				Document document = iterator.next();
+				resMap.put("discount",document.get("discount"));
+				resMap.put("riderDiscount",document.get("riderDiscount"));
+				Object limitDayReliefObj = document.get("limitDayRelief");
+				Object limitOneObj = document.get("limitOne");
+				if (limitOneObj!=null && limitOneObj instanceof String) {
+					resMap.put("limitOne",Double.valueOf((String) limitOneObj));
+				}else if (limitOneObj!=null && limitOneObj instanceof Double){
+					resMap.put("limitOne",Double.valueOf((Double) limitOneObj));
+				}
+				if (limitDayReliefObj!=null && limitDayReliefObj instanceof String) {
+					resMap.put("limitDayRelief",Double.valueOf((String) limitDayReliefObj));
+				}else if (limitDayReliefObj!=null && limitDayReliefObj instanceof Double){
+					resMap.put("limitDayRelief",Double.valueOf((Double) limitDayReliefObj));
+				}
+				break;
+			}
 		}
-		HashMap<String, Object> resMap = new HashMap<String, Object>();
-		for (Iterator<Document> iterator = results.iterator(); iterator.hasNext();) {
-			Document document = iterator.next();
-			resMap.put("discount",document.get("discount"));
-			resMap.put("riderDiscount",document.get("riderDiscount"));
-			resMap.put("limitDayRelief",document.get("limitDayRelief"));
-			resMap.put("limitOne",document.get("limitOne"));
-			break;
-		}
+	
 		return resMap;
 	}
 }

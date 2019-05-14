@@ -1,6 +1,7 @@
 package com.zhongjian.service.order.impl;
 
 import com.zhongjian.common.constant.FinalDatas;
+import com.zhongjian.commoncomponent.PropUtil;
 import com.zhongjian.dao.entity.order.address.OrderAddressBean;
 import com.zhongjian.dao.entity.order.address.OrderAddressOrderBean;
 import com.zhongjian.dao.entity.order.shopown.OrderShopownBean;
@@ -53,10 +54,13 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 	private MarketDao marketDao;
 
 	@Autowired
-	AddressTask addressTask;
+	private AddressTask addressTask;
 
 	@Autowired
-	OrderTask orderTask;
+	private OrderTask orderTask;
+	
+	@Autowired
+	private PropUtil propUtil;
 
 	@Override
 	@Transactional(rollbackFor = NDCException.class)
@@ -106,10 +110,10 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		// 会员单笔limit
 		Double limitOne = 200d;
 		Double limitDayRelief = 10d;
-		//config获取
-		String memberDeliverfee = "3";
-		String memberSelfMentionDeliverfee = "1";
-		String originalfee = "6";
+		//代码配置获取
+		String memberDeliverfee = propUtil.getMemberDeliverfee();
+		String memberSelfMentionDeliverfee = propUtil.getSelfmentionDeliverfee();
+		String originalfee = propUtil.getOriginalfee();
 		
  		String deliverfee = originalfee;
 		BigDecimal deliverfeeBigDecimal = new BigDecimal(originalfee);
@@ -564,8 +568,15 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				resMap.put("delMemberPrice", "开通会员，预计最高可为您节省" + vipFavour + "元");
 			} else {
 				vipFavour = vipFavourable.setScale(2,BigDecimal.ROUND_HALF_UP).toString();
-				resMap.put("delMemberPrice", "-￥" + vipFavour);
-				resMap.put("memberContent", "会员享九五折");
+				if (vipFavourable.compareTo(BigDecimal.ZERO) == 0) {
+					resMap.put("memberContent", "当日vip优惠额度达到上限");
+					resMap.put("delMemberPrice", "");
+				}else {
+					resMap.put("delMemberPrice", "-￥" + vipFavour);
+					String disCountStr = new BigDecimal(memberDiscount).multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).toString();
+					resMap.put("memberContent", "会员享" + getHan(disCountStr));
+				}
+ 				
 				resMap.put("riderPayContent", "");
 			}
 		}
@@ -808,15 +819,41 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			return integralVipDao.getDefualtVipConfig();
 		} else {
 			// 如果是会员
-			return integralVipDao.getVipConfigByUid();
+			return integralVipDao.getVipConfigByUid(uid);
 		}
+	}
+	public static String getHan(String numberString) {
+		StringBuilder result = new StringBuilder();
+		if (numberString.length() == 2 && numberString.contains("0")) {
+			numberString = numberString.substring(0, 1);
+		}
+		else if (numberString.length() == 1) {
+			result.append("零点");
+		}
+		for (int i = 0; i < numberString.length(); i++) {
+			char current = numberString.charAt(i);
+			if (current == '9') {
+				result.append("九");
+			} else if (current == '8') {
+				result.append("八");
+			} else if (current == '7') {
+				result.append("七");
+			} else if (current == '6'){
+				result.append("六");
+			}else if (current == '5'){
+				result.append("五");
+			}else if (current == '4'){
+				result.append("四");
+			}else if (current == '3'){
+				result.append("三");
+			}else if (current == '2'){
+				result.append("二");
+			}else if (current == '1'){
+				result.append("一");
+			}
+		}
+		result.append("折");
+		return result.toString();
 	}
 
-	public static void main(String[] args) {
-		String rule = "50-33.90,80-44.99";
-		String[] split = rule.split(",");
-		for (int i = 0; i < split.length; i++) {
-			System.out.println(split[i].split("-")[0]);
-		}
-	}
 }
