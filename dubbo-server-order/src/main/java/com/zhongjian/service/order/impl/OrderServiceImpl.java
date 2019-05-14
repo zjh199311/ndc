@@ -460,6 +460,10 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		if (needPayNeedHandleFlag) {
 			needPay = needPay.add(deliverfeeBigDecimal);
 		}
+		//needpay负值处理
+		if (needPay.compareTo(BigDecimal.ZERO) == -1) {
+			needPay = BigDecimal.ZERO;
+		}
 		needPayString = needPay.setScale(2,BigDecimal.ROUND_HALF_UP).toString();
 
 		// 生成订单
