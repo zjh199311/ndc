@@ -23,7 +23,6 @@ public class AddressTask extends TaskBase{
 		executeTask(new Runnable() {
 			@Override
 			public void run() {
-				System.out.println("设置" + id + "针对用户" + uid);
 				addressService.updateDefaultAdress(id, uid);
 			}
 		});
