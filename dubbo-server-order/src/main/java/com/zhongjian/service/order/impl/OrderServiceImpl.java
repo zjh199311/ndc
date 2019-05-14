@@ -1,5 +1,6 @@
 package com.zhongjian.service.order.impl;
 
+import com.zhongjian.common.IdWorkers;
 import com.zhongjian.common.constant.FinalDatas;
 import com.zhongjian.commoncomponent.PropUtil;
 import com.zhongjian.dao.entity.order.address.OrderAddressBean;
@@ -61,6 +62,9 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 	
 	@Autowired
 	private PropUtil propUtil;
+	
+	@Autowired
+	private IdWorkers idWorkers;
 
 	@Override
 	@Transactional(rollbackFor = NDCException.class)
@@ -219,7 +223,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				storeActivityPrice = storeActivityPrice
 						.add(storeAmountBigDecimal.subtract(actualStoreAmountBigDecimal));
 				// 为生成hm_order做准备
-				String smallOrderSn = "HM" + RandomUtil.getFlowNumber();
+				String smallOrderSn = "HM" + idWorkers.getOrderIdWork().nextId();
 				if (orderJoint.length() == 0) {
 					orderJoint.append(smallOrderSn);
 				} else {
@@ -476,7 +480,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		// 生成订单
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		if (toCreateOrder) {
-			storeOrders.put("rider_sn", "RI" + RandomUtil.getFlowNumber());
+			storeOrders.put("rider_sn", "RI" + idWorkers.getRiderOrderIdWork().nextId());
 			storeOrders.put("order_sn", orderJoint.toString());
 			storeOrders.put("uid", uid);
 			storeOrders.put("marketid", marketId);
@@ -488,7 +492,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			storeOrders.put("service_time", unixTime);
 			storeOrders.put("is_appointment", isAppointment);
 			storeOrders.put("original_price", storesAmountBigDecimal);
-			String outTradeNo = UUID.randomUUID().toString().replaceAll("-", "");
+			String outTradeNo = String.valueOf(idWorkers.getOutTradeIdWork().nextId());
 			storeOrders.put("out_trade_no", outTradeNo);// 生成订单的时候三方号同时生成
 			storeOrders.put("market_activity_price",
 					marketActivityPrice == BigDecimal.ZERO ? null : marketActivityPrice);

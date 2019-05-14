@@ -60,6 +60,9 @@ public class PropUtil {
         setOriginalfee((String) propComponent.getMap().get("order.fee.originalfee"));
         setMemberDeliverfee((String) propComponent.getMap().get("order.fee.memberdeliverfee"));
         setSelfmentionDeliverfee((String) propComponent.getMap().get("order.fee.selfmentiondeliverfee"));
+        
+        setWorkerId((String) propComponent.getMap().get("server.workid"));
+        setDatacenterId((String) propComponent.getMap().get("server.datacenterid"));
     }
 
     private String yxUrl;
@@ -105,5 +108,8 @@ public class PropUtil {
     private String originalfee;
     private String memberDeliverfee;
     private String selfmentionDeliverfee;
+    
+    private String workerId;
+    private String datacenterId;
 
 }
