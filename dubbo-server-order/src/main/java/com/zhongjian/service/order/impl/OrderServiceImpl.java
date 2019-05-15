@@ -358,6 +358,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		}
 
 		vipFavourRiderOrder = vipFavourable;
+		BigDecimal priceForCoupon = needPay;
 		// 判断是否是会员
 		if (vipStatus == 1) {
 			isVIp = 1;
@@ -375,9 +376,8 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		}
 
 		boolean todayCouponUse = orderDao.checkCouponOrderByUid(uid);
-
 		BigDecimal priceForIntegralor = needPay.add(deliverfeeBigDecimal);
-		BigDecimal priceForCoupon = needPay;
+		
 		if (orderDao.getCouponsNumCanUse(uid) > 0) {
 			if (todayCouponUse) {
 				couponContent = "有可用优惠券";
