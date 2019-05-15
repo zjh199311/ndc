@@ -144,7 +144,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
             BigDecimal marketByClose = BigDecimal.ZERO;
 
             for (CartShopownResultDTO shopownResultDTO : cartShopownResultDTOS) {
-                shopownResultDTO.setPicture("/" + shopownResultDTO.getPicture());
+                shopownResultDTO.setPicture("/upload/" + shopownResultDTO.getPicture());
                 //将所有开张的优惠价格相加.
                 BigDecimal priceByOpen = BigDecimal.ZERO;
                 //将所有预约的优惠价格相加
