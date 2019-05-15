@@ -1,5 +1,6 @@
 package com.zhongjian.service.order.impl;
 
+import com.zhongjian.common.IdWorkers;
 import com.zhongjian.common.constant.FinalDatas;
 import com.zhongjian.commoncomponent.PropUtil;
 import com.zhongjian.dao.entity.order.address.OrderAddressBean;
@@ -61,6 +62,9 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 	
 	@Autowired
 	private PropUtil propUtil;
+	
+	@Autowired
+	private IdWorkers idWorkers;
 
 	@Override
 	@Transactional(rollbackFor = NDCException.class)
@@ -219,7 +223,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				storeActivityPrice = storeActivityPrice
 						.add(storeAmountBigDecimal.subtract(actualStoreAmountBigDecimal));
 				// 为生成hm_order做准备
-				String smallOrderSn = "HM" + RandomUtil.getFlowNumber();
+				String smallOrderSn = "HM" + idWorkers.getOrderIdWork().nextId();
 				if (orderJoint.length() == 0) {
 					orderJoint.append(smallOrderSn);
 				} else {
@@ -372,7 +376,8 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 
 		boolean todayCouponUse = orderDao.checkCouponOrderByUid(uid);
 
-		BigDecimal priceForIntegralorCoupon = needPay.add(deliverfeeBigDecimal);
+		BigDecimal priceForIntegralor = needPay.add(deliverfeeBigDecimal);
+		BigDecimal priceForCoupon = needPay;
 		if (orderDao.getCouponsNumCanUse(uid) > 0) {
 			if (todayCouponUse) {
 				couponContent = "有可用优惠券";
@@ -388,30 +393,30 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		// 算积分或优惠券----start
 		boolean needPayNeedHandleFlag = true;
 
-		priceForIntegralCoupon = priceForIntegralorCoupon.setScale(2,BigDecimal.ROUND_HALF_UP).toString();
+		priceForIntegralCoupon = priceForCoupon.setScale(2,BigDecimal.ROUND_HALF_UP).toString();
 		if ("1".equals(type) && integral > 0) {
 			BigDecimal hundredBigDecimal = new BigDecimal(100);
 			// 使用积分
 			BigDecimal integralBigDecimal = new BigDecimal(integral);
 			BigDecimal integralPrice = integralBigDecimal.divide(hundredBigDecimal);
 
-			if (priceForIntegralorCoupon.compareTo(integralPrice) > 0) {
+			if (priceForIntegralor.compareTo(integralPrice) > 0) {
 				integralContent = "共" + integral + "积分,可抵扣" + integral + "积分";
 				integralPriceString = "-￥" + integralPrice.setScale(2,BigDecimal.ROUND_HALF_UP).toString();
-				needPay = priceForIntegralorCoupon.subtract(integralPrice);
+				needPay = priceForIntegralor.subtract(integralPrice);
 				if (toCreateOrder) {
 					integralSub = integralBigDecimal;
 				}
 				needPayNeedHandleFlag = false;
 			} else {
 				// 全积分支付
-				integralContent = "共" + integral + "积分，可抵扣" + priceForIntegralorCoupon.multiply(hundredBigDecimal).setScale(0,BigDecimal.ROUND_HALF_UP)
+				integralContent = "共" + integral + "积分，可抵扣" + priceForIntegralor.multiply(hundredBigDecimal).setScale(0,BigDecimal.ROUND_HALF_UP)
 						+ "积分";
-				integralPriceString = "-￥" + priceForIntegralorCoupon.setScale(2,BigDecimal.ROUND_HALF_UP);
+				integralPriceString = "-￥" + priceForIntegralor.setScale(2,BigDecimal.ROUND_HALF_UP);
 				needPay = BigDecimal.ZERO;
 				if (toCreateOrder) {
 					integralPay = true;
-					integralSub = priceForIntegralorCoupon.multiply(hundredBigDecimal).setScale(0,BigDecimal.ROUND_HALF_UP);
+					integralSub = priceForIntegralor.multiply(hundredBigDecimal).setScale(0,BigDecimal.ROUND_HALF_UP);
 				}
 				needPayNeedHandleFlag = false;
 			}
@@ -431,15 +436,17 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				BigDecimal payFullBigDecimal = (BigDecimal) couponInfo.get("pay_full");
 				Integer couponType = (Integer) couponInfo.get("type");
 				if (couponType == 0) {
-					if (priceForIntegralorCoupon.compareTo(payFullBigDecimal) >= 0) {
+					if (priceForCoupon.compareTo(payFullBigDecimal) >= 0) {
 						BigDecimal couponPrice = (BigDecimal) couponInfo.get("price");
-						needPay = priceForIntegralorCoupon.subtract(couponPrice);
-						couponContent = "-￥" + couponPrice.toString();
+						needPay = priceForCoupon.subtract(couponPrice);
+						if (needPay.compareTo(BigDecimal.ZERO) < 0) {
+							couponPrice = priceForCoupon;
+						}
+						couponContent = "-￥" + couponPrice.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 						if (toCreateOrder) {
 							storeOrders.put("couponid", extra);
 							storeOrders.put("coupon_price", couponPrice);
 						}
-						needPayNeedHandleFlag = false;
 					}
 				} else {
 					// 配送券
@@ -473,7 +480,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		// 生成订单
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		if (toCreateOrder) {
-			storeOrders.put("rider_sn", "RI" + RandomUtil.getFlowNumber());
+			storeOrders.put("rider_sn", "RI" + idWorkers.getRiderOrderIdWork().nextId());
 			storeOrders.put("order_sn", orderJoint.toString());
 			storeOrders.put("uid", uid);
 			storeOrders.put("marketid", marketId);
@@ -485,7 +492,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			storeOrders.put("service_time", unixTime);
 			storeOrders.put("is_appointment", isAppointment);
 			storeOrders.put("original_price", storesAmountBigDecimal);
-			String outTradeNo = UUID.randomUUID().toString().replaceAll("-", "");
+			String outTradeNo = String.valueOf(idWorkers.getOutTradeIdWork().nextId());
 			storeOrders.put("out_trade_no", outTradeNo);// 生成订单的时候三方号同时生成
 			storeOrders.put("market_activity_price",
 					marketActivityPrice == BigDecimal.ZERO ? null : marketActivityPrice);
