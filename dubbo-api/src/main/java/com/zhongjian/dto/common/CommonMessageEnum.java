@@ -27,6 +27,7 @@ public enum CommonMessageEnum {
     SHOP_CHANGE_ADVANCE("商户状态变化为预约", 12002),
     ORDER_CHANGE("订单状态变化", 13001),
     ORDER_ALREADYCREATE("您已生成订单", 13002),
+    ORDER_ALREADYCANCEL("订单已取消", 13003),
     SERVERERR("服务异常", 20000),
     NO_PERMISION("您没有权限执行此操作", 50000),
     ;
