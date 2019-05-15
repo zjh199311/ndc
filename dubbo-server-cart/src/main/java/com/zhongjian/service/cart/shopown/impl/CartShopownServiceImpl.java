@@ -144,7 +144,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
             BigDecimal marketByClose = BigDecimal.ZERO;
 
             for (CartShopownResultDTO shopownResultDTO : cartShopownResultDTOS) {
-                shopownResultDTO.setPicture("/" + shopownResultDTO.getPicture());
+                shopownResultDTO.setPicture("/upload/" + shopownResultDTO.getPicture());
                 //将所有开张的优惠价格相加.
                 BigDecimal priceByOpen = BigDecimal.ZERO;
                 //将所有预约的优惠价格相加
@@ -443,7 +443,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                             //1是菜场打折.0是满减
                             if (FinalDatas.ONE == hmMarketActivityResult.getType()) {
                                 BigDecimal bigDecimal = new BigDecimal(hmMarketActivityResult.getUpLimit());
-                                if (totalDisPriceByAdvence.compareTo(bigDecimal) > 0) {
+                                if (numberByAdvence.compareTo(bigDecimal) > 0) {
                                     BigDecimal multiply = bigDecimal.multiply(new BigDecimal(hmMarketActivityResult.getRule()));
                                     //打折下来的值
                                     BigDecimal subtract = bigDecimal.subtract(multiply);
@@ -453,7 +453,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                 String[] split1 = hmMarketActivityResult.getRule().split(",");
                                 for (int i = split1.length - 1; i >= 0; i--) {
                                     String[] split = split1[i].split("-");
-                                    if (totalDisPriceByAdvence.compareTo(new BigDecimal(split[0])) >= 0) {
+                                    if (numberByAdvence.compareTo(new BigDecimal(split[0])) >= 0) {
                                         totalDisPriceByAdvence = totalDisPriceByAdvence.subtract(new BigDecimal(split[1]));
                                         break;
                                     }
@@ -524,7 +524,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                             //1是菜场打折.0是满减
                             if (FinalDatas.ONE == hmMarketActivityResult.getType()) {
                                 BigDecimal bigDecimal = new BigDecimal(hmMarketActivityResult.getUpLimit());
-                                if (totalDisPriceByClose.compareTo(bigDecimal) > 0) {
+                                if (numberByClose.compareTo(bigDecimal) > 0) {
                                     BigDecimal multiply = bigDecimal.multiply(new BigDecimal(hmMarketActivityResult.getRule()));
                                     //打折下来的值
                                     BigDecimal subtract = bigDecimal.subtract(multiply);
@@ -534,7 +534,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                 String[] split1 = hmMarketActivityResult.getRule().split(",");
                                 for (int i = split1.length - 1; i >= 0; i--) {
                                     String[] split = split1[i].split("-");
-                                    if (totalDisPriceByClose.compareTo(new BigDecimal(split[0])) >= 0) {
+                                    if (numberByClose.compareTo(new BigDecimal(split[0])) >= 0) {
                                         totalDisPriceByClose = totalDisPriceByClose.subtract(new BigDecimal(split[1]));
                                         break;
                                     }
@@ -605,7 +605,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                             //1是菜场打折.0是满减
                             if (FinalDatas.ONE == hmMarketActivityResult.getType()) {
                                 BigDecimal bigDecimal = new BigDecimal(hmMarketActivityResult.getUpLimit());
-                                if (totalDisPriceByOpen.compareTo(bigDecimal) > 0) {
+                                if (numberByOpen.compareTo(bigDecimal) > 0) {
                                     BigDecimal multiply = bigDecimal.multiply(new BigDecimal(hmMarketActivityResult.getRule()));
                                     //打折下来的值
                                     BigDecimal subtract = bigDecimal.subtract(multiply);
@@ -615,7 +615,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                 String[] split1 = hmMarketActivityResult.getRule().split(",");
                                 for (int i = split1.length - 1; i >= 0; i--) {
                                     String[] split = split1[i].split("-");
-                                    if (totalDisPriceByOpen.compareTo(new BigDecimal(split[0])) >= 0) {
+                                    if (numberByOpen.compareTo(new BigDecimal(split[0])) >= 0) {
                                         totalDisPriceByOpen = totalDisPriceByOpen.subtract(new BigDecimal(split[1]));
                                         break;
                                     }
