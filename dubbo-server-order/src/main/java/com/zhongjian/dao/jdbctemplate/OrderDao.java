@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,12 +31,12 @@ import org.springframework.stereotype.Repository;
 import com.zhongjian.util.DateUtil;
 
 @Repository
-public class OrderDao extends MongoDBDaoBase{
+public class OrderDao extends MongoDBDaoBase {
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	//activity ----start
+	// activity ----start
 	public CartStoreActivityResultDTO getStoreActivtiy(Integer sid, BigDecimal amount) {
 		String sql = "SELECT full,reduce,discount,type from hm_store_activity where sid="
 				+ " ? and full <= ? and `enable` = 1 and is_delete = 0 AND examine = 2 ORDER BY full DESC LIMIT 1";
@@ -51,8 +50,8 @@ public class OrderDao extends MongoDBDaoBase{
 		return cartStoreActivityResultDTO;
 	}
 
-	//activity ----end
-	
+	// activity ----end
+
 	public List<Map<String, Object>> getBasketByUidAndSid(Integer sid, Integer uid) {
 		String sql = "SELECT hm_goods.price,hm_basket.amount,hm_basket.gid,hm_goods.gname,hm_goods.unit,hm_shopown.sname,"
 				+ "hm_shopown.unFavorable,hm_shopown.marketid,hm_shopown.pid,"
@@ -62,9 +61,9 @@ public class OrderDao extends MongoDBDaoBase{
 		List<Map<String, Object>> resultList = jdbcTemplate.queryForList(sql, new Object[] { uid, sid });
 		return resultList;
 	}
-	
-    //delete baskets
-	public boolean deleteBasketBySid(Integer[] sids,Integer uid) {
+
+	// delete baskets
+	public boolean deleteBasketBySid(Integer[] sids, Integer uid) {
 		StringBuilder sidString = new StringBuilder();
 		for (Integer sid : sids) {
 			if (sidString.length() == 0) {
@@ -74,7 +73,7 @@ public class OrderDao extends MongoDBDaoBase{
 			}
 		}
 		String sql = "DELETE FROM hm_basket WHERE sid in (" + sidString + ") AND uid = ?";
-		return jdbcTemplate.update(sql,  uid) > 0 ? true : false;
+		return jdbcTemplate.update(sql, uid) > 0 ? true : false;
 	}
 
 	public boolean checkFirstOrderByUid(Integer uid) {
@@ -84,6 +83,18 @@ public class OrderDao extends MongoDBDaoBase{
 		return num > 0 ? false : true;
 	}
 
+	public Integer checkFirstToPayOrderByUid(Integer uid) {
+		String sql = "SELECT id FROM hm_rider_order where uid = ? AND ctime  > ? AND  pay_status = 0 AND market_activity_price is not null";
+		Integer orderId = null;
+		try {
+			 orderId = jdbcTemplate.queryForObject(sql, new Object[] { uid, DateUtil.getTodayZeroTime() },
+						Integer.class);
+		} catch (Exception e) {
+		}
+		return orderId;
+	}
+	
+	
 	public boolean checkCouponOrderByUid(Integer uid) {
 		String sql = "SELECT COUNT(1) FROM hm_rider_order where uid = ? AND ctime > ? AND (pay_status = 0 or pay_status = 1) AND couponid is not null";
 		Integer num = jdbcTemplate.queryForObject(sql, new Object[] { uid, DateUtil.getTodayZeroTime() },
@@ -91,8 +102,7 @@ public class OrderDao extends MongoDBDaoBase{
 		return num > 0 ? false : true;
 	}
 
-
-	//优惠券-----start
+	// 优惠券-----start
 //	// 查看优惠券数量
 //	public Integer getCouponsNum(Integer uid) {
 //		String sql = "SELECT COUNT(1) from hm_user_coupon,hm_coupon where uid = ? and state "
@@ -104,11 +114,10 @@ public class OrderDao extends MongoDBDaoBase{
 	// 查看优惠券数量
 	public Integer getCouponsNumCanUse(Integer uid) {
 		String sql = "SELECT COUNT(1) from hm_user_coupon where uid = ? and state = 0";
-		Integer num = jdbcTemplate.queryForObject(sql, new Object[] { uid}, Integer.class);
+		Integer num = jdbcTemplate.queryForObject(sql, new Object[] { uid }, Integer.class);
 		return num;
 	}
-	
-	
+
 	// 查看优惠券
 	public Map<String, Object> getCouponInfo(Integer uid, Integer couponId) {
 		String sql = "SELECT uc.price,uc.coupon mongoid from hm_user_coupon uc where"
@@ -122,7 +131,7 @@ public class OrderDao extends MongoDBDaoBase{
 		String couponMongoId = (String) resMap.get("mongoid");
 		MongoCollection<Document> collection = getCollection("nidcai", "coupon");
 		Document filter = new Document();
-		filter.append("_id",new ObjectId(couponMongoId));
+		filter.append("_id", new ObjectId(couponMongoId));
 		List<Document> results = new ArrayList<Document>();
 		FindIterable<Document> iterables = collection.find(filter);
 		MongoCursor<Document> cursor = iterables.iterator();
@@ -131,27 +140,26 @@ public class OrderDao extends MongoDBDaoBase{
 		}
 		for (Iterator<Document> iterator = results.iterator(); iterator.hasNext();) {
 			Document document = iterator.next();
-			resMap.put("pay_full",new BigDecimal((Double) document.get("payFull")));
-			resMap.put("type",document.get("type"));
+			resMap.put("pay_full", new BigDecimal((Double) document.get("payFull")));
+			resMap.put("type", document.get("type"));
 			break;
 		}
 		return resMap;
 	}
-	
-	
-	
+
 	// 更改优惠券状态为已使用
 	public boolean changeCouponToOne(Integer couponId) {
 		String sql = "update hm_user_coupon set state = 1 where id = ? and state = 0";
-		return jdbcTemplate.update(sql,couponId)>0?true:false;
+		return jdbcTemplate.update(sql, couponId) > 0 ? true : false;
 	}
+
 	// 更改优惠券状态为未使用
 	public boolean changeCouponToZero(Integer couponId) {
 		String sql = "update hm_user_coupon set state = 0 where id = ? and state = 1";
-		return jdbcTemplate.update(sql,couponId)>0?true:false;
+		return jdbcTemplate.update(sql, couponId) > 0 ? true : false;
 	}
-	//优惠券-----end
-	
+	// 优惠券-----end
+
 	// hm_cart添加
 	public void addHmCart(Map<String, Object> map) {
 		String sql = "INSERT INTO `hm_cart` (pid,gid,gname,unit,uid,price,amount,oid,sid,status,ctime,remark) VALUES (null,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -161,11 +169,11 @@ public class OrderDao extends MongoDBDaoBase{
 	}
 
 	// hm_order_detail添加
-	public void addOrderDetail(Map<String, Object> map,String smallOrderSn) {
+	public void addOrderDetail(Map<String, Object> map, String smallOrderSn) {
 		String sql = "INSERT INTO `hm_order_detail` (order_sn,amount,gid,price,oid) VALUES ( ?, ?, ?, ?, ?)";
-		jdbcTemplate.update(sql, smallOrderSn,map.get("amount"), map.get("gid"),map.get("price"), map.get("oid"));
+		jdbcTemplate.update(sql, smallOrderSn, map.get("amount"), map.get("gid"), map.get("price"), map.get("oid"));
 	}
-	
+
 	// hm_order添加
 	public Integer addHmOrder(Map<String, Object> map) {
 		String sql = "INSERT INTO `hm_order` (order_sn,pid,uid,marketid,total,payment,integral,"
@@ -238,12 +246,14 @@ public class OrderDao extends MongoDBDaoBase{
 		List<Map<String, Object>> res = jdbcTemplate.queryForList(sql, marketId, todayTimeZone);
 		return res;
 	}
+
 	public List<Map<String, Object>> getRidsByMarketId(Integer marketId) {
 		String sql = "SELECT rid,0 as sum  FROM hm_rider_user where state = 1 "
 				+ "AND status=1 AND is_order = 1 AND marketid = ?";
 		List<Map<String, Object>> res = jdbcTemplate.queryForList(sql, marketId);
 		return res;
 	}
+
 	public Map<String, Object> getDetailByOrderId(Integer uid, Integer orderId) {
 		String sql = "select out_trade_no,totalPrice from  hm_rider_order where id = ? and uid = ? and pay_status = 0";
 		Map<String, Object> resMap = null;
@@ -263,7 +273,7 @@ public class OrderDao extends MongoDBDaoBase{
 		}
 		return resMap;
 	}
-	
+
 	public Map<String, Object> getROrderIdByOutTradeNo(String outTradeNo) {
 		String sql = "select id,marketid,address_id,rider_sn,uid from hm_rider_order where out_trade_no = ?";
 		Map<String, Object> resMap = null;
@@ -274,9 +284,9 @@ public class OrderDao extends MongoDBDaoBase{
 		return resMap;
 	}
 
-	public boolean updateROStatusToSuccess(String outTradeNo,Integer unixTime) {
+	public boolean updateROStatusToSuccess(String outTradeNo, Integer unixTime) {
 		String sql = "update hm_rider_order set pay_status = 1,pay_time = ? where out_trade_no = ? and pay_status = 0";
-		return jdbcTemplate.update(sql,unixTime, outTradeNo) > 0 ? true : false;
+		return jdbcTemplate.update(sql, unixTime, outTradeNo) > 0 ? true : false;
 	}
 
 	public boolean updateROStatusToTimeout(Integer orderId) {
@@ -284,7 +294,7 @@ public class OrderDao extends MongoDBDaoBase{
 		return jdbcTemplate.update(sql, orderId) > 0 ? true : false;
 	}
 
-	public boolean updateOStatus(List<Integer> orderIds, Integer payStatus,Integer unixTime) {
+	public boolean updateOStatus(List<Integer> orderIds, Integer payStatus, Integer unixTime) {
 		StringBuilder orderIdsString = new StringBuilder();
 		for (Iterator iterator = orderIds.iterator(); iterator.hasNext();) {
 			Integer orderId = (Integer) iterator.next();
@@ -298,34 +308,34 @@ public class OrderDao extends MongoDBDaoBase{
 		String sql = "";
 		if (payStatus == 1) {
 			sql = "update hm_order set pay_status = ?,pay_time = ? where id in (" + orderIdsString.toString() + ")";
-			return jdbcTemplate.update(sql, payStatus,unixTime) > 0 ? true : false;
+			return jdbcTemplate.update(sql, payStatus, unixTime) > 0 ? true : false;
 		} else {
-			sql =  "update hm_order set pay_status = ? where id in (" + orderIdsString.toString() + ")";
+			sql = "update hm_order set pay_status = ? where id in (" + orderIdsString.toString() + ")";
 			return jdbcTemplate.update(sql, payStatus) > 0 ? true : false;
 		}
-		
+
 	}
 
 	public List<Integer> getOrderIdsByRoid(Integer roid) {
 		String sql = "select id from hm_order where roid = ?";
 		return jdbcTemplate.queryForList(sql, Integer.class, roid);
 	}
-	
+
 	public List<Map<String, Object>> getOrderDetailByRoid(Integer roid) {
 		String sql = "select order_sn,is_appointment,pid from hm_order where roid = ?";
-		List<Map<String, Object>> resultList = jdbcTemplate.queryForList(sql, new Object[] {roid});
+		List<Map<String, Object>> resultList = jdbcTemplate.queryForList(sql, new Object[] { roid });
 		return resultList;
 	}
 
-	public void updateroRider(Integer rid,Integer rorderId) {
+	public void updateroRider(Integer rid, Integer rorderId) {
 		String sql = "update hm_rider_order set rid = ? where id = ?";
-		jdbcTemplate.update(sql, rid,rorderId);
+		jdbcTemplate.update(sql, rid, rorderId);
 	}
-	
+
 	// 查看优惠券数量
 	public Double getVipRelief(Integer uid, Integer todayTimeZone) {
 		String sql = "SELECT SUM(vip_relief) FROM hm_rider_order WHERE uid = ? AND (pay_status = 0 OR pay_status = 1) AND ctime > ?";
-		Double num = jdbcTemplate.queryForObject(sql, new Object[] { uid,todayTimeZone}, Double.class);
+		Double num = jdbcTemplate.queryForObject(sql, new Object[] { uid, todayTimeZone }, Double.class);
 		return num;
 	}
 }
