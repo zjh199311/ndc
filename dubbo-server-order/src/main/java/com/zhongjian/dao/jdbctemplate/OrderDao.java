@@ -83,6 +83,13 @@ public class OrderDao extends MongoDBDaoBase {
 		return num > 0 ? false : true;
 	}
 
+	public boolean checkFirstPayOrderByUid(Integer uid) {
+		String sql = "SELECT COUNT(1) FROM hm_rider_order where uid = ? AND ctime  > ? AND  pay_status = 1";
+		Integer num = jdbcTemplate.queryForObject(sql, new Object[] { uid, DateUtil.getTodayZeroTime() },
+				Integer.class);
+		return num > 0 ? true : false;
+	}
+	
 	public Integer checkFirstToPayOrderByUid(Integer uid) {
 		String sql = "SELECT id FROM hm_rider_order where uid = ? AND ctime  > ? AND  pay_status = 0 AND market_activity_price is not null";
 		Integer orderId = null;
@@ -92,6 +99,13 @@ public class OrderDao extends MongoDBDaoBase {
 		} catch (Exception e) {
 		}
 		return orderId;
+	}
+	
+	public Integer checkToPayNum(Integer uid) {
+		String sql = "SELECT COUNT(1) FROM hm_rider_order where uid = ? AND ctime  > ? AND  pay_status = 0";
+		Integer num = jdbcTemplate.queryForObject(sql, new Object[] { uid, DateUtil.getTodayZeroTime() },
+				Integer.class);
+		return num ;
 	}
 	
 	

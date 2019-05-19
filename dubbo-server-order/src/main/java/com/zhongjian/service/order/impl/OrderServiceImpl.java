@@ -287,7 +287,12 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			// 检查首单
 			if (!orderDao.checkFirstOrderByUid(uid)) {
 				marketActivity = "仅限当日首单";
-				orderId = orderDao.checkFirstToPayOrderByUid(uid);
+				if (!orderDao.checkFirstPayOrderByUid(uid)) {
+					if (orderDao.checkToPayNum(uid) == 1) {
+						//没有已经支付的订单
+						orderId = orderDao.checkFirstToPayOrderByUid(uid);
+					}
+				}
 			} else {
 				// 没有选择优惠券或积分
 				if ("0".equals(type)) {
