@@ -283,20 +283,22 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			} else {
 				marketActivity = "首单买满" + upLimit + "打" + (int) (Float.valueOf(rule) * 10) + "折";
 			}
-
+			BigDecimal upBigDecimal = new BigDecimal(upLimit);
 			// 检查首单
 			if (!orderDao.checkFirstOrderByUid(uid)) {
 				marketActivity = "仅限当日首单";
-				if (!orderDao.checkFirstPayOrderByUid(uid)) {
-					if (orderDao.checkToPayNum(uid) == 1) {
-						//没有已经支付的订单
-						orderId = orderDao.checkFirstToPayOrderByUid(uid);
+				if ((marketActivtiyType == 1 && storesAmountBigDecimalForFavorable.compareTo(upBigDecimal) >= 0)
+						|| marketActivtiyType == 0 && maxRight.compareTo(BigDecimal.ZERO) == 1) {
+					if (!orderDao.checkFirstPayOrderByUid(uid)) {
+						if (orderDao.checkToPayNum(uid) == 1) {
+							//没有已经支付的订单
+							orderId = orderDao.checkFirstToPayOrderByUid(uid);
+						}
 					}
 				}
 			} else {
 				// 没有选择优惠券或积分
 				if ("0".equals(type)) {
-					BigDecimal upBigDecimal = new BigDecimal(upLimit);
 					if ((marketActivtiyType == 1 && storesAmountBigDecimalForFavorable.compareTo(upBigDecimal) >= 0)
 							|| marketActivtiyType == 0 && maxRight.compareTo(BigDecimal.ZERO) == 1) {
 						BigDecimal needSuBigDecimal = BigDecimal.ZERO;

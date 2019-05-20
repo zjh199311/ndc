@@ -91,7 +91,7 @@ public class OrderDao extends MongoDBDaoBase {
 	}
 	
 	public Integer checkFirstToPayOrderByUid(Integer uid) {
-		String sql = "SELECT id FROM hm_rider_order where uid = ? AND ctime  > ? AND  pay_status = 0 AND market_activity_price is not null";
+		String sql = "SELECT id FROM hm_rider_order where uid = ? AND ctime  > ? AND  pay_status = 0";
 		Integer orderId = null;
 		try {
 			 orderId = jdbcTemplate.queryForObject(sql, new Object[] { uid, DateUtil.getTodayZeroTime() },
