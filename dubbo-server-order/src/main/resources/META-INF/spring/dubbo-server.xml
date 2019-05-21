@@ -47,7 +47,7 @@
     <dubbo:registry protocol="zookeeper" address="${spring.dubbo.registry.address}" />
 
     <!-- use dubbo protocol to export service on port 20880 -->
-    <dubbo:protocol host="${spring.dubbo.protocol.host}" name="${spring.dubbo.protocol.name}" threadpool="cached" threads="-1" port="${spring.dubbo.protocol.port}"  />
+    <dubbo:protocol host="${spring.dubbo.protocol.host}" name="${spring.dubbo.protocol.name}" threadpool="cached"  port="${spring.dubbo.protocol.port}"  />
     <!-- declare the service interface to be exported -->
     <!-- server start -->
      <dubbo:service interface="com.zhongjian.service.order.OrderService" ref="orderService" version="1.0.0"/>
