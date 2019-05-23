@@ -250,7 +250,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		// 计算商品价格（已算商户活动）-----end
 
 		// 市场开始后结束时间
-
+		BigDecimal priceForCoupon = needPay;
 		// 检测市场活动--start
 		Map<String, Object> marketActivtiy = marketDao.getMarketActivtiy(marketId);
 		if (marketActivtiy != null) {
@@ -283,20 +283,22 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			} else {
 				marketActivity = "首单买满" + upLimit + "打" + (int) (Float.valueOf(rule) * 10) + "折";
 			}
-
+			BigDecimal upBigDecimal = new BigDecimal(upLimit);
 			// 检查首单
 			if (!orderDao.checkFirstOrderByUid(uid)) {
 				marketActivity = "仅限当日首单";
-				if (!orderDao.checkFirstPayOrderByUid(uid)) {
-					if (orderDao.checkToPayNum(uid) == 1) {
-						//没有已经支付的订单
-						orderId = orderDao.checkFirstToPayOrderByUid(uid);
+				if (((marketActivtiyType == 1 && storesAmountBigDecimalForFavorable.compareTo(upBigDecimal) >= 0)
+						|| marketActivtiyType == 0 && maxRight.compareTo(BigDecimal.ZERO) == 1) && "0".equals(type)) {
+					if (!orderDao.checkFirstPayOrderByUid(uid)) {
+						if (orderDao.checkToPayNum(uid) == 1) {
+							//没有已经支付的订单
+							orderId = orderDao.checkFirstToPayOrderByUid(uid);
+						}
 					}
 				}
 			} else {
 				// 没有选择优惠券或积分
 				if ("0".equals(type)) {
-					BigDecimal upBigDecimal = new BigDecimal(upLimit);
 					if ((marketActivtiyType == 1 && storesAmountBigDecimalForFavorable.compareTo(upBigDecimal) >= 0)
 							|| marketActivtiyType == 0 && maxRight.compareTo(BigDecimal.ZERO) == 1) {
 						BigDecimal needSuBigDecimal = BigDecimal.ZERO;
@@ -366,7 +368,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		}
 
 		vipFavourRiderOrder = vipFavourable;
-		BigDecimal priceForCoupon = needPay;
+		
 		// 判断是否是会员
 		if (vipStatus == 1) {
 			isVIp = 1;
@@ -382,7 +384,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				}
 			}
 		}
-
+		
 		boolean todayCouponUse = orderDao.checkCouponOrderByUid(uid);
 		BigDecimal priceForIntegralor = needPay.add(deliverfeeBigDecimal);
 
@@ -446,10 +448,16 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				if (couponType == 0) {
 					if (priceForCoupon.compareTo(payFullBigDecimal) >= 0) {
 						BigDecimal couponPrice = (BigDecimal) couponInfo.get("price");
-						needPay = priceForCoupon.subtract(couponPrice);
-						if (needPay.compareTo(BigDecimal.ZERO) < 0) {
+						needPay = needPay.subtract(couponPrice);
+						if (priceForCoupon.compareTo(couponPrice) < 0) {
 							couponPrice = priceForCoupon;
+							//vip减免改为0
+							vipFavourable = BigDecimal.ZERO;
+							//落地保持一致
+							vipFavourRiderOrder = vipFavourable;
+							needPay = BigDecimal.ZERO;
 						}
+						
 						couponContent = "-￥" + couponPrice.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 						if (toCreateOrder) {
 							storeOrders.put("couponid", extra);

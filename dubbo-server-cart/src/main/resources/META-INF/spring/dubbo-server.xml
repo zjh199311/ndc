@@ -48,7 +48,7 @@
 
     <!-- use dubbo protocol to export service on port 20880 -->
     <dubbo:protocol host="${spring.dubbo.protocol.host}" name="${spring.dubbo.protocol.name}" threadpool="cached"
-                    threads="4" port="${spring.dubbo.protocol.port}"/>
+                    port="${spring.dubbo.protocol.port}"/>
     <!-- declare the service interface to be exported -->
     <!-- server start -->
     <dubbo:service interface="com.zhongjian.service.cart.basket.CartBasketService" ref="hmBasketService" version="1.0.0"/>
