@@ -250,7 +250,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		// 计算商品价格（已算商户活动）-----end
 
 		// 市场开始后结束时间
-
+		BigDecimal priceForCoupon = needPay;
 		// 检测市场活动--start
 		Map<String, Object> marketActivtiy = marketDao.getMarketActivtiy(marketId);
 		if (marketActivtiy != null) {
@@ -368,7 +368,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		}
 
 		vipFavourRiderOrder = vipFavourable;
-		BigDecimal priceForCoupon = needPay;
+		
 		// 判断是否是会员
 		if (vipStatus == 1) {
 			isVIp = 1;
