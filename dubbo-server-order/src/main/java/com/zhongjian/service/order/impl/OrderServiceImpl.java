@@ -449,9 +449,15 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					if (priceForCoupon.compareTo(payFullBigDecimal) >= 0) {
 						BigDecimal couponPrice = (BigDecimal) couponInfo.get("price");
 						needPay = needPay.subtract(couponPrice);
-						if (needPay.compareTo(BigDecimal.ZERO) < 0) {
+						if (priceForCoupon.compareTo(couponPrice) < 0) {
 							couponPrice = priceForCoupon;
+							//vip减免改为0
+							vipFavourable = BigDecimal.ZERO;
+							//落地保持一致
+							vipFavourRiderOrder = vipFavourable;
+							needPay = BigDecimal.ZERO;
 						}
+						
 						couponContent = "-￥" + couponPrice.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 						if (toCreateOrder) {
 							storeOrders.put("couponid", extra);
