@@ -27,6 +27,21 @@ public class CartBaskerListResultDTO implements Serializable{
     private String totalPrice;
 
     /**
+     * 起步价
+     */
+    private String startingPrice;
+
+    /**
+     * 差价
+     */
+    private String disparity;
+
+    /**
+     * 状态 1达到.0未达到
+     */
+    private Integer status;
+
+    /**
      * 优惠价
      */
     private String totalDisPrice;

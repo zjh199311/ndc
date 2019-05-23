@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.cart.cvstore.CartCvstoreBean">
+
+    <select id="findCvstoreBeanById" parameterType="com.zhongjian.dao.cart.CartParamDTO" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from hm_cvstore
+        <where>
+            <if test="gid!=null">
+                gid=#{gid,jdbcType=INTEGER}
+            </if>
+            <if test="uid!=null ">
+                AND uid=#{uid,jdbcType=INTEGER}
+            </if>
+            <if test="sid!=null">
+                AND sid=#{sid,jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCvstoreBeanById" parameterType="com.zhongjian.dao.cart.CartParamDTO"
+            resultType="com.zhongjian.dto.cart.basket.result.CartBasketResultDTO">
+        select
+        <include refid="Base_Column_List"/>
+        from hm_cvstore
+        where uid=#{uid,jdbcType=INTEGER} AND
+        sid=#{sid,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteBeanById" parameterType="com.zhongjian.dto.cart.basket.query.CartBasketDelQueryDTO">
+        DELETE FROM
+        hm_cvstore
+        <where>
+            <if test="id!=null">
+                id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="uid!=null">
+                and uid =#{uid,jdbcType=INTEGER}
+            </if>
+            <if test="sid!=null">
+                and sid=#{sid,jdbcType=INTEGER}
+            </if>
+        </where>
+    </delete>
+
+    <select id="selectCvstoreInfoById" parameterType="com.zhongjian.dao.cart.CartParamDTO"
+            resultType="com.zhongjian.dao.entity.cart.cvstore.CartCvstoreBean">
+        select
+        <include refid="Base_Column_List"/>
+        from hm_cvstore
+        where id=#{id,jdbcType=INTEGER} AND
+        uid=#{uid,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteInfoBySids" parameterType="com.zhongjian.dto.cart.basket.query.CartBasketDelQueryDTO">
+        DELETE FROM
+        hm_cvstore
+        where
+        uid =#{uid,jdbcType=INTEGER}
+        and sid IN
+        <foreach collection="sids" item="item" index="no" open="("
+                 separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <resultMap id="BaseBasketInfoMap" type="com.zhongjian.dto.cart.basket.result.CartBasketResultDTO">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="amount" property="amount" jdbcType="VARCHAR"/>
+        <result column="gid" property="gid" jdbcType="INTEGER"/>
+        <result column="price" property="totalPrice" jdbcType="VARCHAR"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="unitPrice" property="unitPrice" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <select id="findCvStoreById" parameterType="com.zhongjian.dto.cart.basket.query.CartBasketListQueryDTO"
+            resultMap="BaseBasketInfoMap">
+        SELECT
+        id,
+        amount,
+        gid,
+        price,
+        remark,
+        unitPrice
+        FROM
+        hm_cvstore
+        where
+        sid =#{sid,jdbcType=INTEGER}
+        and uid =#{uid,jdbcType=INTEGER}
+    </select>
+
+</mapper>

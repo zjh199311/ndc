@@ -194,23 +194,25 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         List<CartStoreActivityResultDTO> findStoreActivityBySid = this.cartStoreActivityBeanHmDAO.executeListMethod(cartBasketListQueryDTO.getSid(), "findStoreActivityBySid", CartStoreActivityResultDTO.class);
         if (CollectionUtils.isEmpty(findStoreActivityBySid)) {
             LogUtil.info("该商家没有优惠活动", "findStoreActivityBySid" + findStoreActivityBySid);
-        }
-        for (int i = 0; i <findStoreActivityBySid.size(); i++) {
-            CartStoreActivityResultDTO cartStoreActivityResultDTO = findStoreActivityBySid.get(i);
-            //查询时根据满减值倒叙来排列,如果大于则计算后直接跳出循环.如果没大于则再次循环直到满足结果
-            if (!StringUtil.isBlank(cartStoreActivityResultDTO.getFull()) && totalPrice.compareTo(new BigDecimal(cartStoreActivityResultDTO.getFull())) >= 0) {
-                //折扣的优惠
-                if (FinalDatas.ONE == cartStoreActivityResultDTO.getType()) {
-                    totalDisPrice = totalPrice.multiply(new BigDecimal(cartStoreActivityResultDTO.getDiscount()));
-                    break;
-                }
-                //满减优惠
-                if (FinalDatas.ZERO == cartStoreActivityResultDTO.getType()) {
-                    totalDisPrice = totalPrice.subtract(new BigDecimal(cartStoreActivityResultDTO.getReduce()));
-                    break;
+        }else{
+            for (int i = 0; i <findStoreActivityBySid.size(); i++) {
+                CartStoreActivityResultDTO cartStoreActivityResultDTO = findStoreActivityBySid.get(i);
+                //查询时根据满减值倒叙来排列,如果大于则计算后直接跳出循环.如果没大于则再次循环直到满足结果
+                if (!StringUtil.isBlank(cartStoreActivityResultDTO.getFull()) && totalPrice.compareTo(new BigDecimal(cartStoreActivityResultDTO.getFull())) >= 0) {
+                    //折扣的优惠
+                    if (FinalDatas.ONE == cartStoreActivityResultDTO.getType()) {
+                        totalDisPrice = totalPrice.multiply(new BigDecimal(cartStoreActivityResultDTO.getDiscount()));
+                        break;
+                    }
+                    //满减优惠
+                    if (FinalDatas.ZERO == cartStoreActivityResultDTO.getType()) {
+                        totalDisPrice = totalPrice.subtract(new BigDecimal(cartStoreActivityResultDTO.getReduce()));
+                        break;
+                    }
                 }
             }
         }
+
         CartBaskerListResultDTO cartBaskerListResultDTO = new CartBaskerListResultDTO();
         if (BigDecimal.ZERO.compareTo(totalDisPrice) != 0)
 

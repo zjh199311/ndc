@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.cart.cvstore.CartCvstoreBean" >
+  <resultMap id="BaseResultMap" type="com.zhongjian.dao.entity.cart.cvstore.CartCvstoreBean" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="gid" property="gid" jdbcType="INTEGER" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="unitPrice" property="unitprice" jdbcType="DECIMAL" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="sid" property="sid" jdbcType="INTEGER" />
+    <result column="ctime" property="ctime" jdbcType="INTEGER" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, gid, uid, price, unitPrice, amount, sid, ctime, remark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hm_cvstore
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hm_cvstore
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhongjian.dao.entity.cart.cvstore.CartCvstoreBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_cvstore (gid, uid, price, 
+      unitPrice, amount, sid, 
+      ctime, remark)
+    values (#{gid,jdbcType=INTEGER}, #{uid,jdbcType=INTEGER}, #{price,jdbcType=DECIMAL}, 
+      #{unitprice,jdbcType=DECIMAL}, #{amount,jdbcType=DECIMAL}, #{sid,jdbcType=INTEGER}, 
+      #{ctime,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhongjian.dao.entity.cart.cvstore.CartCvstoreBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_cvstore
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="gid != null" >
+        gid,
+      </if>
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="unitprice != null" >
+        unitPrice,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="sid != null" >
+        sid,
+      </if>
+      <if test="ctime != null" >
+        ctime,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="gid != null" >
+        #{gid,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="unitprice != null" >
+        #{unitprice,jdbcType=DECIMAL},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="sid != null" >
+        #{sid,jdbcType=INTEGER},
+      </if>
+      <if test="ctime != null" >
+        #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhongjian.dao.entity.cart.cvstore.CartCvstoreBean" >
+    update hm_cvstore
+    <set >
+      <if test="gid != null" >
+        gid = #{gid,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="unitprice != null" >
+        unitPrice = #{unitprice,jdbcType=DECIMAL},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="sid != null" >
+        sid = #{sid,jdbcType=INTEGER},
+      </if>
+      <if test="ctime != null" >
+        ctime = #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhongjian.dao.entity.cart.cvstore.CartCvstoreBean" >
+    update hm_cvstore
+    set gid = #{gid,jdbcType=INTEGER},
+      uid = #{uid,jdbcType=INTEGER},
+      price = #{price,jdbcType=DECIMAL},
+      unitPrice = #{unitprice,jdbcType=DECIMAL},
+      amount = #{amount,jdbcType=DECIMAL},
+      sid = #{sid,jdbcType=INTEGER},
+      ctime = #{ctime,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="searchByEntityCount" resultType="java.lang.Integer" parameterType="com.zhongjian.dao.entity.cart.cvstore.CartCvstoreBean" >
+    select
+    count(*)
+    from hm_cvstore
+    <where>
+     <if test="gid != null">
+      gid=#{gid,jdbcType=INTEGER}
+     </if>
+     <if test="uid != null">
+      AND uid=#{uid,jdbcType=INTEGER}
+     </if>
+     <if test="price != null">
+      AND price=#{price,jdbcType=DECIMAL}
+     </if>
+     <if test="unitprice != null">
+      AND unitPrice=#{unitprice,jdbcType=DECIMAL}
+     </if>
+     <if test="amount != null">
+      AND amount=#{amount,jdbcType=DECIMAL}
+     </if>
+     <if test="sid != null">
+      AND sid=#{sid,jdbcType=INTEGER}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+     <if test="remark != null">
+      AND remark=#{remark,jdbcType=VARCHAR}
+     </if>
+    </where>
+  </select>
+  <select id="searchByEntity" resultMap="BaseResultMap" parameterType="com.zhongjian.dao.entity.cart.cvstore.CartCvstoreBean" >
+    select
+    <include refid="Base_Column_List"/>
+    from hm_cvstore
+    <where>
+     <if test="gid != null">
+      gid=#{gid,jdbcType=INTEGER}
+     </if>
+     <if test="uid != null">
+      AND uid=#{uid,jdbcType=INTEGER}
+     </if>
+     <if test="price != null">
+      AND price=#{price,jdbcType=DECIMAL}
+     </if>
+     <if test="unitprice != null">
+      AND unitPrice=#{unitprice,jdbcType=DECIMAL}
+     </if>
+     <if test="amount != null">
+      AND amount=#{amount,jdbcType=DECIMAL}
+     </if>
+     <if test="sid != null">
+      AND sid=#{sid,jdbcType=INTEGER}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+     <if test="remark != null">
+      AND remark=#{remark,jdbcType=VARCHAR}
+     </if>
+    </where>
+  </select>
+</mapper>

@@ -13,7 +13,8 @@
                     column="pid">
         </collection>
     </resultMap>
-    <select id="findShopownInfoByMarketId" parameterType="com.zhongjian.dto.cart.market.query.CartMarketQueryDTO" resultMap="BaseShopownMap">
+    <select id="findShopownInfoByMarketId" parameterType="com.zhongjian.dto.cart.market.query.CartMarketQueryDTO"
+            resultMap="BaseShopownMap">
         SELECT
             DISTINCT (s.pid),
             s.sname,
@@ -28,6 +29,32 @@
         WHERE
             s.marketid = #{marketId,jdbcType=INTEGER}
             and b.uid=#{uid,jdbcType=INTEGER}
+    </select>
+
+    <resultMap id="BaseShopownInfo" type="com.zhongjian.dto.cart.shopown.result.CartShopownResultDTO">
+        <id column="pid" property="pid" jdbcType="INTEGER"/>
+        <result column="sname" property="shopName" jdbcType="VARCHAR"/>
+        <result column="pic" property="picture" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <collection property="storeActivity"
+                    select="com.zhongjian.dao.entity.cart.store.CartStoreActivityBean.findStoreActivityBySid"
+                    column="pid">
+        </collection>
+
+    </resultMap>
+
+    <select id="findShopownInfoByUid" parameterType="java.lang.Integer" resultMap="BaseShopownInfo">
+         SELECT
+        DISTINCT (s.pid),
+        s.sname,
+        s.pic,
+        s.`status`
+        FROM
+        hm_shopown s
+        INNER JOIN hm_goods g on g.pid = s.pid
+        INNER JOIN hm_cvstore b ON b.sid = g.pid
+        WHERE
+        b.uid=#{uid,jdbcType=INTEGER}
     </select>
 
 

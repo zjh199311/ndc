@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * @Author: yd
+ * @Author: ldd
  */
 @Data
 public class CartMarketQueryDTO implements Serializable{

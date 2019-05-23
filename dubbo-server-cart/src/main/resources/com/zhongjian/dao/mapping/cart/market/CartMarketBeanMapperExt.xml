@@ -26,7 +26,7 @@
         LEFT JOIN hm_goods g ON g.pid = s.pid
         LEFT JOIN hm_basket b ON b.sid = g.pid
         where b.uid=#{uid.jdbcType=INTEGER}
-        and m.is_delete=1
+        and m.state=1
 
     </select>
 </mapper>

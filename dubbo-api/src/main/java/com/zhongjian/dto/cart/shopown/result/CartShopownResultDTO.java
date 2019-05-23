@@ -2,6 +2,7 @@ package com.zhongjian.dto.cart.shopown.result;
 
 import com.google.gson.annotations.SerializedName;
 import com.zhongjian.dto.cart.basket.result.CartBasketResultDTO;
+import com.zhongjian.dto.cart.storeActivity.result.CartCvStoreActivityResultDTO;
 import com.zhongjian.dto.cart.storeActivity.result.CartStoreActivityResultDTO;
 import lombok.Data;
 
@@ -44,6 +45,21 @@ public class CartShopownResultDTO implements Serializable {
      * 优惠后价格
      */
     private String discountPrice;
+
+    /**
+     * 起步价
+     */
+    private String startingPrice;
+
+    /**
+     * 差价
+     */
+    private String disparity;
+
+    /**
+     * 状态 1达到.0未达到
+     */
+    private Integer state;
 
     /**
      * 状态
