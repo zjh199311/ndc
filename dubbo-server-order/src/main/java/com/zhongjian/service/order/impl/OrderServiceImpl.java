@@ -183,7 +183,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					String unit = (String) map.get("unit");
 					String remark = (String) map.get("remark");
 					hmCart.put("gid", gid);
-					hmCart.put("gname", gname);
+					hmCart.put("gname", gname == null? "其他" : gname);
 					hmCart.put("unit", unit == null ? "个" : unit);
 					hmCart.put("uid", uid);
 					hmCart.put("price", singleAmount);
@@ -674,7 +674,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				marketId = orderShopownBean.getMarketid();
 				flag = true;
 			} else {
-				if (marketId != orderShopownBean.getMarketid()) {
+				if (!marketId.equals(orderShopownBean.getMarketid())) {
 					resultDTO.setData("1");
 					return resultDTO;
 				}
