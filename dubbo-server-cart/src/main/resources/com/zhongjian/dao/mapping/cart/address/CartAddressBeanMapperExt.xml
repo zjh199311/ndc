@@ -8,6 +8,8 @@
         <result column="gender" property="gender" jdbcType="CHAR"/>
         <result column="phone" property="phone" jdbcType="VARCHAR"/>
         <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="longitude" property="longitude" jdbcType="VARCHAR"/>
+        <result column="latitude" property="latitude" jdbcType="VARCHAR"/>
         <result column="house_number" property="houseNumber" jdbcType="VARCHAR"/>
         <result column="status" property="status" jdbcType="VARCHAR"/>
     </resultMap>

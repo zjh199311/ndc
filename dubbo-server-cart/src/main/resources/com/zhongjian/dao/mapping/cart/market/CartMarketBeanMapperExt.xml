@@ -27,6 +27,13 @@
         LEFT JOIN hm_basket b ON b.sid = g.pid
         where b.uid=#{uid.jdbcType=INTEGER}
         and m.state=1
-
+    </select>
+    
+    <select id="findMarketById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        SELECT
+           <include refid="Base_Column_List"/>
+        from
+          hm_market
+        where id=#{marketId,jdbcType=INTEGER}
     </select>
 </mapper>

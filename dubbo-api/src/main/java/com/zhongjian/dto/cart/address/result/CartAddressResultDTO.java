@@ -36,6 +36,16 @@ public class CartAddressResultDTO implements Serializable{
     private String phone;
 
     /**
+     * 经度
+     */
+    private String longitude;
+
+    /**
+     * 纬度
+     */
+    private String latitude;
+
+    /**
      * 收货人地址
      */
     private String address;

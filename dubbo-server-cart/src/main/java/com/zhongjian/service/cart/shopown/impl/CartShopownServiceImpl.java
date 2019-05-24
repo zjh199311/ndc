@@ -160,6 +160,28 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                 if (FinalDatas.TWO.toString().equals(shopownResultDTO.getStatus())) {
                     shopownResultDTO.setStatusMsg("预约中");
                 }
+                //拼接每个商户下的活动信息
+                List<CartStoreActivityResultDTO> cartStoreActivityResultDTOS = shopownResultDTO.getStoreActivity();
+                stringbuider = new StringBuilder();
+                for (int i = cartStoreActivityResultDTOS.size() - 1; i >= 0; i--) {
+                    CartStoreActivityResultDTO cartStoreActivityResultDTO = cartStoreActivityResultDTOS.get(i);
+                    if (FinalDatas.ZERO == cartStoreActivityResultDTO.getType()) {
+                        stringbuider.append(decimalFormat.format(Double.parseDouble(cartStoreActivityResultDTO.getFull()))).append("减").append(
+                                decimalFormat.format(Double.parseDouble(cartStoreActivityResultDTO.getReduce()))
+                        ).append(",");
+                    }
+                    if (FinalDatas.ONE == cartStoreActivityResultDTO.getType()) {
+                        stringbuider.append(decimalFormat.format(new BigDecimal(cartStoreActivityResultDTO.getDiscount()).multiply(BigDecimal.TEN))).append("折");
+                    }
+                }
+                //去除末尾逗号
+                String buider = stringbuider.toString();
+                if (!StringUtil.isBlank(buider) && (",".equals(stringbuider.toString().substring(buider.length() - 1, buider.length())))) {
+                    String activityMsg = stringbuider.toString().substring(0, stringbuider.toString().length() - 1);
+                    shopownResultDTO.setActivityMsg(activityMsg);
+                } else if (!StringUtil.isBlank(buider)) {
+                    shopownResultDTO.setActivityMsg(buider.toString());
+                }
                 //这个商户下用户购买的食品信息
                 CartBasketListQueryDTO cartBasketListQueryDTO = new CartBasketListQueryDTO();
                 cartBasketListQueryDTO.setUid(uid);
@@ -170,7 +192,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                 List<BigDecimal> listByOpen = new ArrayList<>();
                 //将所有预约的总价相加.
                 List<BigDecimal> listByAdvence = new ArrayList<>();
-                //将所有打烊的总价相加
+                //将所有打烊的总价相加.
                 List<BigDecimal> listByClose = new ArrayList<>();
                 for (CartBasketResultDTO cartBasketResultDTO : findBasketById) {
 
@@ -183,18 +205,16 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                         stringbuider.append(cartBasketResultDTO.getUnitPrice()).append("元/").append(cartGoodsBean.getUnit());
                         cartBasketResultDTO.setUnitPrice(stringbuider.toString());
                         cartBasketResultDTO.setUnit(cartGoodsBean.getUnit());
-
-                        if (FinalDatas.ZERO == cartBasketResultDTO.getGid()) {
-                            cartBasketResultDTO.setFoodName("其他");
-                            cartBasketResultDTO.setStatus(1);
-                        } else {
-                            cartBasketResultDTO.setFoodName(cartGoodsBean.getGname());
-                        }
                     }
                     cartBasketResultDTO.setAmount(decimalFormat.format(Double.parseDouble(cartBasketResultDTO.getAmount())));
                     cartBasketResultDTO.setTotalPrice("¥" + decimalFormat.format(Double.parseDouble(cartBasketResultDTO.getTotalPrice())));
 
-
+                    if (FinalDatas.ZERO == cartBasketResultDTO.getGid()) {
+                        cartBasketResultDTO.setFoodName("其他");
+                        cartBasketResultDTO.setStatus(1);
+                    } else {
+                        cartBasketResultDTO.setFoodName(cartGoodsBean.getGname());
+                    }
                     //判断要是没有remark备注就不需要拼接组装;
                     if (!StringUtils.isBlank(cartBasketResultDTO.getRemark())) {
                         //拼接备注信息:[名字]+备注信息
@@ -230,33 +250,15 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                         numberByAdvence = listByAdvence.get(i).add(numberByAdvence);
                     }
                 }
-
-                //拼接每个商户下的活动信息
-                List<CartStoreActivityResultDTO> cartStoreActivityResultDTOS = shopownResultDTO.getStoreActivity();
-                if (CollectionUtils.isEmpty(cartStoreActivityResultDTOS)) {
-                    LogUtil.info("该商家没有优惠活动", "cartStoreActivityResultDTOS" + cartStoreActivityResultDTOS);
+                /**
+                 *   这边逻辑. 因为商品的总价是放在商户的bean中. 而活动优惠价格的bean放在商户bean中的.  所有要先计算完总价才去判断该商户是否有活动.因为该活动表中的
+                 *   full字段.在这边取不到.写在上面的活动循环中就得不到总值.这边就根据pid去查询数据库
+                 */
+                List<CartStoreActivityResultDTO> findStoreActivityBySid = this.hmStoreActivityHmDAO.executeListMethod(shopownResultDTO.getPid(), "findStoreActivityBySid", CartStoreActivityResultDTO.class);
+                if (CollectionUtils.isEmpty(findStoreActivityBySid)) {
+                    LogUtil.info("该商家没有优惠活动", "findStoreActivityBySid" + findStoreActivityBySid);
                 } else {
-                    stringbuider = new StringBuilder();
-                    for (int i = cartStoreActivityResultDTOS.size() - 1; i >= 0; i--) {
-                        CartStoreActivityResultDTO cartStoreActivityResultDTO = cartStoreActivityResultDTOS.get(i);
-                        if (FinalDatas.ZERO == cartStoreActivityResultDTO.getType()) {
-                            stringbuider.append(decimalFormat.format(Double.parseDouble(cartStoreActivityResultDTO.getFull()))).append("减").append(
-                                    decimalFormat.format(Double.parseDouble(cartStoreActivityResultDTO.getReduce()))
-                            ).append(",");
-                        }
-                        if (FinalDatas.ONE == cartStoreActivityResultDTO.getType()) {
-                            stringbuider.append(decimalFormat.format(new BigDecimal(cartStoreActivityResultDTO.getDiscount()).multiply(BigDecimal.TEN))).append("折");
-                        }
-                    }
-                    //去除末尾逗号
-                    String buider = stringbuider.toString();
-                    if (!StringUtil.isBlank(buider) && (",".equals(stringbuider.toString().substring(buider.length() - 1, buider.length())))) {
-                        String activityMsg = stringbuider.toString().substring(0, stringbuider.toString().length() - 1);
-                        shopownResultDTO.setActivityMsg(activityMsg);
-                    } else {
-                        shopownResultDTO.setActivityMsg(buider);
-                    }
-                    for (CartStoreActivityResultDTO cartStoreActivityResultDTO : cartStoreActivityResultDTOS) {
+                    for (CartStoreActivityResultDTO cartStoreActivityResultDTO : findStoreActivityBySid) {
                         //折扣的优惠
                         if (FinalDatas.ONE == cartStoreActivityResultDTO.getType()) {
                             if (FinalDatas.ONE.toString().equals(shopownResultDTO.getStatus())) {
@@ -288,6 +290,7 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                     break;
                                 }
                             }
+
                         }
                     }
                     //商户下的总优惠价
