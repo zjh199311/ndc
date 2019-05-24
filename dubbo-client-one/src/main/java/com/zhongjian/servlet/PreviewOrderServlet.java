@@ -128,11 +128,14 @@ public class PreviewOrderServlet extends HttpServlet {
 		orderStatusQueryDTO.setPids(sidList);
 		orderStatusQueryDTO.setStatus(status);
 		ResultDTO<String> jungle = orderService.judgeHmShopownStatus(orderStatusQueryDTO);
-		if (jungle.getData().equals("1")) {
+		String[] splits = jungle.getData().split("_");
+		String jungleString = splits[0];
+		String marketIdString = splits[1];
+		if (jungleString.equals("1")) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE));
-		}else if (jungle.getData().equals("2")) {
+		}else if (jungleString.equals("2")) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE_ADVANCE));
-		}else if (jungle.getData().equals("3")){
+		}else if (jungleString.equals("3")){
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE_OPEN));
 		}
 		Integer isAppointment = 0;
@@ -144,6 +147,7 @@ public class PreviewOrderServlet extends HttpServlet {
 		CartAddressQueryDTO cartAddressQueryDTO = new CartAddressQueryDTO();
 		cartAddressQueryDTO.setId(0);
 		cartAddressQueryDTO.setUid(uid);
+		cartAddressQueryDTO.setMarketId(Integer.valueOf(marketIdString));
 		CartAddressResultDTO address = addressServie.previewOrderAddress(cartAddressQueryDTO);
 		Map<String, Object> orderDetail = orderService.previewOrCreateOrder(uid, sids, type, extra, isSelfMention, false, null, null, isAppointment);
 		//请求服务获取预览订单数据--end
@@ -151,5 +155,4 @@ public class PreviewOrderServlet extends HttpServlet {
 		orderDetail.put("address", address);
 		return GsonUtil.GsonString(ResultUtil.getSuccess(orderDetail));
 	}
-	
 }

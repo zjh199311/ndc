@@ -125,11 +125,13 @@ public class CreateOrderServlet extends HttpServlet {
 		orderStatusQueryDTO.setPids(sidList);
 		orderStatusQueryDTO.setStatus(status);
 		ResultDTO<String> jungle = orderService.judgeHmShopownStatus(orderStatusQueryDTO);
-		if (jungle.getData().equals("1")) {
+		String[] splits = jungle.getData().split("_");
+		String jungleString = splits[0];
+		if (jungleString.equals("1")) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE));
-		} else if (jungle.getData().equals("2")) {
+		} else if (jungleString.equals("2")) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE_ADVANCE));
-		} else if (jungle.getData().equals("3")) {
+		} else if (jungleString.equals("3")) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE_OPEN));
 		}
 		Integer isAppointment = 0;

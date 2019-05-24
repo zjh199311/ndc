@@ -703,6 +703,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			return resultDTO;
 		}
 		resultDTO.setData("1");
+		resultDTO.setData(resultDTO.getData() + "_" + marketId);
 		return resultDTO;
 
 	}
