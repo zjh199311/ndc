@@ -64,7 +64,7 @@ public class AddressServiceImpl extends HmBaseService<CartAddressBean, Integer> 
             double latitude1 = Double.parseDouble(findMarketById.getLatitude());
             double longitude1 = Double.parseDouble(findMarketById.getLongitude());
             double distance = DistanceUtils.getDistance(longitude, latitude, longitude1, latitude1);
-            if (new Double(3.6)>=distance) {
+            if (distance <= 3.6) {
                 return cartAddressResultDTO;
             }else{
                 return null;

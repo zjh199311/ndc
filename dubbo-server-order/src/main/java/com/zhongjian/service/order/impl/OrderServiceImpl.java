@@ -691,6 +691,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			}
 		}
 		if (isAppointMentSize == 0 && openSize == 0) {
+			resultDTO.setData(resultDTO.getData() + "_" + marketId);
 			return resultDTO;// 状态监测通过
 		}
 		if (isAppointMentSize == listSize) {
@@ -703,7 +704,6 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			return resultDTO;
 		}
 		resultDTO.setData("1");
-		resultDTO.setData(resultDTO.getData() + "_" + marketId);
 		return resultDTO;
 
 	}

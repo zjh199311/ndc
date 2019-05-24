@@ -130,7 +130,6 @@ public class PreviewOrderServlet extends HttpServlet {
 		ResultDTO<String> jungle = orderService.judgeHmShopownStatus(orderStatusQueryDTO);
 		String[] splits = jungle.getData().split("_");
 		String jungleString = splits[0];
-		String marketIdString = splits[1];
 		if (jungleString.equals("1")) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE));
 		}else if (jungleString.equals("2")) {
@@ -138,6 +137,7 @@ public class PreviewOrderServlet extends HttpServlet {
 		}else if (jungleString.equals("3")){
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE_OPEN));
 		}
+		String marketIdString = splits[1];
 		Integer isAppointment = 0;
 		if (status == 2) {
 			isAppointment = 1;
