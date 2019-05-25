@@ -32,6 +32,7 @@ import java.util.Iterator;
 import com.zhongjian.util.DateUtil;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -183,7 +184,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					String unit = (String) map.get("unit");
 					String remark = (String) map.get("remark");
 					hmCart.put("gid", gid);
-					hmCart.put("gname", gname == null? "其他" : gname);
+					hmCart.put("gname", gname == null ? "其他" : gname);
 					hmCart.put("unit", unit == null ? "个" : unit);
 					hmCart.put("uid", uid);
 					hmCart.put("price", singleAmount);
@@ -291,7 +292,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 						|| marketActivtiyType == 0 && maxRight.compareTo(BigDecimal.ZERO) == 1) && "0".equals(type)) {
 					if (!orderDao.checkFirstPayOrderByUid(uid)) {
 						if (orderDao.checkToPayNum(uid) == 1) {
-							//没有已经支付的订单
+							// 没有已经支付的订单
 							orderId = orderDao.checkFirstToPayOrderByUid(uid);
 						}
 					}
@@ -368,7 +369,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		}
 
 		vipFavourRiderOrder = vipFavourable;
-		
+
 		// 判断是否是会员
 		if (vipStatus == 1) {
 			isVIp = 1;
@@ -384,7 +385,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				}
 			}
 		}
-		
+
 		boolean todayCouponUse = orderDao.checkCouponOrderByUid(uid);
 		BigDecimal priceForIntegralor = needPay.add(deliverfeeBigDecimal);
 
@@ -451,13 +452,13 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 						needPay = needPay.subtract(couponPrice);
 						if (priceForCoupon.compareTo(couponPrice) < 0) {
 							couponPrice = priceForCoupon;
-							//vip减免改为0
+							// vip减免改为0
 							vipFavourable = BigDecimal.ZERO;
-							//落地保持一致
+							// 落地保持一致
 							vipFavourRiderOrder = vipFavourable;
 							needPay = BigDecimal.ZERO;
 						}
-						
+
 						couponContent = "-￥" + couponPrice.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 						if (toCreateOrder) {
 							storeOrders.put("couponid", extra);
@@ -589,7 +590,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			if (orderId != null) {
 				resMap.put("needCancelId", orderId);
 				resMap.put("cancelReason", "检测到您有待支付订单使用首单优惠，是否取消让该单享受优惠，直接支付视为放弃首单优惠");
-			}else {
+			} else {
 				resMap.put("cancelReason", "");
 			}
 			resMap.put("priceForCoupon", priceForIntegralCoupon);
@@ -718,27 +719,42 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			String format = DateUtil.HourMinute.format(nowTime.getTime());
 			return format;
 		} else {
-			// 首先先判断今天是否为这个月的最后一天.如果不是最后一天则为第二天的08:48分
-			// 获取今天的天数
-			String today = DateUtil.day.format(new Date());
-			// 获取这个月的月份
-			String month = DateUtil.month.format(new Date());
-			// 获取这个月最后一天的天数.
-			Date lastDayOfMonth = DateUtil.getLastDayOfMonth(new Date());
-			String lastDay = DateUtil.day.format(lastDayOfMonth);
-			// 如果等于0那么.今天则为最后一天.那么就是月数加1后的08点48分.
 			try {
+				// 首先先判断今天是否为这个月的最后一天.如果不是最后一天则为第二天的08:48分
+				// 获取今天的天数
+				Date nowDate = new Date();
+				SimpleDateFormat sdf1 = new SimpleDateFormat("HH");
+				String hourString = sdf1.format(nowDate);
+				Integer hour = Integer.valueOf(hourString);
+				if (hour.compareTo(0) >= 0 && hour.compareTo(7) <= 0) {
+					Date date = DateUtil.lastDayTime.parse(DateUtil.formateDate(nowDate) + " 00:00");
+					Calendar calendar = Calendar.getInstance();
+					calendar.setTime(date);
+					calendar.add(Calendar.HOUR_OF_DAY, 8);
+					calendar.add(Calendar.MINUTE, 48);
+					// 获取第二天的08点48分.
+					String format = DateUtil.lastDayTime.format(calendar.getTime());
+					return format;
+				}
+
+				String today = DateUtil.day.format(nowDate);
+				// 获取这个月的月份
+				String month = DateUtil.month.format(nowDate);
+				// 获取这个月最后一天的天数.
+				Date lastDayOfMonth = DateUtil.getLastDayOfMonth(nowDate);
+				String lastDay = DateUtil.day.format(lastDayOfMonth);
+				// 如果等于0那么.今天则为最后一天.那么就是月数加1后的08点48分.
 				if (today.compareTo(lastDay) == 0) {
 					// 如果当前是12月.则直接将月份设置为1月.如果不是则月份加1;
 					Date date;
 					if (FinalDatas.twelve.compareTo(month) == 0) {
-						date = DateUtil.getFirstDayOfYear(new Date());
+						date = DateUtil.getFirstDayOfYear(DateUtil.addYearFroDate(nowDate, 1));
 					} else {
 						// 将月数加1
-						date = DateUtil.addMonthFroDate(new Date(), 1); // 2019/05/30 20:00
+						date = DateUtil.addMonthFroDate(nowDate, 1); // 2019/05/30 20:00
 					}
 					// 获取今天的最小时间
-					Date parse = DateUtil.lastDayTime.parse(DateUtil.formateDate(date) + " 00:00:00");
+					Date parse = DateUtil.lastDayTime.parse(DateUtil.formateDate(date) + " 00:00");
 					Calendar nowTime = Calendar.getInstance();
 					nowTime.setTime(parse);
 					// 天数设置为第一天
@@ -748,7 +764,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					String format = DateUtil.lastDayTime.format(nowTime.getTime());
 					return format;
 				} else {
-					Date parse = DateUtil.lastDayTime.parse(DateUtil.formateDate(new Date()) + " 00:00:00");
+					Date parse = DateUtil.lastDayTime.parse(DateUtil.formateDate(nowDate) + " 00:00");
 					Date date = DateUtil.addDayFroDate(parse, 1);
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(date);
