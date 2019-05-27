@@ -1,5 +1,7 @@
 package com.zhongjian.service.cart.cvstore;
 
+import com.zhongjian.aspect.annotation.MethodRoute;
+import com.zhongjian.aspect.annotation.Route;
 import com.zhongjian.dto.cart.basket.query.CartBasketDelQueryDTO;
 import com.zhongjian.dto.cart.basket.query.CartBasketEditQueryDTO;
 import com.zhongjian.dto.cart.basket.query.CartBasketListQueryDTO;
@@ -8,6 +10,7 @@ import com.zhongjian.dto.common.ResultDTO;
 /**
  * @Author: ldd
  */
+@Route
 public interface CartCvstoreService {
 
     /**
@@ -26,6 +29,7 @@ public interface CartCvstoreService {
     /**
      * 根据主键id和用户id删除订单
      */
+    @MethodRoute(value = "deleteInfoByIdForCvs")
     ResultDTO<Object> deleteInfoById(CartBasketDelQueryDTO cartBasketDelQueryDTO);
 
     /**

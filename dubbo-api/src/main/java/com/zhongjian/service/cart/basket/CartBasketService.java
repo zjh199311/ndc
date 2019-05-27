@@ -1,5 +1,7 @@
 package com.zhongjian.service.cart.basket;
 
+import com.zhongjian.aspect.annotation.MethodRoute;
+import com.zhongjian.aspect.annotation.Route;
 import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.cart.basket.query.CartBasketDelQueryDTO;
 import com.zhongjian.dto.cart.basket.query.CartBasketEditQueryDTO;
@@ -8,6 +10,7 @@ import com.zhongjian.dto.cart.basket.query.CartBasketListQueryDTO;
 /**
  * @Author: ldd
  */
+@Route
 public interface CartBasketService {
 
     /**
@@ -16,21 +19,25 @@ public interface CartBasketService {
      * @param cartBasketEditQueryDTO
      * @return
      */
+    @MethodRoute(value = "addOrUpdateInfo")
     ResultDTO<Object> addOrUpdateInfo(CartBasketEditQueryDTO cartBasketEditQueryDTO);
 
     /**
      * 商户在商家里面的购物车详情页
      */
+
     ResultDTO<Object> queryList(CartBasketListQueryDTO cartBasketListQueryDTO);
 
     /**
      * 根据主键id和用户id删除订单
      */
+    @MethodRoute(value = "deleteInfoByIdForBasket")
     ResultDTO<Object> deleteInfoById(CartBasketDelQueryDTO cartBasketDelQueryDTO);
 
     /**
      * 清空该用户在该商家下所有购物订单
      */
+
     ResultDTO<Object> deleteAllInfoById(CartBasketDelQueryDTO cartBasketDelQueryDTO);
 
     /**
