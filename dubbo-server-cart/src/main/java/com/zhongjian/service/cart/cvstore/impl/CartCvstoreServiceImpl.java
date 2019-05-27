@@ -229,10 +229,10 @@ public class CartCvstoreServiceImpl extends HmBaseService<CartCvstoreBean, Integ
         cartBaskerListResultDTO.setStartingPrice(String.valueOf(findCvStoreActivityByPid.getStartingPrice()));
 
         if (BigDecimal.ZERO.compareTo(totalDisPrice) != 0) {
-            cartBaskerListResultDTO.setTotalDisPrice(String.valueOf(totalDisPrice.setScale(2)));
+            cartBaskerListResultDTO.setTotalDisPrice(String.valueOf(totalDisPrice.setScale(2, BigDecimal.ROUND_HALF_UP)));
             useForStartPrice = totalDisPrice;
         }
-        cartBaskerListResultDTO.setTotalPrice(String.valueOf(totalPrice.setScale(2)));
+        cartBaskerListResultDTO.setTotalPrice(String.valueOf(totalPrice.setScale(2,BigDecimal.ROUND_HALF_UP)));
         if (null == useForStartPrice) {
             useForStartPrice = totalPrice;
         }

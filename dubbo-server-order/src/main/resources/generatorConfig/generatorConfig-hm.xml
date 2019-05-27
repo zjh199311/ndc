@@ -22,26 +22,26 @@
 
 
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
-						connectionURL="jdbc:mysql://192.168.0.252:3306/ndcdev" userId="root"
-						password="123456">
+						connectionURL="jdbc:mysql://api-dev.nidcai.com:3306/emarket_dev" userId="emarket_dev"
+						password="emarket@dev@-123">
 		</jdbcConnection>
 
 		<javaTypeResolver>
 			<property name="forceBigDecimals" value="false" />
 		</javaTypeResolver>
 
-		<javaModelGenerator targetPackage="com.zhongjian.dao.entity.order.address"
+		<javaModelGenerator targetPackage="com.zhongjian.dao.entity.order.rider"
 			targetProject="src/main/java">
 			<property name="enableSubPackages" value="true" />
 			<property name="trimStrings" value="true" />
 		</javaModelGenerator>
 
-		<sqlMapGenerator targetPackage="com.zhongjian.dao.mapping.cart.address"
+		<sqlMapGenerator targetPackage="com.zhongjian.dao.mapping.order.rider"
 			targetProject="src/main/resources">
 			<property name="enableSubPackages" value="true" />
 		</sqlMapGenerator>
 
-		<table tableName="hm_address" domainObjectName="HmAddressBean"
+		<table tableName="hm_rider_order" domainObjectName="OrderRiderOrderBean"
 			   enableCountByExample="false" enableUpdateByExample="false"
 			   enableDeleteByExample="false" enableSelectByExample="false"
 			   selectByExampleQueryId="false">

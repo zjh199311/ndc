@@ -234,24 +234,24 @@ public class CartCvstoreShopServiceImpl extends HmBaseService<CartShopownBean, I
                 //商户下的总优惠价
                 if (FinalDatas.ONE.toString().equals(shopownResultDTO.getStatus())) {
                     if (BigDecimal.ZERO.compareTo(priceByClose) != 0) {
-                        shopownResultDTO.setDiscountPrice(String.valueOf(priceByClose.setScale(2)));
+                        shopownResultDTO.setDiscountPrice(String.valueOf(priceByClose.setScale(2,BigDecimal.ROUND_HALF_UP)));
                         useForStartPriceByClose = priceByClose;
                     }
                 } else if (FinalDatas.ZERO.toString().equals(shopownResultDTO.getStatus())) {
                     if (BigDecimal.ZERO.compareTo(priceByOpen) != 0) {
-                        shopownResultDTO.setDiscountPrice(String.valueOf(priceByOpen.setScale(2)));
+                        shopownResultDTO.setDiscountPrice(String.valueOf(priceByOpen.setScale(2,BigDecimal.ROUND_HALF_UP)));
                         useForStartPriceByOpen = priceByOpen;
                     }
                 }
             }
             //商户下的总价
             if (FinalDatas.ONE.toString().equals(shopownResultDTO.getStatus())) {
-                shopownResultDTO.setTotalPrice(String.valueOf(numberByClose.setScale(2)));
+                shopownResultDTO.setTotalPrice(String.valueOf(numberByClose.setScale(2,BigDecimal.ROUND_HALF_UP)));
                 if (null == useForStartPriceByClose) {
                     useForStartPriceByClose = numberByClose;
                 }
             } else if (FinalDatas.ZERO.toString().equals(shopownResultDTO.getStatus())) {
-                shopownResultDTO.setTotalPrice(String.valueOf(numberByOpen.setScale(2)));
+                shopownResultDTO.setTotalPrice(String.valueOf(numberByOpen.setScale(2,BigDecimal.ROUND_HALF_UP)));
                 if (null == useForStartPriceByOpen) {
                     useForStartPriceByOpen = numberByOpen;
                 }
