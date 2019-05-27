@@ -909,5 +909,9 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		result.append("折");
 		return result.toString();
 	}
+	public static void main(String[] args) {
+		OrderServiceImpl orderServiceImpl = new OrderServiceImpl();
+		System.out.println(orderServiceImpl.previewOrderTime(1));
+	}
 
 }

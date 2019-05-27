@@ -22,6 +22,8 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.concurrent.SynchronousQueue;
+
 import javax.annotation.Resource;
 import javax.annotation.Resources;
 
@@ -177,6 +179,7 @@ public class AppTest {
         userQueryDTO.setMarketId(119);
 
         userService.getCouponByUid(userQueryDTO);
+        
     }
 
 }
