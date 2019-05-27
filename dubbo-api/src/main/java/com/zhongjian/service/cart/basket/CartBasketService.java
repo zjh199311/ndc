@@ -10,7 +10,6 @@ import com.zhongjian.dto.cart.basket.query.CartBasketListQueryDTO;
 /**
  * @Author: ldd
  */
-@Route
 public interface CartBasketService {
 
     /**
@@ -19,7 +18,6 @@ public interface CartBasketService {
      * @param cartBasketEditQueryDTO
      * @return
      */
-    @MethodRoute(value = "addOrUpdateInfo")
     ResultDTO<Object> addOrUpdateInfo(CartBasketEditQueryDTO cartBasketEditQueryDTO);
 
     /**
@@ -31,7 +29,6 @@ public interface CartBasketService {
     /**
      * 根据主键id和用户id删除订单
      */
-    @MethodRoute(value = "deleteInfoByIdForBasket")
     ResultDTO<Object> deleteInfoById(CartBasketDelQueryDTO cartBasketDelQueryDTO);
 
     /**
