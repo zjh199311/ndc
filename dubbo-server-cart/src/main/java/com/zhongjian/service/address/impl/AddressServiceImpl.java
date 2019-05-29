@@ -6,11 +6,16 @@ import com.zhongjian.dao.entity.cart.market.CartMarketBean;
 import com.zhongjian.dao.entity.cart.user.UserBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
 import com.zhongjian.dao.framework.inf.HmDAO;
+import com.zhongjian.dao.jdbctemplate.StoreAddressDao;
 import com.zhongjian.dto.cart.address.query.CartAddressQueryDTO;
 import com.zhongjian.dto.cart.address.result.CartAddressResultDTO;
 import com.zhongjian.service.address.AddressService;
 import com.zhongjian.util.DistanceUtils;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -25,6 +30,8 @@ public class AddressServiceImpl extends HmBaseService<CartAddressBean, Integer> 
     private HmDAO<CartMarketBean, Integer> marketBean;
 
 
+    @Autowired
+    private StoreAddressDao storeAddressDao;
     @Resource
     private void setHmDAO(HmDAO<UserBean, Integer> hmDAO) {
         this.hmDAO = hmDAO;
@@ -86,4 +93,36 @@ public class AddressServiceImpl extends HmBaseService<CartAddressBean, Integer> 
         this.hmDAO.executeUpdateMethod(cartAddressQueryDTO, "updateMarketIdById");
 
     }
+
+	@Override
+	public CartAddressResultDTO previewCVOrderAddress(CartAddressQueryDTO cartAddressQueryDTO,Integer sid) {
+		  /**
+         * 要是传来的id为0.则根据uid去查询数据库并根据status为1的默认地址返回.limit=1 要是传来的id不为0,则根据id去查询在返回
+         */
+        CartAddressResultDTO cartAddressResultDTO = null;
+        if (FinalDatas.ZERO == cartAddressQueryDTO.getId()) {
+            cartAddressResultDTO = this.dao.executeSelectOneMethod(
+                    cartAddressQueryDTO.getUid(), "findAddressByUid", CartAddressResultDTO.class);
+        } else {
+            cartAddressResultDTO = this.dao.executeSelectOneMethod(
+                    cartAddressQueryDTO,"findAddressByid", CartAddressResultDTO.class);
+        }
+        if (cartAddressResultDTO != null) {
+            //地址的经度纬度
+            double latitude = Double.parseDouble(cartAddressResultDTO.getLatitude());
+            double longitude = Double.parseDouble(cartAddressResultDTO.getLongitude());
+            //商户经纬度
+            Map<String, Object> storeAddress = storeAddressDao.getStoreAddress(sid);
+            double longitude1 = Double.parseDouble((String) storeAddress.get("longitude"));
+            double latitude1 = Double.parseDouble((String) storeAddress.get("latitude"));
+            double distance = DistanceUtils.getDistance(longitude, latitude, longitude1, latitude1);
+            if (distance <= 0.5) {
+                return cartAddressResultDTO;
+            }else{
+                return null;
+            }
+        } else {
+            return null;
+        }
+	}
 }

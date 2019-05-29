@@ -89,6 +89,21 @@ public class IntegralVipDao extends MongoDBDaoBase{
 			}else if (limitDayReliefObj!=null && limitDayReliefObj instanceof Double){
 				resMap.put("limitDayRelief",Double.valueOf((Double) limitDayReliefObj));
 			}
+			
+			//便利店参数
+			resMap.put("cvdiscount",document.get("cvdiscount"));
+			Object cvlimitDayReliefObj = document.get("cvlimitDayRelief");
+			Object cvlimitOneObj = document.get("cvlimitOne");
+			if (cvlimitOneObj!=null && cvlimitOneObj instanceof String) {
+				resMap.put("cvlimitOne",Double.valueOf((String) cvlimitOneObj));
+			}else if (cvlimitOneObj!=null && cvlimitOneObj instanceof Double){
+				resMap.put("cvlimitOne",Double.valueOf((Double) cvlimitOneObj));
+			}
+			if (cvlimitDayReliefObj!=null && cvlimitDayReliefObj instanceof String) {
+				resMap.put("cvlimitDayRelief",Double.valueOf((String) cvlimitDayReliefObj));
+			}else if (cvlimitDayReliefObj!=null && cvlimitDayReliefObj instanceof Double){
+				resMap.put("cvlimitDayRelief",Double.valueOf((Double) cvlimitDayReliefObj));
+			}
 			break;
 		}
 		return resMap;
@@ -131,6 +146,21 @@ public class IntegralVipDao extends MongoDBDaoBase{
 					resMap.put("limitDayRelief",Double.valueOf((String) limitDayReliefObj));
 				}else if (limitDayReliefObj!=null && limitDayReliefObj instanceof Double){
 					resMap.put("limitDayRelief",Double.valueOf((Double) limitDayReliefObj));
+				}
+				
+				//便利店参数
+				resMap.put("cvdiscount",document.get("cvdiscount"));
+				Object cvlimitDayReliefObj = document.get("cvlimitDayRelief");
+				Object cvlimitOneObj = document.get("cvlimitOne");
+				if (cvlimitOneObj!=null && cvlimitOneObj instanceof String) {
+					resMap.put("cvlimitOne",Double.valueOf((String) cvlimitOneObj));
+				}else if (cvlimitOneObj!=null && cvlimitOneObj instanceof Double){
+					resMap.put("cvlimitOne",Double.valueOf((Double) cvlimitOneObj));
+				}
+				if (cvlimitDayReliefObj!=null && cvlimitDayReliefObj instanceof String) {
+					resMap.put("cvlimitDayRelief",Double.valueOf((String) cvlimitDayReliefObj));
+				}else if (cvlimitDayReliefObj!=null && cvlimitDayReliefObj instanceof Double){
+					resMap.put("cvlimitDayRelief",Double.valueOf((Double) cvlimitDayReliefObj));
 				}
 				break;
 			}

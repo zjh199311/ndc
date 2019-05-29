@@ -48,7 +48,14 @@
 		version="1.0.0" />
 	<dubbo:reference id="addressService"
 		interface="com.zhongjian.service.address.AddressService"
-		version="1.0.0" />
+		version="1.0.0">
+		<dubbo:method name="previewCVOrderAddress" async="true"/>
+	</dubbo:reference>
+	<dubbo:reference id="cvOrderService"
+		interface="com.zhongjian.service.order.CVOrderService"
+		version="1.0.0">
+		<dubbo:method name="previewOrderTime" async="true"/>
+	</dubbo:reference>
 	<bean class="com.zhongjian.common.SpringContextHolder"></bean>
 	<bean id="propComponent" init-method="readProperties"
 		class="com.zhongjian.component.PropComponent"></bean>

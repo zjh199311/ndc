@@ -9,11 +9,17 @@ import com.zhongjian.dto.cart.address.result.CartAddressResultDTO;
 public interface AddressService {
 
     /**
-     * 获取默认地址0表示默认
+     ** 获取默认地址0表示默认
      * @param cartAddressQueryDTO
      * @return
      */
     CartAddressResultDTO previewOrderAddress(CartAddressQueryDTO cartAddressQueryDTO);
+    /**
+     ** 获取默认地址0表示默认
+     * @param cartAddressQueryDTO
+     * @return
+     */
+    CartAddressResultDTO previewCVOrderAddress(CartAddressQueryDTO cartAddressQueryDTO,Integer sid);
     /**
      * 修改默认地址
      * @param cartAddressQueryDTO

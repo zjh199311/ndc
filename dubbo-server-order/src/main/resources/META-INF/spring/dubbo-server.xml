@@ -51,6 +51,7 @@
     <!-- declare the service interface to be exported -->
     <!-- server start -->
      <dubbo:service interface="com.zhongjian.service.order.OrderService" ref="orderService" version="1.0.0"/>
+     <dubbo:service interface="com.zhongjian.service.order.CVOrderService" ref="cvOrderService" version="1.0.0"/>
      <!-- server end -->
 
      <!-- 创建数据源 -->

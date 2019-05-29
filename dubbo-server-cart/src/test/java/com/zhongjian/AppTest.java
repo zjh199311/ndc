@@ -6,6 +6,7 @@ import com.zhongjian.commoncomponent.PropUtil;
 import com.zhongjian.dao.cart.CartParamDTO;
 import com.zhongjian.dao.entity.cart.rider.CartRiderOrderBean;
 import com.zhongjian.dao.framework.inf.HmDAO;
+import com.zhongjian.dao.jdbctemplate.StoreAddressDao;
 import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.cart.basket.query.CartBasketDelQueryDTO;
 import com.zhongjian.dto.cart.basket.query.CartBasketEditQueryDTO;
@@ -19,9 +20,11 @@ import com.zhongjian.service.user.UserService;
 import com.zhongjian.util.DateUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Map;
 import java.util.concurrent.SynchronousQueue;
 
 import javax.annotation.Resource;
@@ -42,6 +45,9 @@ public class AppTest {
 
 
 
+    @Autowired
+    private StoreAddressDao storeAddressDao;
+    
     @Resource
     private UserService userService;
 
@@ -180,6 +186,11 @@ public class AppTest {
 
         userService.getCouponByUid(userQueryDTO);
         
+    }
+    @Test
+    public void storeAddressDao() {
+    	Map<String, Object> storeAddress = storeAddressDao.getStoreAddress(586);
+    	double longitude = Double.parseDouble((String) storeAddress.get("longitude"));
     }
 
 }
