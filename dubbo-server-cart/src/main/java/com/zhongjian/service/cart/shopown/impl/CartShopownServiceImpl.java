@@ -476,8 +476,8 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                     }
                                 }
                             }
-                                cartMarketResultByAdvenceDTO.setTotalPrice(String.valueOf(totalDisPriceByAdvence.setScale(2, BigDecimal.ROUND_HALF_UP)));
                         }
+                        cartMarketResultByAdvenceDTO.setTotalPrice(String.valueOf(totalDisPriceByAdvence.setScale(2, BigDecimal.ROUND_HALF_UP)));
                     }
                 }else{
                     cartMarketResultByAdvenceDTO.setTotalPrice(String.valueOf(totalDisPriceByAdvence.setScale(2, BigDecimal.ROUND_HALF_UP)));
@@ -533,8 +533,8 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                     }
                                 }
                             }
-                            cartMarketResultByCloseDTO.setTotalPrice(String.valueOf(totalDisPriceByClose.setScale(2, BigDecimal.ROUND_HALF_UP)));
                         }
+                        cartMarketResultByCloseDTO.setTotalPrice(String.valueOf(totalDisPriceByClose.setScale(2, BigDecimal.ROUND_HALF_UP)));
                     }
                 }else{
                      cartMarketResultByCloseDTO.setTotalPrice(String.valueOf(totalDisPriceByClose.setScale(2, BigDecimal.ROUND_HALF_UP)));
@@ -590,8 +590,8 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                     }
                                 }
                             }
-                            cartMarketResultByOpenDTO.setTotalPrice(String.valueOf(totalDisPriceByOpen.setScale(2, BigDecimal.ROUND_HALF_UP)));
                         }
+                        cartMarketResultByOpenDTO.setTotalPrice(String.valueOf(totalDisPriceByOpen.setScale(2, BigDecimal.ROUND_HALF_UP)));
                     }
                 }else{
                     cartMarketResultByOpenDTO.setTotalPrice(String.valueOf(totalDisPriceByOpen.setScale(2, BigDecimal.ROUND_HALF_UP)));
