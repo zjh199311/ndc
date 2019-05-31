@@ -21,7 +21,8 @@ public interface CVOrderService {
      ** 生成订单
      */
     
-    Map<String, Object> createOrder(Integer uid, Integer sid, String type, Integer extra,Integer addressId, Integer unixTime);
+    Map<String, Object> createOrder(Integer uid, Integer sid, String type, Integer extra,
+    		String isSelfMention,Integer addressId, Integer unixTime);
     
     /**
      ** 是否已打烊
