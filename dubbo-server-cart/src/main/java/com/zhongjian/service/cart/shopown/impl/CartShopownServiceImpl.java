@@ -477,9 +477,10 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                 }
                             }
                                 cartMarketResultByAdvenceDTO.setTotalPrice(String.valueOf(totalDisPriceByAdvence.setScale(2, BigDecimal.ROUND_HALF_UP)));
-
                         }
                     }
+                }else{
+                    cartMarketResultByAdvenceDTO.setTotalPrice(String.valueOf(totalDisPriceByAdvence.setScale(2, BigDecimal.ROUND_HALF_UP)));
                 }
             }
             if (null != cartMarketResultByCloseDTO.getType() && cartMarketResultByCloseDTO.getType() == 1) {
@@ -532,10 +533,11 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                                     }
                                 }
                             }
-                            cartMarketResultByCloseDTO.setTotalPrice(FinalDatas.ZERO.toString());
                             cartMarketResultByCloseDTO.setTotalPrice(String.valueOf(totalDisPriceByClose.setScale(2, BigDecimal.ROUND_HALF_UP)));
                         }
                     }
+                }else{
+                     cartMarketResultByCloseDTO.setTotalPrice(String.valueOf(totalDisPriceByClose.setScale(2, BigDecimal.ROUND_HALF_UP)));
                 }
             }
             if (null != cartMarketResultByOpenDTO.getType() && cartMarketResultByOpenDTO.getType() == 0) {
@@ -591,6 +593,8 @@ public class CartShopownServiceImpl extends HmBaseService<CartMarketBean, Intege
                             cartMarketResultByOpenDTO.setTotalPrice(String.valueOf(totalDisPriceByOpen.setScale(2, BigDecimal.ROUND_HALF_UP)));
                         }
                     }
+                }else{
+                    cartMarketResultByOpenDTO.setTotalPrice(String.valueOf(totalDisPriceByOpen.setScale(2, BigDecimal.ROUND_HALF_UP)));
                 }
             }
 
