@@ -512,7 +512,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			storeOrders.put("marketid", marketId);
 			storeOrders.put("rider_pay", deliverfeeBigDecimal);
 			storeOrders.put("address_id", addressId);
-			storeOrders.put("integral", integralSub == BigDecimal.ZERO ? null : integralSub);
+			storeOrders.put("integral", integralSub.intValue());
 			storeOrders.put("totalPrice", needPay);
 			storeOrders.put("ctime", createTime);
 			storeOrders.put("service_time", unixTime);

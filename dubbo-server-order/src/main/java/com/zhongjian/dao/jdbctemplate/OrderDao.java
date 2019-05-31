@@ -230,12 +230,12 @@ public class OrderDao extends MongoDBDaoBase {
 				ps.setObject(11, (Integer) map.get("pay_time"), java.sql.Types.INTEGER);
 				ps.setInt(12, (Integer) map.get("service_time"));
 				ps.setInt(13, (Integer) map.get("ctime"));
-				ps.setObject(14, (BigDecimal) map.get("integral"), java.sql.Types.BIGINT);
+				ps.setInt(14, (int) map.get("integral"));
 				ps.setInt(15, (Integer) map.get("is_appointment"));
 				ps.setBigDecimal(16, (BigDecimal) map.get("original_price"));
 				ps.setString(17, (String) map.get("out_trade_no"));
-				ps.setObject(18, (BigDecimal) map.get("coupon_price"), java.sql.Types.INTEGER);
-				ps.setObject(19, (BigDecimal) map.get("market_activity_price"), java.sql.Types.INTEGER);
+				ps.setBigDecimal(18, (BigDecimal) map.get("coupon_price"));
+				ps.setBigDecimal(19, (BigDecimal) map.get("market_activity_price"));
 				ps.setBigDecimal(20, (BigDecimal) map.get("store_activity_price"));
 				ps.setBigDecimal(21, (BigDecimal) map.get("vip_relief"));
 				ps.setInt(22, (Integer) map.get("rider_status"));
