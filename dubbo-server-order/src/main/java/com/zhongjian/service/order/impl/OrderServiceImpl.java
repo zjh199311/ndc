@@ -352,8 +352,8 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				: (Double) config.get("riderDiscount");
 
 		// 动态获取VIP参数 --end
-		memberDeliverfee = new BigDecimal(deliverfee).multiply(new BigDecimal(memberDeliverfeeDiscount))
-				.stripTrailingZeros().toString();
+//		memberDeliverfee = new BigDecimal(deliverfee).multiply(new BigDecimal(memberDeliverfeeDiscount))
+//				.stripTrailingZeros().toString();
 		BigDecimal subtract = new BigDecimal(1).subtract(new BigDecimal(memberDiscount));
 		Double canFavourOne = subtract.multiply(new BigDecimal(limitOne)).setScale(2, BigDecimal.ROUND_HALF_UP)
 				.doubleValue();
