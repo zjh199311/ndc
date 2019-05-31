@@ -27,6 +27,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -112,6 +113,8 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         Long unixTime = System.currentTimeMillis() / 1000;
         cartBasketBean.setCtime(unixTime.intValue());
         if (null == findBasketBeanById) {
+            BigDecimal abs;
+
             if (FinalDatas.ZERO == cartBasketEditQueryDTO.getGid()) {
                 cartBasketBean.setPrice(new BigDecimal(cartBasketEditQueryDTO.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
                 cartBasketBean.setAmount(new BigDecimal(1));
@@ -121,9 +124,20 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
                 cartBasketBean.setAmount(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
                 cartBasketBean.setUnitprice(cartGoodsBean.getPrice());
                 //计算总价保留两个小数点
-                //总价
-                BigDecimal multiply = cartGoodsBean.getPrice().multiply(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
-                cartBasketBean.setPrice(multiply.setScale(2, BigDecimal.ROUND_HALF_UP));
+                //总价（传入的总价除于食品价格与传入的数量校验.小于或者等于0.01）
+                BigDecimal divide = new BigDecimal(cartBasketEditQueryDTO.getPrice()).divide(cartGoodsBean.getPrice(), 5, RoundingMode.HALF_UP);
+                BigDecimal subtract = divide.subtract(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
+                if (subtract.compareTo(BigDecimal.ZERO) < 0) {
+                    abs = subtract.abs();
+                } else {
+                    abs = subtract;
+                }
+                if (abs.compareTo(new BigDecimal(0.01)) <= 0) {
+                    cartBasketBean.setPrice(new BigDecimal(cartBasketEditQueryDTO.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                }else{
+                    BigDecimal multiply = cartGoodsBean.getPrice().multiply(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
+                    cartBasketBean.setPrice(multiply.setScale(2, BigDecimal.ROUND_HALF_UP));
+                }
                 cartBasketBean.setSid(cartGoodsBean.getPid());
             }
             this.dao.insertSelective(cartBasketBean);
@@ -194,8 +208,8 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         List<CartStoreActivityResultDTO> findStoreActivityBySid = this.cartStoreActivityBeanHmDAO.executeListMethod(cartBasketListQueryDTO.getSid(), "findStoreActivityBySid", CartStoreActivityResultDTO.class);
         if (CollectionUtils.isEmpty(findStoreActivityBySid)) {
             LogUtil.info("该商家没有优惠活动", "findStoreActivityBySid" + findStoreActivityBySid);
-        }else{
-            for (int i = 0; i <findStoreActivityBySid.size(); i++) {
+        } else {
+            for (int i = 0; i < findStoreActivityBySid.size(); i++) {
                 CartStoreActivityResultDTO cartStoreActivityResultDTO = findStoreActivityBySid.get(i);
                 //查询时根据满减值倒叙来排列,如果大于则计算后直接跳出循环.如果没大于则再次循环直到满足结果
                 if (!StringUtil.isBlank(cartStoreActivityResultDTO.getFull()) && totalPrice.compareTo(new BigDecimal(cartStoreActivityResultDTO.getFull())) >= 0) {
@@ -217,9 +231,9 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
         if (BigDecimal.ZERO.compareTo(totalDisPrice) != 0)
 
         {
-            cartBaskerListResultDTO.setTotalDisPrice(String.valueOf(totalDisPrice.setScale(2,BigDecimal.ROUND_HALF_UP)));
+            cartBaskerListResultDTO.setTotalDisPrice(String.valueOf(totalDisPrice.setScale(2, BigDecimal.ROUND_HALF_UP)));
         }
-        cartBaskerListResultDTO.setTotalPrice(String.valueOf(totalPrice.setScale(2,BigDecimal.ROUND_HALF_UP)));
+        cartBaskerListResultDTO.setTotalPrice(String.valueOf(totalPrice.setScale(2, BigDecimal.ROUND_HALF_UP)));
         cartBaskerListResultDTO.setCarts(findBasketBeanById);
         return ResultUtil.getSuccess(cartBaskerListResultDTO);
     }
@@ -307,9 +321,21 @@ public class CartBasketServiceImpl extends HmBaseService<CartBasketBean, Integer
             ResultDTO<Object> dto = deleteInfoById(cartBasketDelQueryDTO);
             return dto;
         } else {
-            //总价
-            BigDecimal totalprice = cartGoodsBean.getPrice().multiply(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
-            cartBasketBean.setPrice(totalprice);
+            //总价（传入的总价除于食品价格与传入的数量校验.小于或者等于0.01）
+            BigDecimal abs;
+            BigDecimal divide = new BigDecimal(cartBasketEditQueryDTO.getPrice()).divide(cartGoodsBean.getPrice(), 5, RoundingMode.HALF_UP);
+            BigDecimal subtract = divide.subtract(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
+            if (subtract.compareTo(BigDecimal.ZERO) < 0) {
+                abs = subtract.abs();
+            } else {
+                abs = subtract;
+            }
+            if (abs.compareTo(new BigDecimal(0.01)) <= 0) {
+                cartBasketBean.setPrice(new BigDecimal(cartBasketEditQueryDTO.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
+            }else{
+                BigDecimal totalprice = cartGoodsBean.getPrice().multiply(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
+                cartBasketBean.setPrice(totalprice);
+            }
             cartBasketBean.setUnitprice(cartGoodsBean.getPrice());
             cartBasketBean.setAmount(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
             if (StringUtil.isBlank(cartBasketEditQueryDTO.getRemark())) {
