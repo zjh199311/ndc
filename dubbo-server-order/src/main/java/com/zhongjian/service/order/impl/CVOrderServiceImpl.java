@@ -10,7 +10,9 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.zhongjian.common.IdWorkers;
 import com.zhongjian.dao.jdbctemplate.CVOrderDao;
 import com.zhongjian.dao.jdbctemplate.IntegralVipDao;
 import com.zhongjian.dao.jdbctemplate.OrderDao;
@@ -29,6 +31,9 @@ public class CVOrderServiceImpl implements CVOrderService {
 
 	@Autowired
 	private IntegralVipDao integralVipDao;
+	
+	@Autowired
+	private IdWorkers idWorkers;
 
 	@Override
 	public Map<String, Object> previewCVOrder(Integer uid, Integer sid, String type, Integer extra) {
@@ -274,10 +279,189 @@ public class CVOrderServiceImpl implements CVOrderService {
 	}
 
 	@Override
-	public Map<String, Object> createOrder(Integer uid, Integer sid, String type, Integer extra, Integer addressId,
+	@Transactional
+	public Map<String, Object> createOrder(Integer uid, Integer sid, String type, Integer extra,String isSelfMention, Integer addressId,
 			Integer unixTime) {
-		//
-		return null;
+		// 结果集定义
+		Map<String, Object> resMap = new HashMap<String, Object>();
+		List<Map<String, Object>> goodMaps = new ArrayList<Map<String, Object>>();
+		//store order
+		Map<String,Object> cvOrderMap = new HashMap<String, Object>();
+		//user order
+		Map<String,Object> userOrderMap = new HashMap<String, Object>();
+		// 商铺下商品总价
+		BigDecimal storeAmountBigDecimal = BigDecimal.ZERO;
+		// 商户活动后价格
+		BigDecimal actualStoreAmountBigDecimal = BigDecimal.ZERO;
+		// 商户名
+		Integer dataSid = 0;
+		// 会员折扣
+		Double memberDiscount = 0.95;
+		// 会员单笔limit
+		Double limitOne = 200d;
+		Double limitDayRelief = 10d;
+		// 积分使用
+		BigDecimal integralPriceData = BigDecimal.ZERO;
+		//优惠券使用
+		BigDecimal couponPriceData = BigDecimal.ZERO;
+		// 该单应付总价
+		BigDecimal needPay = BigDecimal.ZERO;
+		//总价
+		StringBuilder remarks = new StringBuilder();
+		int createTime = (int) (System.currentTimeMillis() / 1000);
+		List<Map<String, Object>> storeGoodsList = cvOrderDao.getCVStoreByUidAndSid(sid, uid);
+		//查出购物车详情
+		for (Iterator<Map<String, Object>> iterator = storeGoodsList.iterator(); iterator.hasNext();) {
+			Map<String, Object> cvStore = (Map<String, Object>) iterator.next();
+			boolean flag = true;
+			if (flag == true) {
+				dataSid = (Integer) cvStore.get("pid");// 商户名
+				flag = false;
+			}
+			BigDecimal amoBigDecimal = (BigDecimal) cvStore.get("amount");// 数量
+			BigDecimal priceBigDecimal = cvStore.get("price") == null ? (BigDecimal) cvStore.get("basketprice")
+					: (BigDecimal) cvStore.get("price");
+			BigDecimal singleAmount = amoBigDecimal.multiply(priceBigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP);
+			Map<String, Object> good = new HashMap<String, Object>();
+			String gname = cvStore.get("gname") == null? "其他" : (String) cvStore.get("gname");
+			String unit = cvStore.get("unit") == null? "个" : (String) cvStore.get("unit");
+			good.put("gname", gname);
+			good.put("price", singleAmount);
+			good.put("amount", amoBigDecimal);
+			good.put("unit",unit);
+			good.put("gid", cvStore.get("gid"));
+			good.put("uid", uid);
+			good.put("sid", dataSid);
+			good.put("ctime", createTime);
+			String remark = (String) cvStore.get("remark");
+			good.put("remark", remark);
+			if (!"".equals(remark)) {
+				remarks.append("[").append(gname).append("]").append(cvStore.get("remark") );
+			}
+			goodMaps.add(good);
+			storeAmountBigDecimal = storeAmountBigDecimal.add(singleAmount);
+		}
+		CartStoreActivityResultDTO storeActivtiy = orderDao.getStoreActivtiy(sid, storeAmountBigDecimal);
+		if (storeActivtiy == null) {
+			actualStoreAmountBigDecimal = storeAmountBigDecimal;
+		} else {
+			if (storeActivtiy.getType() == 0) {
+				actualStoreAmountBigDecimal = storeAmountBigDecimal.subtract(new BigDecimal(storeActivtiy.getReduce()))
+						.setScale(2, BigDecimal.ROUND_HALF_UP);
+			} else {
+				actualStoreAmountBigDecimal = storeAmountBigDecimal
+						.multiply(new BigDecimal(storeActivtiy.getDiscount())).setScale(2, BigDecimal.ROUND_HALF_UP);
+			}
+		}
+		needPay = actualStoreAmountBigDecimal;
+		// 积分优惠券初始化显示----start
+		Map<String, Object> uMap = integralVipDao.getIntegralAndVipInfo(uid);
+		Integer integral = (Integer) (uMap.get("integral"));
+		boolean todayCouponUse = cvOrderDao.todayCouponUse(uid);
+		Integer vipStatus = (Integer) (uMap.get("vip_status"));
+		// 动态获取VIP参数 --start
+		Map<String, Object> config = getConfigByUidAndStatus(uid, vipStatus);
+		limitDayRelief = config.get("cvlimitDayRelief") == null ? limitDayRelief
+				: (Double) config.get("cvlimitDayRelief");
+		limitOne = config.get("cvlimitOne") == null ? limitOne : (Double) config.get("cvlimitOne");
+		memberDiscount = config.get("cvdiscount") == null ? memberDiscount : (Double) config.get("cvdiscount");
+
+		// 动态获取VIP参数 --end
+		BigDecimal subtract = new BigDecimal(1).subtract(new BigDecimal(memberDiscount));
+		Double canFavourOne = subtract.multiply(new BigDecimal(limitOne)).setScale(2, BigDecimal.ROUND_HALF_UP)
+				.doubleValue();
+		Double vipRelief = cvOrderDao.getVipRelief(uid);
+		Double canFavourDay = limitDayRelief - vipRelief;
+		if (canFavourDay < 0.00) {
+			canFavourDay = 0.00;
+		}
+		BigDecimal vipFavourMoney = BigDecimal.ZERO;
+		if (canFavourDay < canFavourOne) {
+			vipFavourMoney = new BigDecimal(canFavourDay);
+		} else {
+			vipFavourMoney = new BigDecimal(canFavourOne);
+		}
+		BigDecimal vipFavourable = subtract.multiply(needPay).setScale(2, BigDecimal.ROUND_HALF_UP);
+		if (vipFavourable.compareTo(vipFavourMoney) == 1) {
+			vipFavourable = vipFavourMoney;
+		}
+		// 判断是否是会员
+		if (vipStatus == 1) {
+			needPay = needPay.subtract(vipFavourable);
+		}
+		BigDecimal priceForIntegral = needPay;
+		BigDecimal priceForCoupon = needPay;
+		if ("1".equals(type) && integral > 0) {
+			BigDecimal hundredBigDecimal = new BigDecimal(100);
+			// 使用积分
+			BigDecimal integralBigDecimal = new BigDecimal(integral);
+			BigDecimal integralPrice = integralBigDecimal.divide(hundredBigDecimal);
+			if (priceForIntegral.compareTo(integralPrice) > 0) {
+				integralPriceData = integralPrice;
+				needPay = needPay.subtract(integralPrice);
+			} else {
+				// 全积分支付
+				integralPriceData = priceForIntegral;
+				needPay = BigDecimal.ZERO;
+			}
+		}
+		
+		boolean useCoupon = false;
+		if ("2".equals(type) && todayCouponUse) {
+			Map<String, Object> couponInfo = orderDao.getCouponInfo(uid, extra);
+			if (couponInfo != null) {
+				BigDecimal payFullBigDecimal = (BigDecimal) couponInfo.get("pay_full");
+				Integer couponType = (Integer) couponInfo.get("type");
+				if (couponType == 0) {
+					if (priceForCoupon.compareTo(payFullBigDecimal) >= 0) {
+						useCoupon = true;
+						BigDecimal couponPrice = (BigDecimal) couponInfo.get("price");
+						needPay = needPay.subtract(couponPrice);
+						if (priceForCoupon.compareTo(couponPrice) < 0) {
+							couponPrice = priceForCoupon;
+							needPay = BigDecimal.ZERO;
+						}
+						couponPriceData = couponPrice;
+					}
+				} 
+			}
+		}
+		//便利店商户订单封装
+		cvOrderMap.put("order_sn", "CV" + idWorkers.getCVOrderIdWork().nextId());
+		cvOrderMap.put("total", storeAmountBigDecimal);
+		cvOrderMap.put("payment", actualStoreAmountBigDecimal);
+		cvOrderMap.put("sid", sid);
+		cvOrderMap.put("ctime", createTime);
+		cvOrderMap.put("order_status", 0);
+		if ("1".equals(isSelfMention)) {
+			cvOrderMap.put("ordertaking_time", createTime);
+			cvOrderMap.put("order_status", 3);
+		}
+		cvOrderMap.put("addressid", addressId);
+		cvOrderMap.put("pay_status", 0);
+		cvOrderMap.put("deliver_fee", BigDecimal.ZERO);
+		cvOrderMap.put("remark", remarks.toString());
+		//便利店用户订单封装
+		userOrderMap.put("order_sn", "UCV" + idWorkers.getCVUserOrderIdWork().nextId());
+		userOrderMap.put("out_trade_no", "CV" + idWorkers.getCVOutTradeIdWork().nextId());
+		userOrderMap.put("pay_status", 0);
+		userOrderMap.put("uid", uid);
+		userOrderMap.put("integralPrice",integralPriceData);
+		userOrderMap.put("store_activity_price",storeAmountBigDecimal.subtract(actualStoreAmountBigDecimal));
+		userOrderMap.put("totalPrice",needPay);
+		userOrderMap.put("originalPrice",actualStoreAmountBigDecimal);
+		userOrderMap.put("ctime", createTime);
+		userOrderMap.put("vip_relief",vipFavourable);
+		if (useCoupon) {
+			userOrderMap.put("coupon_price",couponPriceData);
+			userOrderMap.put("coupon_id",extra);
+			orderDao.changeCouponToOne(extra);
+			cvOrderDao.todayCouponSetUse(uid);
+		}
+		Integer cvUserOrderId = cvOrderDao.addCVUserOrder(userOrderMap);
+		
+		
+		return resMap;
 	}
 
 	@Override

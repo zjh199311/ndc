@@ -171,12 +171,21 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					}
 					flag = false;
 				}
-
-				BigDecimal amoBigDecimal = (BigDecimal) map.get("amount");// 数量
-				BigDecimal priceBigDecimal = map.get("price") == null ? (BigDecimal) map.get("basketprice")
-						: (BigDecimal) map.get("price");
-				BigDecimal singleAmount = amoBigDecimal.multiply(priceBigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP);
-
+				//商品录入价格
+				BigDecimal singleAmount =null;
+				//购物车物品总价
+				BigDecimal basketPrice = (BigDecimal) map.get("basketprice");
+				// 数量
+				BigDecimal amoBigDecimal = (BigDecimal) map.get("amount");
+				//购物车单价
+				BigDecimal unitPrice = (BigDecimal) map.get("unitPrice");
+				//商品单价
+				BigDecimal goodUnitPrice = (BigDecimal) map.get("price");
+				if (goodUnitPrice == null || unitPrice.compareTo(goodUnitPrice) == 0) {
+					singleAmount = basketPrice;
+				}else {
+					singleAmount =  amoBigDecimal.multiply(goodUnitPrice).setScale(2, BigDecimal.ROUND_HALF_UP);
+				}
 				if (toCreateOrder) {
 					hmCart = new HashMap<String, Object>();
 					Integer gid = (Integer) map.get("gid");

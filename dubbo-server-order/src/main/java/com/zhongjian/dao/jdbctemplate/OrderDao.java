@@ -53,7 +53,8 @@ public class OrderDao extends MongoDBDaoBase {
 	// activity ----end
 
 	public List<Map<String, Object>> getBasketByUidAndSid(Integer sid, Integer uid) {
-		String sql = "SELECT hm_goods.price,hm_basket.amount,hm_basket.gid,hm_goods.gname,hm_goods.unit,hm_shopown.sname,"
+		String sql = "SELECT hm_goods.price,hm_basket.amount,hm_basket.gid,hm_basket.unitPrice,"
+				+ "hm_goods.gname,hm_goods.unit,hm_shopown.sname,"
 				+ "hm_shopown.unFavorable,hm_shopown.marketid,hm_shopown.pid,"
 				+ "hm_basket.price basketprice,hm_basket.remark from hm_basket LEFT JOIN hm_goods ON hm_basket.gid = "
 				+ "hm_goods.id INNER JOIN hm_shopown on  hm_shopown.pid = hm_basket.sid where "
@@ -116,18 +117,10 @@ public class OrderDao extends MongoDBDaoBase {
 		return num > 0 ? false : true;
 	}
 
-	// 优惠券-----start
-//	// 查看优惠券数量
-//	public Integer getCouponsNum(Integer uid) {
-//		String sql = "SELECT COUNT(1) from hm_user_coupon,hm_coupon where uid = ? and state "
-//				+ "= 0 and timeout = 0 and hm_user_coupon.couponid = hm_coupon.id";
-//		Integer num = jdbcTemplate.queryForObject(sql, new Object[] { uid }, Integer.class);
-//		return num;
-//	}
 
 	// 查看优惠券数量
 	public Integer getCouponsNumCanUse(Integer uid) {
-		String sql = "SELECT COUNT(1) from hm_user_coupon where uid = ? and state = 0";
+		String sql = "SELECT COUNT(1) from hm_user_coupon where uid = ? and state = 0 and model = 1";
 		Integer num = jdbcTemplate.queryForObject(sql, new Object[] { uid }, Integer.class);
 		return num;
 	}
