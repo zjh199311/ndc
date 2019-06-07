@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -53,15 +54,34 @@ public class CVOrderDao {
 
 		return couponUse == 0?true:false;
 	}
+	//查询用户记录表
+		public Map<String, Object> getCVUserOrderRecord(Integer uid) {
+			String sql = "SELECT vip_relief,order_num,today_order_num from hm_cvuserorder_record where uid = ? for update";
+			Map<String, Object> resMap = null;
+			try {
+				resMap = jdbcTemplate.queryForMap(sql, uid);
+			} catch (EmptyResultDataAccessException e) {
+			}
+
+			return resMap;
+		}
 	
-	// 更改优惠券状态为已使用
-	public boolean todayCouponSetUse(Integer uid) {
+	
+	// 更新用户记录表
+	public boolean recordUpdate(Map<String, Object> record) {
+		String sql = "update hm_cvuserorder_record set vip_relief = ?,order_num = ?, today_order_num = ? where uid = ?";
+		System.out.println(record.get("order_num"));
+		return jdbcTemplate.update(sql, record.get("vip_relief"), record.get("order_num"), record.get("today_order_num"), record.get("uid")) > 0 ? true : false;
+	}
+
+	//优惠券设置今日已使用
+	public boolean recordCouponUse(Integer uid) {
 		String sql = "update hm_cvuserorder_record set coupon_use = 1 where uid = ? and coupon_use = 0";
 		return jdbcTemplate.update(sql, uid) > 0 ? true : false;
 	}
-
-	// 更改优惠券状态为未使用
-	public boolean todayCouponSetNoUse(Integer uid) {
+	
+	// 取消订单更新用户记录表
+	public boolean recordCouponCancel(Integer uid) {
 		String sql = "update hm_cvuserorder_record set coupon_use = 0 where uid = ? and coupon_use = 1";
 		return jdbcTemplate.update(sql, uid) > 0 ? true : false;
 	}
@@ -76,7 +96,7 @@ public class CVOrderDao {
 	// hm_cvuser_order 新增记录
 	public Integer addCVUserOrder(Map<String, Object> map) {
 		final String sql = "INSERT INTO hm_cvuser_order (order_sn,out_trade_no,pay_status,uid,integralPrice,store_activity_price,"
-				+ "vip_relief,coupon_price,coupon_id,is_show,totalPrice,originalPrice,ctime) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ "vip_relief,coupon_price,coupon_id,is_show,totalPrice,originalPrice,ctime,deliver_fee) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
@@ -89,11 +109,12 @@ public class CVOrderDao {
 				ps.setBigDecimal(6, (BigDecimal) map.get("store_activity_price"));
 				ps.setBigDecimal(7, (BigDecimal) map.get("vip_relief"));
 				ps.setBigDecimal(8, (BigDecimal) map.get("coupon_price"));
-				ps.setInt(9, (Integer) map.get("couponid"));
+				ps.setObject(9, (Integer) map.get("coupon_id"),java.sql.Types.INTEGER);
 				ps.setInt(10, 1);
 				ps.setBigDecimal(11, (BigDecimal) map.get("totalPrice"));
 				ps.setBigDecimal(12, (BigDecimal) map.get("originalPrice"));
 				ps.setInt(13, (Integer) map.get("ctime"));
+				ps.setBigDecimal(14, (BigDecimal) map.get("deliver_fee"));
 				return ps;
 			}
 		}, keyHolder);
@@ -113,19 +134,96 @@ public class CVOrderDao {
 				ps.setBigDecimal(3, (BigDecimal) map.get("total"));
 				ps.setBigDecimal(4, (BigDecimal) map.get("payment"));
 				ps.setInt(5, (Integer) map.get("ctime"));
-				ps.setInt(6, (Integer) map.get("ordertaking_time"));
-				ps.setInt(7, (Integer) map.get("orderend_time"));
+				ps.setObject(6, (Integer) map.get("ordertaking_time"),java.sql.Types.INTEGER);
+				ps.setObject(7, (Integer) map.get("orderend_time"),java.sql.Types.INTEGER);
 				ps.setInt(8, (Integer) map.get("addressid"));
 				ps.setInt(9, (Integer) map.get("order_status"));
 				ps.setInt(10, (Integer) map.get("pay_status"));
 				ps.setBigDecimal(11, (BigDecimal) map.get("deliver_fee"));
-				ps.setInt(12, (Integer) map.get("remark"));
+				ps.setString(12, (String) map.get("remark"));
 				ps.setInt(13, (Integer) map.get("uoid"));
 				return ps;
 			}
 		}, keyHolder);
 		return keyHolder.getKey().intValue();
 	}
+	public void addCVOrderDetail(List<Map<String , Object>> list,Integer oid)   
+    {
+       final List<Map<String, Object>> cvOrderDetails = list;   
+       String sql="insert into hm_cvorder_detail(gid,gname,uid,unit,price,amount,oid,sid,ctime,remark)" +  
+            " values(?,?,?,?,?,?,?,?,?,?)";   
+      jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+		
+		@Override
+		public void setValues(PreparedStatement ps, int i) throws SQLException {
+			ps.setObject(1, cvOrderDetails.get(i).get("gid"),java.sql.Types.INTEGER);
+			ps.setObject(2, cvOrderDetails.get(i).get("gname"),java.sql.Types.VARCHAR);
+			ps.setObject(3, cvOrderDetails.get(i).get("uid"),java.sql.Types.INTEGER);
+			ps.setObject(4, cvOrderDetails.get(i).get("unit"),java.sql.Types.VARCHAR);
+			ps.setObject(5, cvOrderDetails.get(i).get("price"),java.sql.Types.BIGINT);
+			ps.setObject(6, cvOrderDetails.get(i).get("amount"),java.sql.Types.BIGINT);
+			ps.setObject(7, oid);
+			ps.setObject(8, cvOrderDetails.get(i).get("sid"),java.sql.Types.INTEGER);
+			ps.setObject(9, cvOrderDetails.get(i).get("ctime"),java.sql.Types.INTEGER);
+			ps.setObject(10, cvOrderDetails.get(i).get("remark"),java.sql.Types.VARCHAR);
+		}
+		
+		@Override
+		public int getBatchSize() {
+			 return cvOrderDetails.size(); 
+		}
+	});
+    }
 	
-
+	// hm_cvuserorder_record添加
+	public void addCVUserOrderRecord(Map<String, Object> map) {
+		String sql = "INSERT INTO `hm_cvuserorder_record` (uid,vip_relief,order_num,today_order_num,coupon_use) VALUES (?,?,?,?,?)";
+		jdbcTemplate.update(sql, map.get("uid"), map.get("vip_relief"), map.get("order_num"), map.get("today_order_num"), map.get("coupon_use"));
+	}
+	//查询用户订单的uoid
+	public Integer getUidByOutTradeNo(String outTradeNo)  {
+		String sql = "select id from hm_cvuser_order where out_trade_no = ?";
+		Integer id = null;
+		try {
+			id  = jdbcTemplate.queryForObject(sql, new Object[] { outTradeNo }, Integer.class);	
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return id;
+	}
+	
+	//查询用户订单的vip减免，优惠券id，积分价值
+	public Map<String, Object> getOrderDetailById(Integer orderId)  {
+		String sql = "select uid,vip_relief,integralPrice,coupon_id from hm_cvuser_order where id = ?";
+		Map<String, Object> resMap = null;
+		try {
+			resMap = jdbcTemplate.queryForMap(sql, orderId);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return resMap;
+	}
+	
+	public boolean updateUCVOrderToS(String outTradeNo, Integer unixTime){
+		String sql = "update hm_cvuser_order set pay_status = 1,pay_time = ? where out_trade_no = ? and pay_status = 0";
+		return jdbcTemplate.update(sql, unixTime, outTradeNo) > 0 ? true : false;
+		
+	}
+	
+	public boolean updateUCVStatusToTimeout(Integer UCVOrderId) {
+		String sql = "update hm_cvuser_order set pay_status = 2 where id = ? and pay_status = 0";
+		return jdbcTemplate.update(sql, UCVOrderId) > 0 ? true : false;
+	}
+	
+	public boolean updateCVOrderToS(Integer UCVOrderId){
+		String sql = "update hm_cvorder set pay_status = 1 where uoid = ? and pay_status = 0";
+		return jdbcTemplate.update(sql, UCVOrderId) > 0 ? true : false;
+	}
+	public boolean updateCVOrderToTimeout(Integer UCVOrderId){
+		String sql = "update hm_cvorder set pay_status = 2 where uoid = ? and pay_status = 0";
+		return jdbcTemplate.update(sql, UCVOrderId) > 0 ? true : false;
+	}
+	
+	public void addWaitDeliverOrder(Map<String, Object> map) {
+		String sql = "INSERT INTO `hm_waitdeliver_order` (id,servercenter,orderId) VALUES (?,?,?)";
+		jdbcTemplate.update(sql, map.get("id"), map.get("servercenter"), map.get("orderId"));
+	}
 }

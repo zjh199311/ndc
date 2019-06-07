@@ -11,8 +11,11 @@ import com.zhongjian.dao.jdbctemplate.MarketDao;
 import com.zhongjian.dao.jdbctemplate.OrderDao;
 import com.zhongjian.dao.jdbctemplate.UserDao;
 import com.zhongjian.localservice.OrderService;
+import com.zhongjian.service.order.CVOrderService;
 import com.zhongjian.task.AddressTask;
+import com.zhongjian.util.TaskUtil;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +33,8 @@ public class AppTest {
     AddressDao addressDao;
 
     @Resource
-    private OrderService orderService;
-
+    private CVOrderService cvOrderService;
+    
     @Autowired
     MarketDao marketDao;
 
@@ -43,20 +46,9 @@ public class AppTest {
 
     @Test
     public void test() {
-        Map<String, Object> startAndEnd = marketDao.getStartAndEnd(118);
-        if (startAndEnd == null) {
-            System.out.println("------------------null-------------------");
-        } else {
-            if (startAndEnd.get("starttime") == null) {
-                System.out.println("------------------null-------------------");
-            }
-            String aString = startAndEnd.get("starttime") + "-" + startAndEnd.get("endtime");
-            System.out.println(aString);
-        }
+    	cvOrderService.cancelOrder(17);
+    	cvOrderService.cancelOrder(18);
+    	cvOrderService.cancelOrder(19);
     }
 
-    @Test
-    public void test1() {
-        orderService.todoSth();
-    }
 }

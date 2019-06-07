@@ -1,46 +1,42 @@
-package com.zhongjian.servlet;
+package com.zhongjian.servlet.cvstore;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.zhongjian.dto.cart.basket.query.CartBasketEditQueryDTO;
 import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultUtil;
-import com.zhongjian.dto.user.query.UserQueryDTO;
-import com.zhongjian.dto.user.result.UserCopResultDTO;
-import com.zhongjian.service.user.UserService;
-
 import org.apache.log4j.Logger;
 
+import com.zhongjian.common.FormDataUtil;
 import com.zhongjian.common.GsonUtil;
 import com.zhongjian.common.ResponseHandle;
 import com.zhongjian.common.SpringContextHolder;
 import com.zhongjian.executor.ThreadPoolExecutorSingle;
+import com.zhongjian.service.cart.cvstore.CartCvstoreService;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 
-@WebServlet(value = "/v1/user/getcoupons", asyncSupported = true)
-public class GetCouponsServlet extends HttpServlet {
-	/**
-	 * 
-	 */
+@WebServlet(value = "/v1/cvcart/edit", asyncSupported = true)
+public class CartEditServlet extends HttpServlet {
+
 	private static final long serialVersionUID = 1L;
 
-	private static Logger log = Logger.getLogger(GetCouponsServlet.class);
+	private static Logger log = Logger.getLogger(CartEditServlet.class);
 
-	private UserService userService = (UserService) SpringContextHolder
-			.getBean(UserService.class);
+	private CartCvstoreService cartCvstoreService = (CartCvstoreService) SpringContextHolder
+			.getBean(CartCvstoreService.class);
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		Map<String, String> formData = FormDataUtil.getFormData(request);
 		AsyncContext asyncContext = request.startAsync();
 		ServletInputStream inputStream = request.getInputStream();
 		inputStream.setReadListener(new ReadListener() {
@@ -54,18 +50,12 @@ public class GetCouponsServlet extends HttpServlet {
 					String result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SERVERERR));
 					try {
 						Integer uid = (Integer) request.getAttribute("uid");
-						ServletRequest request2 = asyncContext.getRequest();
-						String price = request2.getParameter("price");
-						Integer marketId = null;
-						String marketIdString = request2.getParameter("marketid");
-						if (marketIdString != null) {
-							marketId = Integer.valueOf(marketIdString);
-						}
-						String model = request2.getParameter("model");
-						if (model == null) {
-							model = "market";
-						}
-						result = GetCouponsServlet.this.handle(uid, marketId,price,model);
+				
+					Integer id= Integer.valueOf(formData.get("id"));
+					String amount = formData.get("amount");
+					String remark = formData.get("remark");
+					String price = formData.get("price");					
+					result = CartEditServlet.this.handle(id,uid, amount, remark,price);
 						// 返回数据
 						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
 					} catch (Exception e) {
@@ -74,7 +64,7 @@ public class GetCouponsServlet extends HttpServlet {
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
-						log.error("fail user/getcoupons : " + e.getMessage());
+						log.error("fail cart/edit : " + e.getMessage());
 					}
 					asyncContext.complete();
 				});
@@ -88,22 +78,16 @@ public class GetCouponsServlet extends HttpServlet {
 
 	}
 
-	private String handle(Integer uid, Integer marketId,String price,String model) {
+	private String handle(Integer id, Integer uid, String amount, String remark,String price) {
 		if (uid == 0) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
 		}
-		UserQueryDTO userQueryDTO = new UserQueryDTO();
-		userQueryDTO.setUid(uid);
-		userQueryDTO.setMarketId(marketId);
-		userQueryDTO.setPrice(price);
-		List<UserCopResultDTO> coupons = null;
-		if ("market".equals(model)) {
-			coupons = userService.getCouponByUid(userQueryDTO);
-		}else if ("cvstore".equals(model)){
-			coupons = userService.getCVCouponByUid(userQueryDTO);
-		}else {
-			return GsonUtil.GsonString(ResultUtil.getFail(null));
-		}
-		return GsonUtil.GsonString(ResultUtil.getSuccess(coupons));
+		CartBasketEditQueryDTO cartBasketEditQueryDTO = new CartBasketEditQueryDTO();
+		cartBasketEditQueryDTO.setUid(uid);
+		cartBasketEditQueryDTO.setId(id);
+		cartBasketEditQueryDTO.setAmount(amount);
+		cartBasketEditQueryDTO.setRemark(remark);
+		cartBasketEditQueryDTO.setPrice(price);
+		return GsonUtil.GsonString(cartCvstoreService.editInfo(cartBasketEditQueryDTO));
 	}
 }

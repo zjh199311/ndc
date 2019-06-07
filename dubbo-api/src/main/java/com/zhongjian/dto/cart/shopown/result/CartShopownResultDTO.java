@@ -1,8 +1,6 @@
 package com.zhongjian.dto.cart.shopown.result;
 
-import com.google.gson.annotations.SerializedName;
 import com.zhongjian.dto.cart.basket.result.CartBasketResultDTO;
-import com.zhongjian.dto.cart.storeActivity.result.CartCvStoreActivityResultDTO;
 import com.zhongjian.dto.cart.storeActivity.result.CartStoreActivityResultDTO;
 import lombok.Data;
 

@@ -31,7 +31,7 @@
         <result column="end_time" property="endtime" jdbcType="INTEGER"/>
 
     </resultMap>
-    <select id="findCouponByUid" parameterType="java.lang.Integer" resultMap="BaseCoupon">
+    <select id="findCouponByUidModelOne" parameterType="java.lang.Integer" resultMap="BaseCoupon">
             SELECT
                 uc.price coupon,
                 uc.coupon mongoid,
@@ -43,10 +43,25 @@
             WHERE
                 uc.state = 0
             AND uc.uid = #{uid,jdbcType=INTEGER}
+            AND uc.model = 1
             order by uc.end_time asc,uc.price desc
     </select>
 
-
+    <select id="findCouponByUidModelTWO" parameterType="java.lang.Integer" resultMap="BaseCoupon">
+            SELECT
+                uc.price coupon,
+                uc.coupon mongoid,
+                uc.id,
+                uc.start_time,
+                uc.end_time
+            FROM
+                hm_user_coupon uc
+            WHERE
+                uc.state = 0
+            AND uc.uid = #{uid,jdbcType=INTEGER}
+            AND uc.model = 2
+            order by uc.end_time asc,uc.price desc
+    </select>
 </mapper>
 
 

@@ -1,4 +1,4 @@
-package com.zhongjian.servlet;
+package com.zhongjian.servlet.cvstore;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.ReadListener;
@@ -19,22 +19,22 @@ import com.zhongjian.common.GsonUtil;
 import com.zhongjian.common.ResponseHandle;
 import com.zhongjian.common.SpringContextHolder;
 import com.zhongjian.executor.ThreadPoolExecutorSingle;
-import com.zhongjian.service.cart.basket.CartBasketService;
+import com.zhongjian.service.cart.cvstore.CartCvstoreService;
 
 import java.io.IOException;
 import java.util.Map;
 
-@WebServlet(value = "/v1/cart/delete", asyncSupported = true)
-public class DeleteCartOne extends HttpServlet {
+@WebServlet(value = "/v1/cvcart/delete", asyncSupported = true)
+public class DeleteCartOneServlet extends HttpServlet {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static Logger log = Logger.getLogger(DeleteCartOne.class);
+	private static Logger log = Logger.getLogger(DeleteCartOneServlet.class);
 
-	private CartBasketService cartBasketService = (CartBasketService) SpringContextHolder.getBean(CartBasketService.class);
+	private CartCvstoreService cartCvstoreService = (CartCvstoreService) SpringContextHolder.getBean(CartCvstoreService.class);
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -55,7 +55,7 @@ public class DeleteCartOne extends HttpServlet {
 					try {
 					Integer uid = (Integer) request.getAttribute("uid");
 					Integer basketId = Integer.valueOf(formData.get("id"));
-					result = DeleteCartOne.this.handle(uid, basketId);
+					result = DeleteCartOneServlet.this.handle(uid, basketId);
 					// 返回数据
 				
 						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
@@ -65,7 +65,7 @@ public class DeleteCartOne extends HttpServlet {
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
-						log.error("fail cart/delete : " + e.getMessage());
+						log.error("fail cvcart/delete : " + e.getMessage());
 					}
 					asyncContext.complete();
 				});
@@ -86,6 +86,6 @@ public class DeleteCartOne extends HttpServlet {
 		CartBasketDelQueryDTO cartBasketDelQueryDTO = new CartBasketDelQueryDTO();
 		cartBasketDelQueryDTO.setUid(uid);
 		cartBasketDelQueryDTO.setId(id);
-		return GsonUtil.GsonString(cartBasketService.deleteInfoById(cartBasketDelQueryDTO));
+		return GsonUtil.GsonString(cartCvstoreService.deleteInfoById(cartBasketDelQueryDTO));
 	}
 }

@@ -8,6 +8,7 @@ import com.zhongjian.dao.entity.order.address.OrderAddressOrderBean;
 import com.zhongjian.dao.entity.order.shopown.OrderShopownBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
 import com.zhongjian.dao.jdbctemplate.AddressDao;
+import com.zhongjian.dao.jdbctemplate.CVOrderDao;
 import com.zhongjian.dao.jdbctemplate.IntegralVipDao;
 import com.zhongjian.dao.jdbctemplate.MarketDao;
 import com.zhongjian.dao.jdbctemplate.OrderDao;
@@ -37,6 +38,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service("orderService")
 public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> implements OrderService {
@@ -44,6 +46,9 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 	@Autowired
 	private OrderDao orderDao;
 
+	@Autowired
+	private CVOrderDao cvOrderDao;
+	
 	@Autowired
 	private AddressDao addressDao;
 
@@ -67,7 +72,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 
 	@SuppressWarnings("unchecked")
 	@Override
-	@Transactional(rollbackFor = NDCException.class)
+	@Transactional(rollbackFor = Exception.class)
 	public Map<String, Object> previewOrCreateOrder(Integer uid, Integer[] sids, String type, Integer extra,
 			String isSelfMention, boolean toCreateOrder, Integer addressId, Integer unixTime, Integer isAppointment)
 			throws NDCException {
@@ -558,8 +563,8 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			if (!orderDao.deleteBasketBySid(sids, uid)) {
 				throw new NDCException.DeleteBasketExcpetion();
 			}
-			if (integralPay) {
-				handleROrder(outTradeNo, needPay.toString());
+			if (integralPay || needPay.compareTo(BigDecimal.ZERO) == 0) {
+				handleROrder(outTradeNo, needPayString);
 				resMap.put("roid", roid);
 				resMap.put("status", 1);
 			} else {
@@ -808,7 +813,36 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 	@Transactional
 	public boolean handleROrder(String out_trade_no, String total_amount) {
 		int currentTime = (int) (System.currentTimeMillis() / 1000);
-		if (out_trade_no.startsWith("VQ")) {
+		if (out_trade_no.startsWith("CV")) {
+			if (cvOrderDao.updateUCVOrderToS(out_trade_no, currentTime)) {
+				Integer uoid = cvOrderDao.getUidByOutTradeNo(out_trade_no);
+				if (uoid != null) {
+					cvOrderDao.updateCVOrderToS(uoid);
+				}
+				//把订单推送至rabbitmq处理，confirm即可
+				//降级至本地处理
+				//1.把订单待接单持久化以免宕机未推给平台处理
+				Map<String, Object> waitDeliver = new HashMap<String, Object>();
+				waitDeliver.put("id", UUID.randomUUID().toString().replaceAll("\\-", ""));
+				waitDeliver.put("servercenter", propUtil.getOrderServerCenter());
+				waitDeliver.put("orderId", uoid);
+				cvOrderDao.addWaitDeliverOrder(waitDeliver);
+				if (true) {
+					//定时交由平台处理
+					//1.订单延时60s去改变deliverModel为2
+					//2.派单删除持久化记录，并推送消息给骑手
+					//(宕机重启后查询持久化记录，遍历为2的重复1，2步骤，否则直接派单)
+				}else {
+					//某些条件直接让商户接单
+					//商户完单要删除持久化记录
+				}
+				//2.异步推送消息给商户
+				
+				
+				//3.记录积分使用
+				//4.生成地址
+				//5.异步设置用户默认地址
+			}
 			return true;
 		} else {
 			if (orderDao.updateROStatusToSuccess(out_trade_no, currentTime)) {
@@ -918,9 +952,4 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		result.append("折");
 		return result.toString();
 	}
-	public static void main(String[] args) {
-		OrderServiceImpl orderServiceImpl = new OrderServiceImpl();
-		System.out.println(orderServiceImpl.previewOrderTime(1));
-	}
-
 }

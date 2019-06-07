@@ -7,10 +7,15 @@ import com.zhongjian.util.TaskUtil;
 public class TaskBase {
 
 	public void executeTask(Runnable runnable){
-		TaskUtil.executorTask.execute(runnable);
+		if (TaskUtil.executorTask != null) {
+			TaskUtil.executorTask.execute(runnable);
+		}
+		
 	}
 
 	public void executeShedule(Runnable runnable,long initialDelay,long delay){
-		TaskUtil.executorShedule.scheduleWithFixedDelay(runnable, initialDelay, delay, TimeUnit.SECONDS);
+		if (TaskUtil.executorShedule != null) {
+			TaskUtil.executorShedule.scheduleWithFixedDelay(runnable, initialDelay, delay, TimeUnit.SECONDS);
+		}
 	}
 }

@@ -30,7 +30,12 @@ public interface UserService {
 	List<UserCopResultDTO> getCouponByUid(UserQueryDTO userQueryDTO);
 
 
-
+	/**
+	 * 根据uid查询优惠卷信息.
+	 * @param userQueryDTO
+	 * @return
+	 */
+	List<UserCopResultDTO> getCVCouponByUid(UserQueryDTO userQueryDTO);
 
 
 }

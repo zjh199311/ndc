@@ -19,7 +19,7 @@ private OrderService orderService;
 		this.orderShedule();
 	}
 	void orderShedule() {
-		// 定时执行任务，每隔2秒钟执行一次
+		// 定时执行任务，每隔5分钟钟执行一次
 		executeShedule(new Runnable() {
 			@Override
 			public void run() {

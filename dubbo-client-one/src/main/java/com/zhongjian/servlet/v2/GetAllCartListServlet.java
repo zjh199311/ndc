@@ -1,11 +1,14 @@
-package com.zhongjian.servlet;
+package com.zhongjian.servlet.v2;
 
+import com.alibaba.dubbo.rpc.RpcContext;
 import com.zhongjian.common.GsonUtil;
 import com.zhongjian.common.ResponseHandle;
 import com.zhongjian.common.SpringContextHolder;
 import com.zhongjian.dto.common.CommonMessageEnum;
+import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.executor.ThreadPoolExecutorSingle;
+import com.zhongjian.service.cart.shopown.CartCvStoreShopService;
 import com.zhongjian.service.cart.shopown.CartShopownService;
 import org.apache.log4j.Logger;
 
@@ -15,11 +18,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
-/**
- * @Author: ldd
- */
-@WebServlet(value = "/v1/cart/getAllCartList", asyncSupported = true)
+@WebServlet(value = "/v2/cart/getAllCartList", asyncSupported = true)
 public class GetAllCartListServlet extends HttpServlet {
 
 	/**
@@ -31,6 +35,8 @@ public class GetAllCartListServlet extends HttpServlet {
 
 	private CartShopownService cartShopownService = (CartShopownService) SpringContextHolder
 			.getBean(CartShopownService.class);
+	private CartCvStoreShopService cartCvStoreShopService = (CartCvStoreShopService) SpringContextHolder
+			.getBean(CartCvStoreShopService.class);
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -76,6 +82,18 @@ public class GetAllCartListServlet extends HttpServlet {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
 		}
 		cartShopownService.deleteGoodsOnShelves(uid, false);
-		return GsonUtil.GsonString(cartShopownService.queryList(uid));
+		Map<String, Object> result = new HashMap<String, Object>();
+		ResultDTO<Object> cvstoreCarts = cartCvStoreShopService.queryList(uid);
+		Future<ResultDTO<Object>> futureCVStoreCarts = RpcContext.getContext().getFuture();
+		result.put("marketCart", cartShopownService.queryList(uid).getData());
+		try {
+			cvstoreCarts = futureCVStoreCarts.get();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			e.printStackTrace();
+		}
+		result.put("cvCart", cvstoreCarts.getData());
+		return GsonUtil.GsonString(ResultUtil.getSuccess(result));
 	}
 }

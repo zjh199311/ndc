@@ -13,7 +13,7 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
 
-@Service
+@Service("localOrderService")
 public class OrderServiceImpl extends HmBaseService<OrderRiderOrderBean, Integer> implements OrderService {
 
 

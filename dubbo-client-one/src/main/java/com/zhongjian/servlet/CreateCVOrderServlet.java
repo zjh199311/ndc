@@ -9,41 +9,36 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.zhongjian.dto.cart.address.query.CartAddressQueryDTO;
-import com.zhongjian.dto.cart.address.result.CartAddressResultDTO;
 import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.exception.NDCException;
+import com.zhongjian.exception.NDCException.CouponException;
+import com.zhongjian.exception.NDCException.DeleteBasketExcpetion;
+import com.zhongjian.exception.NDCException.IntegralException;
 
 import org.apache.log4j.Logger;
 
-import com.alibaba.dubbo.rpc.RpcContext;
 import com.zhongjian.common.FormDataUtil;
 import com.zhongjian.common.GsonUtil;
 import com.zhongjian.common.ResponseHandle;
 import com.zhongjian.common.SpringContextHolder;
 import com.zhongjian.executor.ThreadPoolExecutorSingle;
-import com.zhongjian.service.address.AddressService;
 import com.zhongjian.service.order.CVOrderService;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
-@WebServlet(value = "/v1/order/previewcvorder", asyncSupported = true)
-public class PreviewCVOrderServlet extends HttpServlet {
+@WebServlet(value = "/v1/order/createcvorder", asyncSupported = true)
+public class CreateCVOrderServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private static Logger log = Logger.getLogger(PreviewCVOrderServlet.class);
+	private static Logger log = Logger.getLogger(CreateCVOrderServlet.class);
 
-	private CVOrderService orderService = (CVOrderService) SpringContextHolder.getBean(CVOrderService.class);
+	private CVOrderService cvOrderService = (CVOrderService) SpringContextHolder.getBean(CVOrderService.class);
 
-	private AddressService addressServie = (AddressService) SpringContextHolder.getBean(AddressService.class);
-	
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		Map<String, String> formData = FormDataUtil.getFormData(request);
 		AsyncContext asyncContext = request.startAsync();
@@ -58,10 +53,9 @@ public class PreviewCVOrderServlet extends HttpServlet {
 				ThreadPoolExecutorSingle.executor.execute(() -> {
 					String result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SERVERERR));
 					try {
-						//sid,login_token 
 						Integer uid = (Integer) request.getAttribute("uid");
 						Integer sid = Integer.valueOf(formData.get("sid"));
-						String type = formData.get("type")==null?"0":formData.get("type");
+						String type = formData.get("type");
 						String extraString = formData.get("extra");
 						if ("2".equals(type) && extraString == null) {
 							result = GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.PARAM_LOST));
@@ -73,8 +67,11 @@ public class PreviewCVOrderServlet extends HttpServlet {
 						if ("2".equals(type)) {
 							extra = Integer.valueOf(extraString);
 						}
-						String isSelfMention = formData.get("isselfmention") == null?"0":formData.get("isselfmention");
-						result = PreviewCVOrderServlet.this.handle(uid,sid,type,extra,isSelfMention);
+						String isSelfMention = formData.get("isselfmention");
+						Integer addressId = Integer.valueOf(formData.get("addressid"));
+						Integer unixTime = Integer.valueOf(formData.get("unixtime"));
+						result = CreateCVOrderServlet.this.handle(uid, sid, type, extra, isSelfMention, addressId,
+								unixTime);
 						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -83,7 +80,7 @@ public class PreviewCVOrderServlet extends HttpServlet {
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
-						log.error("fail previeworder: " + e.getMessage());
+						log.error("fail createorder: " + e.getMessage());
 					}
 					asyncContext.complete();
 				});
@@ -97,33 +94,30 @@ public class PreviewCVOrderServlet extends HttpServlet {
 
 	}
 
-	private String handle(Integer uid, Integer sid, String type, Integer extra,String isselfmention) throws NDCException {
+	private String handle(Integer uid, Integer sid, String type, Integer extra, String isSelfMention,
+			Integer addressId, Integer unixTime) {
 		if (uid == 0) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
 		}
-		//check shop status
-		//请求服务获取预览订单数据--start
-		String serverTime = orderService.previewOrderTime();
-		Future<String> futureServerTime = RpcContext.getContext().getFuture();
-		CartAddressQueryDTO cartAddressQueryDTO = new CartAddressQueryDTO();
-		cartAddressQueryDTO.setId(0);
-		cartAddressQueryDTO.setUid(uid);
-		CartAddressResultDTO address = addressServie.previewCVOrderAddress(cartAddressQueryDTO,sid);
-		Future<CartAddressResultDTO> futureaddress = RpcContext.getContext().getFuture();
-		Map<String, Object> orderDetail = orderService.previewCVOrder(uid, sid, type, extra,isselfmention);
-		//请求服务获取预览订单数据--end
-		//获取数据
-		try {
-			serverTime = futureServerTime.get();
-		} catch (InterruptedException | ExecutionException e) {
+	
+		if (!cvOrderService.judgeHmShopownStatus(sid)) {
+			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE));
 		}
+		Map<String, Object> reslutMap = null;
 		try {
-			address = futureaddress.get();
-		} catch (InterruptedException | ExecutionException e) {
-			address = null;
+			reslutMap = cvOrderService.createOrder(uid, sid, type, extra, isSelfMention, addressId, unixTime);
+		} catch (NDCException e) {
+			if (e instanceof DeleteBasketExcpetion) {
+				return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.ORDER_ALREADYCREATE));
+			}
+			else if (e instanceof IntegralException) {
+				return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_INTEGRAL_ERR));
+			}else if (e instanceof CouponException) {
+				return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_COUPON_ERR));
+			}
 		}
-		orderDetail.put("serverTime", serverTime);
-		orderDetail.put("address", address);
-		return GsonUtil.GsonString(ResultUtil.getSuccess(orderDetail));
+
+		return GsonUtil.GsonString(ResultUtil.getSuccess(reslutMap));
 	}
+
 }

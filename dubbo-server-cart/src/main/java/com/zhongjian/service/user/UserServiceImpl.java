@@ -49,43 +49,44 @@ public class UserServiceImpl extends HmBaseService<UserBean, Integer> implements
 	@Override
 	public List<UserCopResultDTO> getCouponByUid(UserQueryDTO userQueryDTO) {
 
-		List<UserCopResultDTO> findCouponByUid = this.dao.executeListMethod(userQueryDTO.getUid(), "findCouponByUid",
-				UserCopResultDTO.class);
+		List<UserCopResultDTO> findCouponByUid = this.dao.executeListMethod(userQueryDTO.getUid(),
+				"findCouponByUidModelOne", UserCopResultDTO.class);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Iterator<UserCopResultDTO> iterator = findCouponByUid.iterator();
 		while (iterator.hasNext()) {
 			UserCopResultDTO userCopResultDTO = iterator.next();
 			Map<String, Object> coupInfo = couponDao.getCoupInfo(userCopResultDTO.getMongoId());
 			Integer type = (Integer) coupInfo.get("type");
-			//是否达到满减
-			//state设置
-			if ((new BigDecimal(userQueryDTO.getPrice()).compareTo((BigDecimal) coupInfo.get("pay_full")) >= 0 && type == 0) || type == 1) {
+			// 是否达到满减
+			// state设置
+			if ((new BigDecimal(userQueryDTO.getPrice()).compareTo((BigDecimal) coupInfo.get("pay_full")) >= 0
+					&& type == 0) || type == 1) {
 				userCopResultDTO.setState(0);
 				userCopResultDTO.setReason("");
 			} else {
 				userCopResultDTO.setState(1);
 				userCopResultDTO.setReason("未达到满减");
 			}
-			//type设置
+			// type设置
 			userCopResultDTO.setType(type);
-			//content设置
+			// content设置
 			if (type == 0) {
 				userCopResultDTO.setContent("满" + coupInfo.get("pay_full") + "元可用(每天限用一张)");
-			}else {
+			} else {
 				userCopResultDTO.setContent("抵消该单配送费(每天限用一张)");
 			}
-			
+
 			String startTime = sdf.format(new Date((long) userCopResultDTO.getStarttime() * 1000));
 			String endTime = sdf.format(new Date((long) userCopResultDTO.getEndtime() * 1000));
 			userCopResultDTO.setEndtime(null);
 			userCopResultDTO.setStarttime(null);
 			userCopResultDTO.setMongoId(null);
-			//time设置
+			// time设置
 			userCopResultDTO.setStart_time(startTime);
 			userCopResultDTO.setEnd_time(endTime);
-			
-			//去掉不符合市场的
-			List<Integer> mids = (List<Integer>)coupInfo.get("marketid");
+
+			// 去掉不符合市场的
+			List<Integer> mids = (List<Integer>) coupInfo.get("marketid");
 			Boolean flag = true;
 			if (mids != null) {
 				for (Integer mid : mids) {
@@ -97,10 +98,50 @@ public class UserServiceImpl extends HmBaseService<UserBean, Integer> implements
 				if (flag) {
 					iterator.remove();
 				}
-			}else {
+			} else {
 				continue;
 			}
 		}
 		return findCouponByUid;
+	}
+
+	@Override
+	public List<UserCopResultDTO> getCVCouponByUid(UserQueryDTO userQueryDTO) {
+
+		List<UserCopResultDTO> findCouponByUid = this.dao.executeListMethod(userQueryDTO.getUid(),
+				"findCouponByUidModelTWO", UserCopResultDTO.class);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Iterator<UserCopResultDTO> iterator = findCouponByUid.iterator();
+		while (iterator.hasNext()) {
+			UserCopResultDTO userCopResultDTO = iterator.next();
+			Map<String, Object> coupInfo = couponDao.getCoupInfo(userCopResultDTO.getMongoId());
+			Integer type = (Integer) coupInfo.get("type");
+			// 是否达到满减
+			// state设置
+			if ((new BigDecimal(userQueryDTO.getPrice()).compareTo((BigDecimal) coupInfo.get("pay_full")) >= 0
+					&& type == 0)) {
+				userCopResultDTO.setState(0);
+				userCopResultDTO.setReason("");
+			} else {
+				userCopResultDTO.setState(1);
+				userCopResultDTO.setReason("未达到满减");
+			}
+			// type设置
+			userCopResultDTO.setType(type);
+			// content设置
+			if (type == 0) {
+				userCopResultDTO.setContent("满" + coupInfo.get("pay_full") + "元可用(每天限用一张)");
+			}
+			String startTime = sdf.format(new Date((long) userCopResultDTO.getStarttime() * 1000));
+			String endTime = sdf.format(new Date((long) userCopResultDTO.getEndtime() * 1000));
+			userCopResultDTO.setEndtime(null);
+			userCopResultDTO.setStarttime(null);
+			userCopResultDTO.setMongoId(null);
+			// time设置
+			userCopResultDTO.setStart_time(startTime);
+			userCopResultDTO.setEnd_time(endTime);
+		}
+		return findCouponByUid;
+
 	}
 }

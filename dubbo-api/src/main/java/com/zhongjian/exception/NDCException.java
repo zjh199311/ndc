@@ -8,12 +8,12 @@ public class NDCException extends Exception {
 
 	}
 
-	// 购物车清除异常
+	// 积分变动异常
 	public static class IntegralException extends NDCException {
 
 	}
 
-	// 购物车清除异常
+	// 优惠券变动异常
 	public static class CouponException extends NDCException {
 
 	}
