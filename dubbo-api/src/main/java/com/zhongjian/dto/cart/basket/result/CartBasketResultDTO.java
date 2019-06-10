@@ -42,6 +42,11 @@ public class CartBasketResultDTO implements Serializable {
     private String foodName;
 
     /**
+     * 食品名称
+     */
+    private String gname;
+
+    /**
      * 商品描述
      */
     private String content;

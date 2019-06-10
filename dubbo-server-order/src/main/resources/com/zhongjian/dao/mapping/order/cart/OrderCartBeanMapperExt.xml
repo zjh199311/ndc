@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.order.cart.OrderCartBean" >
+
+    <resultMap id="BaseResultInfo" type="com.zhongjian.dto.cart.basket.result.CartBasketResultDTO">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="gid" property="gid" jdbcType="INTEGER"/>
+        <result column="gname" property="gname" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <select id="findCartOrderByOid" resultMap="BaseResultInfo" parameterType="java.lang.Integer">
+        SELECT
+            gid,
+            gname,
+            price
+        FROM
+            hm_cart c,
+            hm_order o,
+            hm_rider_order r
+        WHERE
+            c.oid = o.id
+        AND o.roid = r.id
+        AND o.id=#{id,jdbcType=INTEGER}
+    </select>
+
+</mapper>

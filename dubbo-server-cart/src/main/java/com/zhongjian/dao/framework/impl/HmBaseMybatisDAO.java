@@ -43,11 +43,11 @@ public abstract class HmBaseMybatisDAO<T, PK extends Serializable> extends SqlSe
      * @param statement
      * @param entity
      */
-    protected Integer create(String statement, T entity) {
-        return getSqlSession().insert(statement, entity);
-    }
+     protected Integer create(String statement, T entity) {
+     return getSqlSession().insert(statement, entity);
+     }
 
-    /**
+     /**
      * 根据ID列表进行删除，可以删除一个或多个
      *
      * @param statement

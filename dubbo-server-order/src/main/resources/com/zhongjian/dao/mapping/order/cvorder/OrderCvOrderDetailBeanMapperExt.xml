@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.order.cvorder.OrderCvOrderDetailBean">
+    <resultMap id="BaseResultInfo" type="com.zhongjian.dto.cart.basket.result.CartBasketResultDTO">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="gid" property="gid" jdbcType="INTEGER"/>
+        <result column="gname" property="gname" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="findCvOrderByOid" parameterType="java.lang.Integer" resultMap="BaseResultInfo">
+   SELECT
+        gname,
+        price
+    FROM
+        hm_cvorder_detail hd,
+        hm_cvuser_order ho,
+        hm_cvorder hc
+    WHERE
+        ho.id = hc.uoid
+    AND hd.oid = hc.id
+    AND hc.id = #{id,jdbcType=INTEGER}
+</select>
+
+</mapper>

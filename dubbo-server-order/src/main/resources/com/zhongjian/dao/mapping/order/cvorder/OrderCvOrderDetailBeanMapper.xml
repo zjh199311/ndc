@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.order.cvorder.OrderCvOrderDetailBean" >
+  <resultMap id="BaseResultMap" type="com.zhongjian.dao.entity.order.cvorder.OrderCvOrderDetailBean" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="gid" property="gid" jdbcType="INTEGER" />
+    <result column="gname" property="gname" jdbcType="VARCHAR" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="amount" property="amount" jdbcType="DECIMAL" />
+    <result column="oid" property="oid" jdbcType="INTEGER" />
+    <result column="sid" property="sid" jdbcType="INTEGER" />
+    <result column="ctime" property="ctime" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, gid, gname, uid, unit, price, amount, oid, sid, ctime, remark
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hm_cvorder_detail
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hm_cvorder_detail
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhongjian.dao.entity.order.cvorder.OrderCvOrderDetailBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_cvorder_detail (gid, gname, uid, 
+      unit, price, amount, 
+      oid, sid, ctime, remark
+      )
+    values (#{gid,jdbcType=INTEGER}, #{gname,jdbcType=VARCHAR}, #{uid,jdbcType=INTEGER}, 
+      #{unit,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, #{amount,jdbcType=DECIMAL}, 
+      #{oid,jdbcType=INTEGER}, #{sid,jdbcType=INTEGER}, #{ctime,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhongjian.dao.entity.order.cvorder.OrderCvOrderDetailBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_cvorder_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="gid != null" >
+        gid,
+      </if>
+      <if test="gname != null" >
+        gname,
+      </if>
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="unit != null" >
+        unit,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="amount != null" >
+        amount,
+      </if>
+      <if test="oid != null" >
+        oid,
+      </if>
+      <if test="sid != null" >
+        sid,
+      </if>
+      <if test="ctime != null" >
+        ctime,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="gid != null" >
+        #{gid,jdbcType=INTEGER},
+      </if>
+      <if test="gname != null" >
+        #{gname,jdbcType=VARCHAR},
+      </if>
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="unit != null" >
+        #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="amount != null" >
+        #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="oid != null" >
+        #{oid,jdbcType=INTEGER},
+      </if>
+      <if test="sid != null" >
+        #{sid,jdbcType=INTEGER},
+      </if>
+      <if test="ctime != null" >
+        #{ctime,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhongjian.dao.entity.order.cvorder.OrderCvOrderDetailBean" >
+    update hm_cvorder_detail
+    <set >
+      <if test="gid != null" >
+        gid = #{gid,jdbcType=INTEGER},
+      </if>
+      <if test="gname != null" >
+        gname = #{gname,jdbcType=VARCHAR},
+      </if>
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="unit != null" >
+        unit = #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="amount != null" >
+        amount = #{amount,jdbcType=DECIMAL},
+      </if>
+      <if test="oid != null" >
+        oid = #{oid,jdbcType=INTEGER},
+      </if>
+      <if test="sid != null" >
+        sid = #{sid,jdbcType=INTEGER},
+      </if>
+      <if test="ctime != null" >
+        ctime = #{ctime,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhongjian.dao.entity.order.cvorder.OrderCvOrderDetailBean" >
+    update hm_cvorder_detail
+    set gid = #{gid,jdbcType=INTEGER},
+      gname = #{gname,jdbcType=VARCHAR},
+      uid = #{uid,jdbcType=INTEGER},
+      unit = #{unit,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      amount = #{amount,jdbcType=DECIMAL},
+      oid = #{oid,jdbcType=INTEGER},
+      sid = #{sid,jdbcType=INTEGER},
+      ctime = #{ctime,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="searchByEntityCount" resultType="java.lang.Integer" parameterType="com.zhongjian.dao.entity.order.cvorder.OrderCvOrderDetailBean" >
+    select
+    count(*)
+    from hm_cvorder_detail
+    <where>
+     <if test="gid != null">
+      gid=#{gid,jdbcType=INTEGER}
+     </if>
+     <if test="gname != null">
+      AND gname=#{gname,jdbcType=VARCHAR}
+     </if>
+     <if test="uid != null">
+      AND uid=#{uid,jdbcType=INTEGER}
+     </if>
+     <if test="unit != null">
+      AND unit=#{unit,jdbcType=VARCHAR}
+     </if>
+     <if test="price != null">
+      AND price=#{price,jdbcType=DECIMAL}
+     </if>
+     <if test="amount != null">
+      AND amount=#{amount,jdbcType=DECIMAL}
+     </if>
+     <if test="oid != null">
+      AND oid=#{oid,jdbcType=INTEGER}
+     </if>
+     <if test="sid != null">
+      AND sid=#{sid,jdbcType=INTEGER}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=VARCHAR}
+     </if>
+     <if test="remark != null">
+      AND remark=#{remark,jdbcType=VARCHAR}
+     </if>
+    </where>
+  </select>
+  <select id="searchByEntity" resultMap="BaseResultMap" parameterType="com.zhongjian.dao.entity.order.cvorder.OrderCvOrderDetailBean" >
+    select
+    <include refid="Base_Column_List"/>
+    from hm_cvorder_detail
+    <where>
+     <if test="gid != null">
+      gid=#{gid,jdbcType=INTEGER}
+     </if>
+     <if test="gname != null">
+      AND gname=#{gname,jdbcType=VARCHAR}
+     </if>
+     <if test="uid != null">
+      AND uid=#{uid,jdbcType=INTEGER}
+     </if>
+     <if test="unit != null">
+      AND unit=#{unit,jdbcType=VARCHAR}
+     </if>
+     <if test="price != null">
+      AND price=#{price,jdbcType=DECIMAL}
+     </if>
+     <if test="amount != null">
+      AND amount=#{amount,jdbcType=DECIMAL}
+     </if>
+     <if test="oid != null">
+      AND oid=#{oid,jdbcType=INTEGER}
+     </if>
+     <if test="sid != null">
+      AND sid=#{sid,jdbcType=INTEGER}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=VARCHAR}
+     </if>
+     <if test="remark != null">
+      AND remark=#{remark,jdbcType=VARCHAR}
+     </if>
+    </where>
+  </select>
+</mapper>

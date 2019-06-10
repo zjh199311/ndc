@@ -29,6 +29,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -130,9 +131,26 @@ public class CartCvstoreServiceImpl extends HmBaseService<CartCvstoreBean, Integ
                 cartCvstoreBean.setAmount(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
                 cartCvstoreBean.setUnitprice(cartGoodsBean.getPrice());
                 //计算总价保留两个小数点
-                //总价
-                BigDecimal multiply = cartGoodsBean.getPrice().multiply(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
-                cartCvstoreBean.setPrice(multiply.setScale(2, BigDecimal.ROUND_HALF_UP));
+                //总价（传入的总价除于食品价格与传入的数量校验.小于或者等于0.01）
+                BigDecimal abs;
+                if (!StringUtil.isBlank(cartBasketEditQueryDTO.getPrice()) && new BigDecimal(cartBasketEditQueryDTO.getPrice()).compareTo(BigDecimal.ZERO) > 0) {
+                    BigDecimal divide = new BigDecimal(cartBasketEditQueryDTO.getPrice()).divide(cartGoodsBean.getPrice(), 5, RoundingMode.HALF_UP);
+                    BigDecimal subtract = divide.subtract(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
+                    if (subtract.compareTo(BigDecimal.ZERO) < 0) {
+                        abs = subtract.abs();
+                    } else {
+                        abs = subtract;
+                    }
+                    if (abs.compareTo(new BigDecimal(0.01)) <= 0) {
+                        cartCvstoreBean.setPrice(new BigDecimal(cartBasketEditQueryDTO.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                    } else {
+                        BigDecimal multiply = cartGoodsBean.getPrice().multiply(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
+                        cartCvstoreBean.setPrice(multiply.setScale(2, BigDecimal.ROUND_HALF_UP));
+                    }
+                } else {
+                    BigDecimal multiply = cartGoodsBean.getPrice().multiply(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
+                    cartCvstoreBean.setPrice(multiply.setScale(2, BigDecimal.ROUND_HALF_UP));
+                }
                 cartCvstoreBean.setSid(cartGoodsBean.getPid());
             }
             this.dao.insertSelective(cartCvstoreBean);
@@ -335,9 +353,26 @@ public class CartCvstoreServiceImpl extends HmBaseService<CartCvstoreBean, Integ
             ResultDTO<Object> dto = deleteInfoById(cartBasketDelQueryDTO);
             return dto;
         } else {
-            //总价
-            BigDecimal totalprice = cartGoodsBean.getPrice().multiply(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
-            cartCvstoreBean.setPrice(totalprice);
+            //总价（传入的总价除于食品价格与传入的数量校验.小于或者等于0.01）
+            BigDecimal abs;
+            if (!StringUtil.isBlank(cartBasketEditQueryDTO.getPrice()) && new BigDecimal(cartBasketEditQueryDTO.getPrice()).compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal divide = new BigDecimal(cartBasketEditQueryDTO.getPrice()).divide(cartGoodsBean.getPrice(), 5, RoundingMode.HALF_UP);
+                BigDecimal subtract = divide.subtract(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
+                if (subtract.compareTo(BigDecimal.ZERO) < 0) {
+                    abs = subtract.abs();
+                } else {
+                    abs = subtract;
+                }
+                if (abs.compareTo(new BigDecimal(0.01)) <= 0) {
+                    cartCvstoreBean.setPrice(new BigDecimal(cartBasketEditQueryDTO.getPrice()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                } else {
+                    BigDecimal multiply = cartGoodsBean.getPrice().multiply(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
+                    cartCvstoreBean.setPrice(multiply.setScale(2, BigDecimal.ROUND_HALF_UP));
+                }
+            } else {
+                BigDecimal multiply = cartGoodsBean.getPrice().multiply(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
+                cartCvstoreBean.setPrice(multiply.setScale(2, BigDecimal.ROUND_HALF_UP));
+            }
             cartCvstoreBean.setUnitprice(cartGoodsBean.getPrice());
             cartCvstoreBean.setAmount(new BigDecimal(cartBasketEditQueryDTO.getAmount()));
             if (StringUtil.isBlank(cartBasketEditQueryDTO.getRemark())) {

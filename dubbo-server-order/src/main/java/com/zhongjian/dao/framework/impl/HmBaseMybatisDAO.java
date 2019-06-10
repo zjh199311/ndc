@@ -1,6 +1,6 @@
 package com.zhongjian.dao.framework.impl;
 
-import com.zhongjian.dao.framework.Page;
+import com.zhongjian.dto.Page;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.support.SqlSessionDaoSupport;

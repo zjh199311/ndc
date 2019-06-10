@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.order.cvstore.OrderCvOrderBean" >
+  <resultMap id="BaseResultMap" type="com.zhongjian.dao.entity.order.cvstore.OrderCvOrderBean" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="order_sn" property="orderSn" jdbcType="VARCHAR" />
+    <result column="sid" property="sid" jdbcType="INTEGER" />
+    <result column="total" property="total" jdbcType="DECIMAL" />
+    <result column="payment" property="payment" jdbcType="DECIMAL" />
+    <result column="ctime" property="ctime" jdbcType="INTEGER" />
+    <result column="ordertaking_time" property="ordertakingTime" jdbcType="INTEGER" />
+    <result column="orderend_time" property="orderendTime" jdbcType="INTEGER" />
+    <result column="addressid" property="addressid" jdbcType="INTEGER" />
+    <result column="order_status" property="orderStatus" jdbcType="TINYINT" />
+    <result column="pay_status" property="payStatus" jdbcType="TINYINT" />
+    <result column="deliver_fee" property="deliverFee" jdbcType="DECIMAL" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="uoid" property="uoid" jdbcType="INTEGER" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, order_sn, sid, total, payment, ctime, ordertaking_time, orderend_time, addressid, 
+    order_status, pay_status, deliver_fee, remark, uoid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hm_cvorder
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hm_cvorder
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhongjian.dao.entity.order.cvstore.OrderCvOrderBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_cvorder (order_sn, sid, total, 
+      payment, ctime, ordertaking_time, 
+      orderend_time, addressid, order_status, 
+      pay_status, deliver_fee, remark, 
+      uoid)
+    values (#{orderSn,jdbcType=VARCHAR}, #{sid,jdbcType=INTEGER}, #{total,jdbcType=DECIMAL}, 
+      #{payment,jdbcType=DECIMAL}, #{ctime,jdbcType=INTEGER}, #{ordertakingTime,jdbcType=INTEGER}, 
+      #{orderendTime,jdbcType=INTEGER}, #{addressid,jdbcType=INTEGER}, #{orderStatus,jdbcType=TINYINT}, 
+      #{payStatus,jdbcType=TINYINT}, #{deliverFee,jdbcType=DECIMAL}, #{remark,jdbcType=VARCHAR}, 
+      #{uoid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhongjian.dao.entity.order.cvstore.OrderCvOrderBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_cvorder
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderSn != null" >
+        order_sn,
+      </if>
+      <if test="sid != null" >
+        sid,
+      </if>
+      <if test="total != null" >
+        total,
+      </if>
+      <if test="payment != null" >
+        payment,
+      </if>
+      <if test="ctime != null" >
+        ctime,
+      </if>
+      <if test="ordertakingTime != null" >
+        ordertaking_time,
+      </if>
+      <if test="orderendTime != null" >
+        orderend_time,
+      </if>
+      <if test="addressid != null" >
+        addressid,
+      </if>
+      <if test="orderStatus != null" >
+        order_status,
+      </if>
+      <if test="payStatus != null" >
+        pay_status,
+      </if>
+      <if test="deliverFee != null" >
+        deliver_fee,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="uoid != null" >
+        uoid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderSn != null" >
+        #{orderSn,jdbcType=VARCHAR},
+      </if>
+      <if test="sid != null" >
+        #{sid,jdbcType=INTEGER},
+      </if>
+      <if test="total != null" >
+        #{total,jdbcType=DECIMAL},
+      </if>
+      <if test="payment != null" >
+        #{payment,jdbcType=DECIMAL},
+      </if>
+      <if test="ctime != null" >
+        #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="ordertakingTime != null" >
+        #{ordertakingTime,jdbcType=INTEGER},
+      </if>
+      <if test="orderendTime != null" >
+        #{orderendTime,jdbcType=INTEGER},
+      </if>
+      <if test="addressid != null" >
+        #{addressid,jdbcType=INTEGER},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="payStatus != null" >
+        #{payStatus,jdbcType=TINYINT},
+      </if>
+      <if test="deliverFee != null" >
+        #{deliverFee,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="uoid != null" >
+        #{uoid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhongjian.dao.entity.order.cvstore.OrderCvOrderBean" >
+    update hm_cvorder
+    <set >
+      <if test="orderSn != null" >
+        order_sn = #{orderSn,jdbcType=VARCHAR},
+      </if>
+      <if test="sid != null" >
+        sid = #{sid,jdbcType=INTEGER},
+      </if>
+      <if test="total != null" >
+        total = #{total,jdbcType=DECIMAL},
+      </if>
+      <if test="payment != null" >
+        payment = #{payment,jdbcType=DECIMAL},
+      </if>
+      <if test="ctime != null" >
+        ctime = #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="ordertakingTime != null" >
+        ordertaking_time = #{ordertakingTime,jdbcType=INTEGER},
+      </if>
+      <if test="orderendTime != null" >
+        orderend_time = #{orderendTime,jdbcType=INTEGER},
+      </if>
+      <if test="addressid != null" >
+        addressid = #{addressid,jdbcType=INTEGER},
+      </if>
+      <if test="orderStatus != null" >
+        order_status = #{orderStatus,jdbcType=TINYINT},
+      </if>
+      <if test="payStatus != null" >
+        pay_status = #{payStatus,jdbcType=TINYINT},
+      </if>
+      <if test="deliverFee != null" >
+        deliver_fee = #{deliverFee,jdbcType=DECIMAL},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="uoid != null" >
+        uoid = #{uoid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhongjian.dao.entity.order.cvstore.OrderCvOrderBean" >
+    update hm_cvorder
+    set order_sn = #{orderSn,jdbcType=VARCHAR},
+      sid = #{sid,jdbcType=INTEGER},
+      total = #{total,jdbcType=DECIMAL},
+      payment = #{payment,jdbcType=DECIMAL},
+      ctime = #{ctime,jdbcType=INTEGER},
+      ordertaking_time = #{ordertakingTime,jdbcType=INTEGER},
+      orderend_time = #{orderendTime,jdbcType=INTEGER},
+      addressid = #{addressid,jdbcType=INTEGER},
+      order_status = #{orderStatus,jdbcType=TINYINT},
+      pay_status = #{payStatus,jdbcType=TINYINT},
+      deliver_fee = #{deliverFee,jdbcType=DECIMAL},
+      remark = #{remark,jdbcType=VARCHAR},
+      uoid = #{uoid,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="searchByEntityCount" resultType="java.lang.Integer" parameterType="com.zhongjian.dao.entity.order.cvstore.OrderCvOrderBean" >
+    select
+    count(*)
+    from hm_cvorder
+    <where>
+     <if test="orderSn != null">
+      order_sn=#{orderSn,jdbcType=VARCHAR}
+     </if>
+     <if test="sid != null">
+      AND sid=#{sid,jdbcType=INTEGER}
+     </if>
+     <if test="total != null">
+      AND total=#{total,jdbcType=DECIMAL}
+     </if>
+     <if test="payment != null">
+      AND payment=#{payment,jdbcType=DECIMAL}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+     <if test="ordertakingTime != null">
+      AND ordertaking_time=#{ordertakingTime,jdbcType=INTEGER}
+     </if>
+     <if test="orderendTime != null">
+      AND orderend_time=#{orderendTime,jdbcType=INTEGER}
+     </if>
+     <if test="addressid != null">
+      AND addressid=#{addressid,jdbcType=INTEGER}
+     </if>
+     <if test="orderStatus != null">
+      AND order_status=#{orderStatus,jdbcType=TINYINT}
+     </if>
+     <if test="payStatus != null">
+      AND pay_status=#{payStatus,jdbcType=TINYINT}
+     </if>
+     <if test="deliverFee != null">
+      AND deliver_fee=#{deliverFee,jdbcType=DECIMAL}
+     </if>
+     <if test="remark != null">
+      AND remark=#{remark,jdbcType=VARCHAR}
+     </if>
+     <if test="uoid != null">
+      AND uoid=#{uoid,jdbcType=INTEGER}
+     </if>
+    </where>
+  </select>
+  <select id="searchByEntity" resultMap="BaseResultMap" parameterType="com.zhongjian.dao.entity.order.cvstore.OrderCvOrderBean" >
+    select
+    <include refid="Base_Column_List"/>
+    from hm_cvorder
+    <where>
+     <if test="orderSn != null">
+      order_sn=#{orderSn,jdbcType=VARCHAR}
+     </if>
+     <if test="sid != null">
+      AND sid=#{sid,jdbcType=INTEGER}
+     </if>
+     <if test="total != null">
+      AND total=#{total,jdbcType=DECIMAL}
+     </if>
+     <if test="payment != null">
+      AND payment=#{payment,jdbcType=DECIMAL}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+     <if test="ordertakingTime != null">
+      AND ordertaking_time=#{ordertakingTime,jdbcType=INTEGER}
+     </if>
+     <if test="orderendTime != null">
+      AND orderend_time=#{orderendTime,jdbcType=INTEGER}
+     </if>
+     <if test="addressid != null">
+      AND addressid=#{addressid,jdbcType=INTEGER}
+     </if>
+     <if test="orderStatus != null">
+      AND order_status=#{orderStatus,jdbcType=TINYINT}
+     </if>
+     <if test="payStatus != null">
+      AND pay_status=#{payStatus,jdbcType=TINYINT}
+     </if>
+     <if test="deliverFee != null">
+      AND deliver_fee=#{deliverFee,jdbcType=DECIMAL}
+     </if>
+     <if test="remark != null">
+      AND remark=#{remark,jdbcType=VARCHAR}
+     </if>
+     <if test="uoid != null">
+      AND uoid=#{uoid,jdbcType=INTEGER}
+     </if>
+    </where>
+  </select>
+</mapper>

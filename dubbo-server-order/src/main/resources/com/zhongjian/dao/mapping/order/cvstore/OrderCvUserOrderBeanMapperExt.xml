@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.order.cvstore.OrderCvUserOrderBean">
+
+    <resultMap id="BaseCvUserInfo" type="com.zhongjian.dto.order.order.result.OrderDetailsResultDTO">
+        <id column="id" property="roid" jdbcType="INTEGER"/>
+        <result column="order_sn" property="riderSn" jdbcType="VARCHAR"/>
+        <result column="ctime" property="ctime" jdbcType="INTEGER"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="pay_status" property="payStatus" jdbcType="INTEGER"/>
+        <result column="is_appointment" property="isAppointment" jdbcType="INTEGER"/>
+        <result column="rider_status" property="riderStatus" jdbcType="INTEGER"/>
+        <result column="totalPrice" property="price" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="queryList" parameterType="java.lang.Integer" resultMap="BaseCvUserInfo">
+        SELECT
+            type,
+            order_sn,
+            ctime,
+            id,
+            pay_status,
+            is_appointment,
+            totalPrice,
+            rider_status
+        FROM
+            (
+                SELECT
+                    0 AS type,
+                    order_sn,
+                    ctime,
+                    id,
+                    pay_status,
+                    is_appointment,
+                    totalPrice,
+                    rider_status
+                FROM
+                    hm_rider_order
+                WHERE
+                    uid = #{uid,jdbcType=INTEGER} and pay_status!=2
+                UNION ALL
+                    SELECT
+                        1 AS type,
+                        o.order_sn,
+                        o.ctime,
+                        o.id,
+                        o.pay_status,
+                        0 AS is_appointment,
+                        o.totalPrice,
+                        c.order_status AS rider_status
+                    FROM
+                        hm_cvuser_order o,
+                        hm_cvorder c
+                    WHERE
+                        o.id = c.uoid
+                    AND o.uid = #{uid,jdbcType=INTEGER}  and o.pay_status!=2
+            ) AS c
+        ORDER BY
+            ctime desc
+    </select>
+
+    <select id="queryListCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        SELECT
+            count(1)
+        FROM
+            (
+                SELECT
+                    0 AS type,
+                    order_sn,
+                    ctime,
+                    id,
+                    pay_status,
+                    is_appointment,
+                    totalPrice,
+                    rider_status
+                FROM
+                    hm_rider_order
+                WHERE
+                    uid = #{uid,jdbcType=INTEGER} and pay_status!=2
+                UNION ALL
+                    SELECT
+                        1 AS type,
+                        o.order_sn,
+                        o.ctime,
+                        o.id,
+                        o.pay_status,
+                        0 AS is_appointment,
+                        o.totalPrice,
+                        c.order_status AS rider_status
+                    FROM
+                        hm_cvuser_order o,
+                        hm_cvorder c
+                    WHERE
+                        o.id = c.uoid
+                    AND o.uid = #{uid,jdbcType=INTEGER}  and o.pay_status!=2
+            ) AS c
+        ORDER BY
+            ctime desc
+    </select>
+</mapper>

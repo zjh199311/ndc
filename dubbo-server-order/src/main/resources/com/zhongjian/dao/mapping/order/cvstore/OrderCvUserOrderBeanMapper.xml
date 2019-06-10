@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.order.cvstore.OrderCvUserOrderBean" >
+  <resultMap id="BaseResultMap" type="com.zhongjian.dao.entity.order.cvstore.OrderCvUserOrderBean" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="order_sn" property="orderSn" jdbcType="VARCHAR" />
+    <result column="pay_status" property="payStatus" jdbcType="TINYINT" />
+    <result column="uid" property="uid" jdbcType="INTEGER" />
+    <result column="integralPrice" property="integralprice" jdbcType="DECIMAL" />
+    <result column="store_activity_price" property="storeActivityPrice" jdbcType="DECIMAL" />
+    <result column="vip_relief" property="vipRelief" jdbcType="DECIMAL" />
+    <result column="coupon_price" property="couponPrice" jdbcType="DECIMAL" />
+    <result column="coupon_id" property="couponId" jdbcType="INTEGER" />
+    <result column="is_show" property="isShow" jdbcType="TINYINT" />
+    <result column="totalPrice" property="totalprice" jdbcType="DECIMAL" />
+    <result column="originalPrice" property="originalprice" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, order_sn, pay_status, uid, integralPrice, store_activity_price, vip_relief, coupon_price, 
+    coupon_id, is_show, totalPrice, originalPrice
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hm_cvuser_order
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hm_cvuser_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhongjian.dao.entity.order.cvstore.OrderCvUserOrderBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_cvuser_order (order_sn, pay_status, uid, 
+      integralPrice, store_activity_price, vip_relief, 
+      coupon_price, coupon_id, is_show, 
+      totalPrice, originalPrice)
+    values (#{orderSn,jdbcType=VARCHAR}, #{payStatus,jdbcType=TINYINT}, #{uid,jdbcType=INTEGER}, 
+      #{integralprice,jdbcType=DECIMAL}, #{storeActivityPrice,jdbcType=DECIMAL}, #{vipRelief,jdbcType=DECIMAL}, 
+      #{couponPrice,jdbcType=DECIMAL}, #{couponId,jdbcType=INTEGER}, #{isShow,jdbcType=TINYINT}, 
+      #{totalprice,jdbcType=DECIMAL}, #{originalprice,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhongjian.dao.entity.order.cvstore.OrderCvUserOrderBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_cvuser_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="orderSn != null" >
+        order_sn,
+      </if>
+      <if test="payStatus != null" >
+        pay_status,
+      </if>
+      <if test="uid != null" >
+        uid,
+      </if>
+      <if test="integralprice != null" >
+        integralPrice,
+      </if>
+      <if test="storeActivityPrice != null" >
+        store_activity_price,
+      </if>
+      <if test="vipRelief != null" >
+        vip_relief,
+      </if>
+      <if test="couponPrice != null" >
+        coupon_price,
+      </if>
+      <if test="couponId != null" >
+        coupon_id,
+      </if>
+      <if test="isShow != null" >
+        is_show,
+      </if>
+      <if test="totalprice != null" >
+        totalPrice,
+      </if>
+      <if test="originalprice != null" >
+        originalPrice,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="orderSn != null" >
+        #{orderSn,jdbcType=VARCHAR},
+      </if>
+      <if test="payStatus != null" >
+        #{payStatus,jdbcType=TINYINT},
+      </if>
+      <if test="uid != null" >
+        #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="integralprice != null" >
+        #{integralprice,jdbcType=DECIMAL},
+      </if>
+      <if test="storeActivityPrice != null" >
+        #{storeActivityPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="vipRelief != null" >
+        #{vipRelief,jdbcType=DECIMAL},
+      </if>
+      <if test="couponPrice != null" >
+        #{couponPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="couponId != null" >
+        #{couponId,jdbcType=INTEGER},
+      </if>
+      <if test="isShow != null" >
+        #{isShow,jdbcType=TINYINT},
+      </if>
+      <if test="totalprice != null" >
+        #{totalprice,jdbcType=DECIMAL},
+      </if>
+      <if test="originalprice != null" >
+        #{originalprice,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhongjian.dao.entity.order.cvstore.OrderCvUserOrderBean" >
+    update hm_cvuser_order
+    <set >
+      <if test="orderSn != null" >
+        order_sn = #{orderSn,jdbcType=VARCHAR},
+      </if>
+      <if test="payStatus != null" >
+        pay_status = #{payStatus,jdbcType=TINYINT},
+      </if>
+      <if test="uid != null" >
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="integralprice != null" >
+        integralPrice = #{integralprice,jdbcType=DECIMAL},
+      </if>
+      <if test="storeActivityPrice != null" >
+        store_activity_price = #{storeActivityPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="vipRelief != null" >
+        vip_relief = #{vipRelief,jdbcType=DECIMAL},
+      </if>
+      <if test="couponPrice != null" >
+        coupon_price = #{couponPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="couponId != null" >
+        coupon_id = #{couponId,jdbcType=INTEGER},
+      </if>
+      <if test="isShow != null" >
+        is_show = #{isShow,jdbcType=TINYINT},
+      </if>
+      <if test="totalprice != null" >
+        totalPrice = #{totalprice,jdbcType=DECIMAL},
+      </if>
+      <if test="originalprice != null" >
+        originalPrice = #{originalprice,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhongjian.dao.entity.order.cvstore.OrderCvUserOrderBean" >
+    update hm_cvuser_order
+    set order_sn = #{orderSn,jdbcType=VARCHAR},
+      pay_status = #{payStatus,jdbcType=TINYINT},
+      uid = #{uid,jdbcType=INTEGER},
+      integralPrice = #{integralprice,jdbcType=DECIMAL},
+      store_activity_price = #{storeActivityPrice,jdbcType=DECIMAL},
+      vip_relief = #{vipRelief,jdbcType=DECIMAL},
+      coupon_price = #{couponPrice,jdbcType=DECIMAL},
+      coupon_id = #{couponId,jdbcType=INTEGER},
+      is_show = #{isShow,jdbcType=TINYINT},
+      totalPrice = #{totalprice,jdbcType=DECIMAL},
+      originalPrice = #{originalprice,jdbcType=DECIMAL}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="searchByEntityCount" resultType="java.lang.Integer" parameterType="com.zhongjian.dao.entity.order.cvstore.OrderCvUserOrderBean" >
+    select
+    count(*)
+    from hm_cvuser_order
+    <where>
+     <if test="orderSn != null">
+      order_sn=#{orderSn,jdbcType=VARCHAR}
+     </if>
+     <if test="payStatus != null">
+      AND pay_status=#{payStatus,jdbcType=TINYINT}
+     </if>
+     <if test="uid != null">
+      AND uid=#{uid,jdbcType=INTEGER}
+     </if>
+     <if test="integralprice != null">
+      AND integralPrice=#{integralprice,jdbcType=DECIMAL}
+     </if>
+     <if test="storeActivityPrice != null">
+      AND store_activity_price=#{storeActivityPrice,jdbcType=DECIMAL}
+     </if>
+     <if test="vipRelief != null">
+      AND vip_relief=#{vipRelief,jdbcType=DECIMAL}
+     </if>
+     <if test="couponPrice != null">
+      AND coupon_price=#{couponPrice,jdbcType=DECIMAL}
+     </if>
+     <if test="couponId != null">
+      AND coupon_id=#{couponId,jdbcType=INTEGER}
+     </if>
+     <if test="isShow != null">
+      AND is_show=#{isShow,jdbcType=TINYINT}
+     </if>
+     <if test="totalprice != null">
+      AND totalPrice=#{totalprice,jdbcType=DECIMAL}
+     </if>
+     <if test="originalprice != null">
+      AND originalPrice=#{originalprice,jdbcType=DECIMAL}
+     </if>
+    </where>
+  </select>
+  <select id="searchByEntity" resultMap="BaseResultMap" parameterType="com.zhongjian.dao.entity.order.cvstore.OrderCvUserOrderBean" >
+    select
+    <include refid="Base_Column_List"/>
+    from hm_cvuser_order
+    <where>
+     <if test="orderSn != null">
+      order_sn=#{orderSn,jdbcType=VARCHAR}
+     </if>
+     <if test="payStatus != null">
+      AND pay_status=#{payStatus,jdbcType=TINYINT}
+     </if>
+     <if test="uid != null">
+      AND uid=#{uid,jdbcType=INTEGER}
+     </if>
+     <if test="integralprice != null">
+      AND integralPrice=#{integralprice,jdbcType=DECIMAL}
+     </if>
+     <if test="storeActivityPrice != null">
+      AND store_activity_price=#{storeActivityPrice,jdbcType=DECIMAL}
+     </if>
+     <if test="vipRelief != null">
+      AND vip_relief=#{vipRelief,jdbcType=DECIMAL}
+     </if>
+     <if test="couponPrice != null">
+      AND coupon_price=#{couponPrice,jdbcType=DECIMAL}
+     </if>
+     <if test="couponId != null">
+      AND coupon_id=#{couponId,jdbcType=INTEGER}
+     </if>
+     <if test="isShow != null">
+      AND is_show=#{isShow,jdbcType=TINYINT}
+     </if>
+     <if test="totalprice != null">
+      AND totalPrice=#{totalprice,jdbcType=DECIMAL}
+     </if>
+     <if test="originalprice != null">
+      AND originalPrice=#{originalprice,jdbcType=DECIMAL}
+     </if>
+    </where>
+  </select>
+</mapper>

@@ -1,7 +1,8 @@
 package com.zhongjian.dao.framework.inf;
 
 
-import com.zhongjian.dao.framework.Page;
+
+import com.zhongjian.dto.Page;
 
 import java.io.Serializable;
 import java.util.List;

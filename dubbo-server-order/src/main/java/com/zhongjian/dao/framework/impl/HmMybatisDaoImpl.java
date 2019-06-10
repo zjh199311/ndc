@@ -1,7 +1,7 @@
 package com.zhongjian.dao.framework.impl;
 
-import com.zhongjian.dao.framework.Page;
 import com.zhongjian.dao.framework.inf.HmDAO;
+import com.zhongjian.dto.Page;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.apache.log4j.Logger;
