@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.order.goods.OrderGoodsBean" >
+  <resultMap id="BaseResultMap" type="com.zhongjian.dao.entity.order.goods.OrderGoodsBean" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cid" property="cid" jdbcType="INTEGER" />
+    <result column="pid" property="pid" jdbcType="INTEGER" />
+    <result column="gname" property="gname" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="ctime" property="ctime" jdbcType="INTEGER" />
+    <result column="is_delete" property="isDelete" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="pic" property="pic" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, cid, pid, gname, price, unit, ctime, is_delete, state, pic, content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hm_goods
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hm_goods
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhongjian.dao.entity.order.goods.OrderGoodsBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_goods (cid, pid, gname, 
+      price, unit, ctime, 
+      is_delete, state, pic, 
+      content)
+    values (#{cid,jdbcType=INTEGER}, #{pid,jdbcType=INTEGER}, #{gname,jdbcType=VARCHAR}, 
+      #{price,jdbcType=DECIMAL}, #{unit,jdbcType=VARCHAR}, #{ctime,jdbcType=INTEGER}, 
+      #{isDelete,jdbcType=INTEGER}, #{state,jdbcType=TINYINT}, #{pic,jdbcType=VARCHAR}, 
+      #{content,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhongjian.dao.entity.order.goods.OrderGoodsBean" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into hm_goods
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="cid != null" >
+        cid,
+      </if>
+      <if test="pid != null" >
+        pid,
+      </if>
+      <if test="gname != null" >
+        gname,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="unit != null" >
+        unit,
+      </if>
+      <if test="ctime != null" >
+        ctime,
+      </if>
+      <if test="isDelete != null" >
+        is_delete,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="pic != null" >
+        pic,
+      </if>
+      <if test="content != null" >
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="cid != null" >
+        #{cid,jdbcType=INTEGER},
+      </if>
+      <if test="pid != null" >
+        #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="gname != null" >
+        #{gname,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="unit != null" >
+        #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="ctime != null" >
+        #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="isDelete != null" >
+        #{isDelete,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="pic != null" >
+        #{pic,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhongjian.dao.entity.order.goods.OrderGoodsBean" >
+    update hm_goods
+    <set >
+      <if test="cid != null" >
+        cid = #{cid,jdbcType=INTEGER},
+      </if>
+      <if test="pid != null" >
+        pid = #{pid,jdbcType=INTEGER},
+      </if>
+      <if test="gname != null" >
+        gname = #{gname,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="unit != null" >
+        unit = #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="ctime != null" >
+        ctime = #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="isDelete != null" >
+        is_delete = #{isDelete,jdbcType=INTEGER},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="pic != null" >
+        pic = #{pic,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhongjian.dao.entity.order.goods.OrderGoodsBean" >
+    update hm_goods
+    set cid = #{cid,jdbcType=INTEGER},
+      pid = #{pid,jdbcType=INTEGER},
+      gname = #{gname,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      unit = #{unit,jdbcType=VARCHAR},
+      ctime = #{ctime,jdbcType=INTEGER},
+      is_delete = #{isDelete,jdbcType=INTEGER},
+      state = #{state,jdbcType=TINYINT},
+      pic = #{pic,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="searchByEntityCount" resultType="java.lang.Integer" parameterType="com.zhongjian.dao.entity.order.goods.OrderGoodsBean" >
+    select
+    count(*)
+    from hm_goods
+    <where>
+     <if test="cid != null">
+      cid=#{cid,jdbcType=INTEGER}
+     </if>
+     <if test="pid != null">
+      AND pid=#{pid,jdbcType=INTEGER}
+     </if>
+     <if test="gname != null">
+      AND gname=#{gname,jdbcType=VARCHAR}
+     </if>
+     <if test="price != null">
+      AND price=#{price,jdbcType=DECIMAL}
+     </if>
+     <if test="unit != null">
+      AND unit=#{unit,jdbcType=VARCHAR}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+     <if test="isDelete != null">
+      AND is_delete=#{isDelete,jdbcType=INTEGER}
+     </if>
+     <if test="state != null">
+      AND state=#{state,jdbcType=TINYINT}
+     </if>
+     <if test="pic != null">
+      AND pic=#{pic,jdbcType=VARCHAR}
+     </if>
+     <if test="content != null">
+      AND content=#{content,jdbcType=VARCHAR}
+     </if>
+    </where>
+  </select>
+  <select id="searchByEntity" resultMap="BaseResultMap" parameterType="com.zhongjian.dao.entity.order.goods.OrderGoodsBean" >
+    select
+    <include refid="Base_Column_List"/>
+    from hm_goods
+    <where>
+     <if test="cid != null">
+      cid=#{cid,jdbcType=INTEGER}
+     </if>
+     <if test="pid != null">
+      AND pid=#{pid,jdbcType=INTEGER}
+     </if>
+     <if test="gname != null">
+      AND gname=#{gname,jdbcType=VARCHAR}
+     </if>
+     <if test="price != null">
+      AND price=#{price,jdbcType=DECIMAL}
+     </if>
+     <if test="unit != null">
+      AND unit=#{unit,jdbcType=VARCHAR}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+     <if test="isDelete != null">
+      AND is_delete=#{isDelete,jdbcType=INTEGER}
+     </if>
+     <if test="state != null">
+      AND state=#{state,jdbcType=TINYINT}
+     </if>
+     <if test="pic != null">
+      AND pic=#{pic,jdbcType=VARCHAR}
+     </if>
+     <if test="content != null">
+      AND content=#{content,jdbcType=VARCHAR}
+     </if>
+    </where>
+  </select>
+</mapper>
