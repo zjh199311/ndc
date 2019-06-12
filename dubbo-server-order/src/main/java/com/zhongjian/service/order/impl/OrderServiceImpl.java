@@ -17,6 +17,7 @@ import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.order.order.query.OrderStatusQueryDTO;
 import com.zhongjian.exception.NDCException;
 import com.zhongjian.service.order.OrderService;
+import com.zhongjian.shedule.OrderShedule;
 import com.zhongjian.task.AddressTask;
 import com.zhongjian.task.OrderTask;
 
@@ -31,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import com.zhongjian.util.DateUtil;
+import com.zhongjian.util.RandomUtil;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,7 +50,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 
 	@Autowired
 	private CVOrderDao cvOrderDao;
-	
+
 	@Autowired
 	private AddressDao addressDao;
 
@@ -63,6 +65,9 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 
 	@Autowired
 	private OrderTask orderTask;
+
+	@Autowired
+	private OrderShedule orderShedule;
 
 	@Autowired
 	private PropUtil propUtil;
@@ -176,20 +181,20 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					}
 					flag = false;
 				}
-				//商品录入价格
-				BigDecimal singleAmount =null;
-				//购物车物品总价
+				// 商品录入价格
+				BigDecimal singleAmount = null;
+				// 购物车物品总价
 				BigDecimal basketPrice = (BigDecimal) map.get("basketprice");
 				// 数量
 				BigDecimal amoBigDecimal = (BigDecimal) map.get("amount");
-				//购物车单价
+				// 购物车单价
 				BigDecimal unitPrice = (BigDecimal) map.get("unitPrice");
-				//商品单价
+				// 商品单价
 				BigDecimal goodUnitPrice = (BigDecimal) map.get("price");
 				if (goodUnitPrice == null || unitPrice.compareTo(goodUnitPrice) == 0) {
 					singleAmount = basketPrice;
-				}else {
-					singleAmount =  amoBigDecimal.multiply(goodUnitPrice).setScale(2, BigDecimal.ROUND_HALF_UP);
+				} else {
+					singleAmount = amoBigDecimal.multiply(goodUnitPrice).setScale(2, BigDecimal.ROUND_HALF_UP);
 				}
 				if (toCreateOrder) {
 					hmCart = new HashMap<String, Object>();
@@ -800,6 +805,15 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		if (business.equals("RIO")) {
 			Map<String, Object> orderInfo = orderDao.getDetailByOrderId(uid, orderId);
 			if (orderInfo != null) {
+				orderInfo.put("out_trade_no",RandomUtil.getRandom620(6) + (String) orderInfo.get("out_trade_no"));
+				orderInfo.put("body", "倪的菜商品订单支付");
+				orderInfo.put("subject", "订单总价");
+			}
+			return orderInfo;
+		} else if (business.equals("CV")) {
+			Map<String, Object> orderInfo = cvOrderDao.getDetailByOrderId(uid, orderId);
+			if (orderInfo != null) {
+				orderInfo.put("out_trade_no","CV" + RandomUtil.getRandom620(6) + (String) orderInfo.get("out_trade_no"));
 				orderInfo.put("body", "倪的菜商品订单支付");
 				orderInfo.put("subject", "订单总价");
 			}
@@ -819,29 +833,32 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				if (uoid != null) {
 					cvOrderDao.updateCVOrderToS(uoid);
 				}
-				//把订单推送至rabbitmq处理，confirm即可
-				//降级至本地处理
-				//1.把订单待接单持久化以免宕机未推给平台处理
-				Map<String, Object> waitDeliver = new HashMap<String, Object>();
-				waitDeliver.put("id", UUID.randomUUID().toString().replaceAll("\\-", ""));
-				waitDeliver.put("servercenter", propUtil.getOrderServerCenter());
-				waitDeliver.put("orderId", uoid);
-				cvOrderDao.addWaitDeliverOrder(waitDeliver);
-				if (true) {
-					//定时交由平台处理
-					//1.订单延时60s去改变deliverModel为2
-					//2.派单删除持久化记录，并推送消息给骑手
-					//(宕机重启后查询持久化记录，遍历为2的重复1，2步骤，否则直接派单)
-				}else {
-					//某些条件直接让商户接单
-					//商户完单要删除持久化记录
+				// 把订单推送至rabbitmq处理，confirm即可
+				// 降级至本地处理
+
+				// 1.把订单待接单持久化以免宕机未推给平台处理
+				if (cvOrderDao.getOrderStatusByUoid(uoid) != 3) {
+					Map<String, Object> waitDeliver = new HashMap<String, Object>();
+					waitDeliver.put("id", UUID.randomUUID().toString().replaceAll("\\-", ""));
+					waitDeliver.put("servercenter", propUtil.getOrderServerCenter());
+					waitDeliver.put("orderId", uoid);
+					cvOrderDao.addWaitDeliverOrder(waitDeliver);
+					if (true) {
+						orderShedule.delayHandleCVOrder(uoid, 60);
+						// 定时交由平台处理
+						// 1.订单延时60s去改变deliverModel为2
+						// 2.派单删除持久化记录，并推送消息给骑手
+						// (宕机重启后查询持久化记录，遍历为2的重复1，2步骤，否则直接派单)
+					} else {
+						// 某些条件直接让商户接单
+						// 商户完单要删除持久化记录
+					}
 				}
-				//2.异步推送消息给商户
-				
-				
-				//3.记录积分使用
-				//4.生成地址
-				//5.异步设置用户默认地址
+				// 2.异步推送消息给商户
+
+				// 3.记录积分使用
+				// 4.生成地址
+				// 5.异步设置用户默认地址
 			}
 			return true;
 		} else {
@@ -952,4 +969,5 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		result.append("折");
 		return result.toString();
 	}
+
 }

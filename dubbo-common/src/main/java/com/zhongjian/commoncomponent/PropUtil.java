@@ -64,6 +64,8 @@ public class PropUtil {
         
         setWorkerId((String) propComponent.getMap().get("server.workid"));
         setDatacenterId((String) propComponent.getMap().get("server.datacenterid"));
+        
+        setZkAddress((String) propComponent.getMap().get("spring.dubbo.registry.address"));
     }
 
     private String yxUrl;
@@ -114,4 +116,5 @@ public class PropUtil {
     private String workerId;
     private String datacenterId;
 
+    private String zkAddress;
 }

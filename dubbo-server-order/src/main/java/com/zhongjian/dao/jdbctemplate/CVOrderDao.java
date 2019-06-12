@@ -66,11 +66,18 @@ public class CVOrderDao {
 			return resMap;
 		}
 	
+		
+	//查询hm_waitdeliver_order列表
+		public List<Integer> queryWaitdeliverOrderList(String serverCenter) {
+			String sql = "SELECT orderid from hm_waitdeliver_order where servercenter = ?";
+			List<Integer> orderIds  = jdbcTemplate.queryForList(sql,new Object[] { serverCenter },Integer.class);
+			return orderIds;
+		}
 	
 	// 更新用户记录表
 	public boolean recordUpdate(Map<String, Object> record) {
 		String sql = "update hm_cvuserorder_record set vip_relief = ?,order_num = ?, today_order_num = ? where uid = ?";
-		System.out.println(record.get("order_num"));
+		record.get("order_num");
 		return jdbcTemplate.update(sql, record.get("vip_relief"), record.get("order_num"), record.get("today_order_num"), record.get("uid")) > 0 ? true : false;
 	}
 
@@ -124,7 +131,7 @@ public class CVOrderDao {
 	// hm_cvorder 新增记录
 	public Integer addCVOrder(Map<String, Object> map) {
 		final String sql = "INSERT INTO hm_cvorder (order_sn,sid,total,payment,ctime,ordertaking_time,"
-				+ "orderend_time,addressid,order_status,pay_status,deliver_fee,remark,uoid) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ "orderend_time,addressid,order_status,pay_status,deliver_fee,remark,uoid,rid,deliver_model,service_fee) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
@@ -142,6 +149,9 @@ public class CVOrderDao {
 				ps.setBigDecimal(11, (BigDecimal) map.get("deliver_fee"));
 				ps.setString(12, (String) map.get("remark"));
 				ps.setInt(13, (Integer) map.get("uoid"));
+				ps.setInt(14, (Integer) map.get("rid"));
+				ps.setInt(15, (Integer) map.get("deliver_model"));
+				ps.setBigDecimal(16, (BigDecimal) map.get("service_fee"));
 				return ps;
 			}
 		}, keyHolder);
@@ -191,6 +201,27 @@ public class CVOrderDao {
 		return id;
 	}
 	
+	//查询用户订单的uoid
+	public Integer getUidByCVOrderId(Integer id)  {
+		String sql = "select uoid from hm_cvorder where id = ?";
+		Integer uoid = 0;
+		try {
+			uoid  = jdbcTemplate.queryForObject(sql, new Object[] { id }, Integer.class);	
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return uoid;
+	}
+	
+	//查询cvorder的rid
+	public Integer getRidFromCVOrder(Integer uoid)  {
+		String sql = "select rid from hm_cvorder where uoid = ?";
+		Integer rid = 0;
+		try {
+			rid  = jdbcTemplate.queryForObject(sql, new Object[] { uoid }, Integer.class);	
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return rid;
+	}
 	//查询用户订单的vip减免，优惠券id，积分价值
 	public Map<String, Object> getOrderDetailById(Integer orderId)  {
 		String sql = "select uid,vip_relief,integralPrice,coupon_id from hm_cvuser_order where id = ?";
@@ -226,4 +257,60 @@ public class CVOrderDao {
 		String sql = "INSERT INTO `hm_waitdeliver_order` (id,servercenter,orderId) VALUES (?,?,?)";
 		jdbcTemplate.update(sql, map.get("id"), map.get("servercenter"), map.get("orderId"));
 	}
+	
+	public boolean changeModelToTwo(Integer uoid) {
+		String sql = "update `hm_cvorder` set deliver_model = 2 where deliver_model = 0 and uoid = ?";
+		return jdbcTemplate.update(sql, uoid) > 0 ? true : false;
+	}
+	
+	public boolean updateRidOfHmCVOrder(Integer rid,Integer uoid) {
+		String sql = "update `hm_cvorder` set rid = ? where  uoid = ?";
+		return jdbcTemplate.update(sql, rid,uoid) > 0 ? true : false;
+	}
+	
+	public Integer getDeliverModelByUoid(Integer uoid) {
+		String sql = "select deliver_model from hm_cvorder where uoid = ?";
+		Integer deliverModel = 0;
+		try {
+			deliverModel  = jdbcTemplate.queryForObject(sql, new Object[] { uoid }, Integer.class);	
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return deliverModel;
+	}
+	
+	public Integer getOrderStatusByUoid(Integer uoid) {
+		String sql = "select order_status from hm_cvorder where uoid = ?";
+		Integer orderStatus = 0;
+		try {
+			orderStatus  = jdbcTemplate.queryForObject(sql, new Object[] { uoid }, Integer.class);	
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return orderStatus;
+	}
+	
+	public boolean deleteWaitdeliverOrder(Integer uoid) {
+		String sql = "DELETE FROM `hm_waitdeliver_order` where orderid = ?";
+		return jdbcTemplate.update(sql ,uoid) > 0 ? true : false;
+	}
+	
+	public Integer getMarketIdByCVOrder(Integer uoid) {
+		String sql = "SELECT hs.marketid from hm_shopown hs,hm_cvorder hc WHERE hs.pid = hc.sid and uoid = ?";
+		Integer marketId = 0;
+		try {
+			marketId  = jdbcTemplate.queryForObject(sql, new Object[] { uoid }, Integer.class);	
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return marketId;
+	}
+	
+	public Map<String, Object> getDetailByOrderId(Integer uid, Integer orderId) {
+		String sql = "select out_trade_no,totalPrice from hm_cvuser_order where id = ? and uid = ? and pay_status = 0";
+		Map<String, Object> resMap = null;
+		try {
+			resMap = jdbcTemplate.queryForMap(sql, orderId, uid);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return resMap;
+	}
+	
 }

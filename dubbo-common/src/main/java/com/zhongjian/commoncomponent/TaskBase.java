@@ -18,4 +18,12 @@ public class TaskBase {
 			TaskUtil.executorShedule.scheduleWithFixedDelay(runnable, initialDelay, delay, TimeUnit.SECONDS);
 		}
 	}
+	
+	
+	
+	public void executeDelayShedule(Runnable runnable,long delay){
+		if (TaskUtil.executorShedule != null) {
+			TaskUtil.executorShedule.schedule(runnable, delay, TimeUnit.SECONDS);
+		}
+	}
 }

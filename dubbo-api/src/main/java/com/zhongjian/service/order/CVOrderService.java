@@ -31,4 +31,6 @@ public interface CVOrderService {
      ** 是否已打烊
      */
     boolean judgeHmShopownStatus(Integer sid);
+    
+    public void platformHandle(Integer cvOrderId);
 }

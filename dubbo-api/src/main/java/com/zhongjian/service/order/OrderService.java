@@ -41,6 +41,7 @@ public interface OrderService {
     boolean handleROrder(String out_trade_no,String total_amount);
     
     boolean cancelOrder(Integer orderId);
-     
-
+    
+    public Integer getRidFormMarket(Integer marketId, String strategy);
+    
 }

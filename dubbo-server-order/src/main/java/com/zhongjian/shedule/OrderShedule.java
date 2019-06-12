@@ -1,23 +1,25 @@
 package com.zhongjian.shedule;
 
-import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
+
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import com.zhongjian.commoncomponent.TaskBase;
 import com.zhongjian.localservice.OrderService;
 
 @Component
-public class OrderShedule extends TaskBase {
+public class OrderShedule extends TaskBase implements ApplicationListener<ContextRefreshedEvent> {
 
 @Autowired
 private OrderService orderService;
 
-	@PostConstruct
-	void startAll() {
-		this.orderShedule();
-	}
 	void orderShedule() {
 		// 定时执行任务，每隔5分钟钟执行一次
 		executeShedule(new Runnable() {
@@ -28,4 +30,30 @@ private OrderService orderService;
 		}, 0, 300);
 	}
 
+	//延时处理订单
+	public void delayHandleCVOrder(Integer orderId,Integer time) {
+		if (orderService.getDelieverModel(orderId) == 2) {
+			orderService.lockDistributeOrder(orderId);
+			return;
+		}
+		// 延时60s把订单改为平台处理
+		executeDelayShedule(new Runnable() {
+			@Override
+			public void run() {
+				orderService.changeAndDistributeOrder(orderId);
+			}
+		},  time);
+	}
+	
+
+	@Override
+	public void onApplicationEvent(ContextRefreshedEvent event) {
+		this.orderShedule();
+		List<Integer> orderList = orderService.queryWaitdeliverOrderList();
+		for (Iterator iterator = orderList.iterator(); iterator.hasNext();) {
+			Integer orderId = (Integer) iterator.next();
+			delayHandleCVOrder(orderId, 60);
+		}
+		
+	}
 }

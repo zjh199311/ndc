@@ -1,12 +1,16 @@
 package com.zhongjian.localservice.impl;
 
+import com.zhongjian.commoncomponent.PropUtil;
 import com.zhongjian.dao.entity.order.rider.OrderRiderOrderBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
+import com.zhongjian.dao.jdbctemplate.CVOrderDao;
 import com.zhongjian.localservice.OrderService;
 import com.zhongjian.util.DateUtil;
+import com.zhongjian.util.DistributedLock;
 import com.zhongjian.util.LogUtil;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -18,8 +22,17 @@ public class OrderServiceImpl extends HmBaseService<OrderRiderOrderBean, Integer
 
 
     @Resource
-    com.zhongjian.service.order.OrderService orderService;
-
+    private com.zhongjian.service.order.OrderService orderService;
+    
+    @Resource
+    private CVOrderDao cvOrderDao;
+    
+    @Resource
+    private PropUtil propUtil;
+    
+    @Resource
+    private DistributedLock zkLock;
+    
     @Override
     public void todoSth() {
 
@@ -31,4 +44,80 @@ public class OrderServiceImpl extends HmBaseService<OrderRiderOrderBean, Integer
         }
         LogUtil.info("定时任务" , DateUtil.formateDate(new Date(),DateUtil.DateMode_4) + ":处理超时订单任务结束");
     }
+
+	@Override
+	public boolean changeDelieverModel(Integer uoid) {
+		if (cvOrderDao.changeModelToTwo(uoid)) {
+			return true;
+		} 
+		if (cvOrderDao.getDeliverModelByUoid(uoid) == 2) {
+			return true;
+		}
+		return false;
+	}
+
+	
+	
+	
+	@Override
+	@Transactional
+	public void distributeOrder(Integer uoid) {
+		//派单的前置条件rid等于0
+		if (cvOrderDao.getRidFromCVOrder(uoid) != 0) {
+			System.out.println("已经派过单了");
+			return;
+		}
+		Integer marketId = 0;
+		// 查出makertid 
+		marketId = cvOrderDao.getMarketIdByCVOrder(uoid);
+		if (marketId == 0) {
+			return;
+		}
+		//派单逻辑
+		Integer rid = orderService.getRidFormMarket(marketId, "least");
+		if (rid != -1) {
+			cvOrderDao.updateRidOfHmCVOrder(rid, uoid);
+			cvOrderDao.deleteWaitdeliverOrder(uoid);
+		}else {
+		//重新派单
+		}
+		
+	}
+	
+	public void changeAndDistributeOrder(Integer uoid) {
+		if (this.changeDelieverModel(uoid)) {
+			this.lockDistributeOrder(uoid);
+		}
+	}
+
+	@Override
+	public Integer getDelieverModel(Integer uoid) {
+		return cvOrderDao.getDeliverModelByUoid(uoid);
+	}
+
+	@Override
+	public List<Integer> queryWaitdeliverOrderList() {
+		return cvOrderDao.queryWaitdeliverOrderList(propUtil.getDatacenterId());
+	}
+
+	@Override
+	public void lockDistributeOrder(Integer uoid) {
+		String lockName = null;
+		try {
+			//zookeeper加锁(针对uid加锁)
+			try {
+				lockName = zkLock.lock(uoid + "");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			this.distributeOrder(uoid);
+		} finally {
+			//zookeeper解锁
+			try {
+				zkLock.unlock(lockName);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

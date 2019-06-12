@@ -102,6 +102,9 @@ public class PreviewCVOrderServlet extends HttpServlet {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
 		}
 		//check shop status
+		if (!orderService.judgeHmShopownStatus(sid)) {
+			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SHOP_CHANGE));
+		}
 		//请求服务获取预览订单数据--start
 		String serverTime = orderService.previewOrderTime();
 		Future<String> futureServerTime = RpcContext.getContext().getFuture();

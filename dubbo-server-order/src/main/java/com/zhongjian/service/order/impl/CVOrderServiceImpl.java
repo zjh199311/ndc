@@ -22,6 +22,7 @@ import com.zhongjian.dto.cart.storeActivity.result.CartStoreActivityResultDTO;
 import com.zhongjian.exception.NDCException;
 import com.zhongjian.service.order.CVOrderService;
 import com.zhongjian.service.order.OrderService;
+import com.zhongjian.shedule.OrderShedule;
 import com.zhongjian.util.DateUtil;
 
 @Service("cvOrderService")
@@ -41,6 +42,9 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 
 	@Autowired
 	private OrderService orderService;
+	
+	@Autowired
+	private OrderShedule orderShedule;
 
 	@Override
 	public Map<String, Object> previewCVOrder(Integer uid, Integer sid, String type, Integer extra,String isSelfMention) {
@@ -92,7 +96,7 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 					: (BigDecimal) cvStore.get("price");
 			BigDecimal singleAmount = amoBigDecimal.multiply(priceBigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP);
 			Map<String, Object> good = new HashMap<String, Object>();
-			String gname = (String) cvStore.get("gname");
+			String gname =  cvStore.get("gname") == null? "其他" : (String) cvStore.get("gname");
 			good.put("gname", gname);
 			good.put("price", singleAmount.toString());
 			goodMaps.add(good);
@@ -161,7 +165,8 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 			isVIp = 1;
 			needPay = needPay.subtract(vipFavourable);
 		}
-		BigDecimal priceForIntegral = needPay;
+		BigDecimal deliverFeeB = new BigDecimal(deliverFee).setScale(2, BigDecimal.ROUND_HALF_UP);
+		BigDecimal priceForIntegral = needPay.add(deliverFeeB);
 		BigDecimal priceForCoupon = needPay;
 		priceForCouponString = priceForCoupon.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 		if ("1".equals(type) && integral > 0) {
@@ -173,7 +178,7 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 			if (priceForIntegral.compareTo(integralPrice) > 0) {
 				integralContent = "共" + integral + "积分,可抵扣" + integral + "积分";
 				integralPriceString = "-￥" + integralPrice.setScale(2, BigDecimal.ROUND_HALF_UP);
-				needPay = needPay.subtract(integralPrice);
+				needPay = priceForIntegral.subtract(integralPrice);
 			} else {
 				// 全积分支付
 				integralContent = "共" + integral + "积分，可抵扣"
@@ -196,6 +201,7 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 							couponPrice = priceForCoupon;
 							needPay = BigDecimal.ZERO;
 						}
+						needPay.add(deliverFeeB);
 						couponContent = "-￥" + couponPrice.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 					}
 				}
@@ -216,7 +222,7 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 		resMap.put("integralPrice", integralPriceString);
 		resMap.put("priceForCoupon", priceForCouponString);
 		
-		resMap.put("fee", new BigDecimal(deliverFee).setScale(2, BigDecimal.ROUND_HALF_UP));
+		resMap.put("fee","￥" + deliverFeeB);
 		//vip注释 --start
 //		vipFavour = vipFavourable.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 //		if (isVIp == 0) {
@@ -270,7 +276,7 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 			cvUserOrderRecord.put("vip_relief", remainVipRelief);
 			cvUserOrderRecord.put("order_num", orderNum);
 			cvUserOrderRecord.put("today_order_num", todayOrderNum);
-			System.out.println(cvOrderDao.recordUpdate(cvUserOrderRecord));
+			cvOrderDao.recordUpdate(cvUserOrderRecord);
 			if (couponId != null) {
 				cvOrderDao.recordCouponCancel(uid);
 				orderDao.changeCouponToZero((Integer) couponId);
@@ -440,7 +446,8 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 			}
 			needPay = needPay.subtract(vipFavourable);
 		}
-		BigDecimal priceForIntegral = needPay;
+		BigDecimal deliverFeeB = new BigDecimal(deliverFee).setScale(2, BigDecimal.ROUND_HALF_UP);
+		BigDecimal priceForIntegral = needPay.add(deliverFeeB);
 		BigDecimal priceForCoupon = needPay;
 		if ("1".equals(type) && integral > 0) {
 			BigDecimal hundredBigDecimal = new BigDecimal(100);
@@ -449,7 +456,7 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 			BigDecimal integralPrice = integralBigDecimal.divide(hundredBigDecimal);
 			if (priceForIntegral.compareTo(integralPrice) > 0) {
 				integralPriceData = integralPrice;
-				needPay = needPay.subtract(integralPrice);
+				needPay = priceForIntegral.subtract(integralPrice);
 			} else {
 				// 全积分支付
 				integralPriceData = priceForIntegral;
@@ -478,11 +485,14 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 							couponPrice = priceForCoupon;
 							needPay = BigDecimal.ZERO;
 						}
+						needPay = needPay.add(deliverFeeB);
 						couponPriceData = couponPrice;
 					}
 				}
 			}
 		}
+		// 删除便利店购物车
+		
 		// 便利店商户订单封装
 		cvOrderMap.put("order_sn", "CV" + idWorkers.getCVOrderIdWork().nextId());
 		cvOrderMap.put("total", storeAmountBigDecimal);
@@ -490,19 +500,21 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 		cvOrderMap.put("sid", sid);
 		cvOrderMap.put("ctime", createTime);
 		cvOrderMap.put("order_status", 0);
-		if ("1".equals(isSelfMention)) {
-			cvOrderMap.put("ordertaking_time", createTime);
-			cvOrderMap.put("order_status", 3);
-		}
+	
 		cvOrderMap.put("addressid", addressId);
 		cvOrderMap.put("pay_status", 0);
 		cvOrderMap.put("deliver_fee", new BigDecimal(deliverFee).setScale(2, BigDecimal.ROUND_HALF_UP));
 		cvOrderMap.put("remark", remarks.toString());
 		cvOrderMap.put("service_fee", BigDecimal.ZERO);
 		cvOrderMap.put("deliver_model", 0);
+		if ("1".equals(isSelfMention)) {
+			cvOrderMap.put("ordertaking_time", createTime);
+			cvOrderMap.put("order_status", 3);
+			cvOrderMap.put("deliver_model", 1);
+		}
 		cvOrderMap.put("rid", 0);
 		// 便利店用户订单封装
-		String out_trade_no = "CV" + idWorkers.getCVOutTradeIdWork().nextId();
+		String out_trade_no = idWorkers.getCVOutTradeIdWork().nextId() + "";
 		userOrderMap.put("order_sn", "UCV" + idWorkers.getCVUserOrderIdWork().nextId());
 		userOrderMap.put("out_trade_no", out_trade_no);
 		userOrderMap.put("pay_status", 0);
@@ -573,5 +585,11 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 		}
 		return true;
 	}
-
+	@Override
+	public void platformHandle(Integer cvOrderId) {
+		Integer uoid = cvOrderDao.getUidByCVOrderId(cvOrderId);
+		if (uoid != 0) {
+			orderShedule.delayHandleCVOrder(uoid,0);
+		}
+	}
 }

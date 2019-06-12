@@ -34,12 +34,4 @@ public final class DistanceUtils {
         return s;
     }
 
-    public static void main(String[] args) {
-        double d = getDistance(120.250192, 30.225197, 120.210453, 30.202429);
-        System.out.println(d);
-        if (d<3.5) {
-        	System.out.println("OK");
-			
-		}
-    }
 }
