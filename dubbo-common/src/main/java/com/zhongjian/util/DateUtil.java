@@ -822,5 +822,23 @@ public class DateUtil extends DateUtils {
      public static int getCurrentTime() {
          return (int) (System.currentTimeMillis() / 1000);
      }
+     /**
+      * 判断时间是否在指定范围
+      *
+      * @return boolean
+      */
+ 	public static boolean belongCalendar(Date nowTime, Date beginTime, Date endTime) {
+		Calendar date = Calendar.getInstance();
+		date.setTime(nowTime);
+		Calendar begin = Calendar.getInstance();
+		begin.setTime(beginTime);
+		Calendar end = Calendar.getInstance();
+		end.setTime(endTime);
+		if (date.after(begin) && date.before(end)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
 

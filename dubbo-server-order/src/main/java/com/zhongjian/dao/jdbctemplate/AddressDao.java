@@ -2,6 +2,8 @@ package com.zhongjian.dao.jdbctemplate;
 
 
 
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -38,4 +40,28 @@ public class AddressDao {
 				" AND a.uid = ?";
 		jdbcTemplate.update(sql,addressId,uid,addressId,uid);
 	}
+	public static void name(int a) {
+		
+		
+			System.out.println(0);
+			if (a == 1) {
+				System.out.println(1);
+			}else {
+				try {
+					name(a);
+					} catch (StackOverflowError e) {
+						System.out.println(2);
+//						BigDecimal add = new BigDecimal(1).add(new BigDecimal(2));
+						System.out.println("saa");
+					}
+				
+			} 
+			
+	
+		
+	}
+	public static void main(String[] args) {
+		name(0);
+	}
+	
 }

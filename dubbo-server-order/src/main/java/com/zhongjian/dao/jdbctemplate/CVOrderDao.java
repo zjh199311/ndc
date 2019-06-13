@@ -191,14 +191,14 @@ public class CVOrderDao {
 		jdbcTemplate.update(sql, map.get("uid"), map.get("vip_relief"), map.get("order_num"), map.get("today_order_num"), map.get("coupon_use"));
 	}
 	//查询用户订单的uoid
-	public Integer getUidByOutTradeNo(String outTradeNo)  {
-		String sql = "select id from hm_cvuser_order where out_trade_no = ?";
-		Integer id = null;
+	public Map<String, Object> getUidByOutTradeNo(String outTradeNo)  {
+		String sql = "select integralPrice,id,uid from hm_cvuser_order where out_trade_no = ?";
+		Map<String, Object> resMap = null;
 		try {
-			id  = jdbcTemplate.queryForObject(sql, new Object[] { outTradeNo }, Integer.class);	
+			resMap = jdbcTemplate.queryForMap(sql, outTradeNo);
 		} catch (EmptyResultDataAccessException e) {
 		}
-		return id;
+		return resMap;
 	}
 	
 	//查询用户订单的uoid
@@ -210,6 +210,17 @@ public class CVOrderDao {
 		} catch (EmptyResultDataAccessException e) {
 		}
 		return uoid;
+	}
+	
+	//查询商户订单的地址
+	public Map<String, Object> getAddressAndOrderSn(Integer uoid)  {
+		String sql = "select order_sn,addressid from hm_cvorder where uoid = ?";
+		Map<String, Object> resMap = null;
+		try {
+			resMap = jdbcTemplate.queryForMap(sql, uoid);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return resMap;
 	}
 	
 	//查询cvorder的rid
@@ -248,6 +259,12 @@ public class CVOrderDao {
 		String sql = "update hm_cvorder set pay_status = 1 where uoid = ? and pay_status = 0";
 		return jdbcTemplate.update(sql, UCVOrderId) > 0 ? true : false;
 	}
+	
+	public boolean updateCVOrderOrderStatus(Integer UCVOrderId){
+		String sql = "update hm_cvorder set order_status = 1 where uoid = ?";
+		return jdbcTemplate.update(sql, UCVOrderId) > 0 ? true : false;
+	}
+	
 	public boolean updateCVOrderToTimeout(Integer UCVOrderId){
 		String sql = "update hm_cvorder set pay_status = 2 where uoid = ? and pay_status = 0";
 		return jdbcTemplate.update(sql, UCVOrderId) > 0 ? true : false;
@@ -308,6 +325,16 @@ public class CVOrderDao {
 		Map<String, Object> resMap = null;
 		try {
 			resMap = jdbcTemplate.queryForMap(sql, orderId, uid);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return resMap;
+	}
+	
+	public Map<String, Object> getOrderDetailByUoid(Integer uoid) {
+		String sql = "select order_sn,sid from hm_cvorder where uoid = ?";
+		Map<String, Object> resMap = null;
+		try {
+			resMap = jdbcTemplate.queryForMap(sql, uoid);
 		} catch (EmptyResultDataAccessException e) {
 		}
 		return resMap;

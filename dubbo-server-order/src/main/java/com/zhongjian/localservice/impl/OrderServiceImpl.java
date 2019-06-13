@@ -5,6 +5,7 @@ import com.zhongjian.dao.entity.order.rider.OrderRiderOrderBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
 import com.zhongjian.dao.jdbctemplate.CVOrderDao;
 import com.zhongjian.localservice.OrderService;
+import com.zhongjian.task.OrderTask;
 import com.zhongjian.util.DateUtil;
 import com.zhongjian.util.DistributedLock;
 import com.zhongjian.util.LogUtil;
@@ -32,6 +33,9 @@ public class OrderServiceImpl extends HmBaseService<OrderRiderOrderBean, Integer
     
     @Resource
     private DistributedLock zkLock;
+    
+    @Resource
+    private OrderTask orderTask;
     
     @Override
     public void todoSth() {
@@ -61,10 +65,20 @@ public class OrderServiceImpl extends HmBaseService<OrderRiderOrderBean, Integer
 	
 	@Override
 	@Transactional
-	public void distributeOrder(Integer uoid) {
+	public void distributeOrder(Integer uoid,boolean isFirst,int time) {
 		//派单的前置条件rid等于0
+		if (time > 8) {
+			//超过五次直接拒绝（菜场无骑手）
+			return;
+		}
+		if (!isFirst) {
+			try {
+				Thread.sleep(60 * 5 * 1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		if (cvOrderDao.getRidFromCVOrder(uoid) != 0) {
-			System.out.println("已经派过单了");
 			return;
 		}
 		Integer marketId = 0;
@@ -78,8 +92,10 @@ public class OrderServiceImpl extends HmBaseService<OrderRiderOrderBean, Integer
 		if (rid != -1) {
 			cvOrderDao.updateRidOfHmCVOrder(rid, uoid);
 			cvOrderDao.deleteWaitdeliverOrder(uoid);
+			orderTask.handleCVOrderPushRider(rid);
 		}else {
 		//重新派单
+				distributeOrder(uoid,false,time ++);
 		}
 		
 	}
@@ -110,7 +126,7 @@ public class OrderServiceImpl extends HmBaseService<OrderRiderOrderBean, Integer
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			this.distributeOrder(uoid);
+			this.distributeOrder(uoid,true,1);
 		} finally {
 			//zookeeper解锁
 			try {

@@ -829,36 +829,59 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		int currentTime = (int) (System.currentTimeMillis() / 1000);
 		if (out_trade_no.startsWith("CV")) {
 			if (cvOrderDao.updateUCVOrderToS(out_trade_no, currentTime)) {
-				Integer uoid = cvOrderDao.getUidByOutTradeNo(out_trade_no);
-				if (uoid != null) {
-					cvOrderDao.updateCVOrderToS(uoid);
-				}
+			    Map<String, Object> cvUserorderDetail = cvOrderDao.getUidByOutTradeNo(out_trade_no);
+			    Integer uoid = (Integer) cvUserorderDetail.get("id");
+			    Integer uid = (Integer) cvUserorderDetail.get("uid");
+			    BigDecimal integralPrice = (BigDecimal) cvUserorderDetail.get("integralPrice");
+				cvOrderDao.updateCVOrderToS(uoid);
 				// 把订单推送至rabbitmq处理，confirm即可
 				// 降级至本地处理
 
 				// 1.把订单待接单持久化以免宕机未推给平台处理
 				if (cvOrderDao.getOrderStatusByUoid(uoid) != 3) {
-					Map<String, Object> waitDeliver = new HashMap<String, Object>();
-					waitDeliver.put("id", UUID.randomUUID().toString().replaceAll("\\-", ""));
-					waitDeliver.put("servercenter", propUtil.getOrderServerCenter());
-					waitDeliver.put("orderId", uoid);
-					cvOrderDao.addWaitDeliverOrder(waitDeliver);
-					if (true) {
+					SimpleDateFormat df = new SimpleDateFormat("HH:mm");// 设置日期格式
+							Date nowTime = null;
+							Date beginTime = null;
+							Date endTime = null;
+							try {
+								nowTime = df.parse(df.format(new Date()));
+								beginTime = df.parse("7:30");
+								endTime = df.parse("18:45");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+					if (DateUtil.belongCalendar(nowTime, beginTime, endTime)) {
+						Map<String, Object> waitDeliver = new HashMap<String, Object>();
+						waitDeliver.put("id", UUID.randomUUID().toString().replaceAll("\\-", ""));
+						waitDeliver.put("servercenter", propUtil.getOrderServerCenter());
+						waitDeliver.put("orderId", uoid);
+						cvOrderDao.addWaitDeliverOrder(waitDeliver);
 						orderShedule.delayHandleCVOrder(uoid, 60);
 						// 定时交由平台处理
 						// 1.订单延时60s去改变deliverModel为2
 						// 2.派单删除持久化记录，并推送消息给骑手
 						// (宕机重启后查询持久化记录，遍历为2的重复1，2步骤，否则直接派单)
 					} else {
-						// 某些条件直接让商户接单
-						// 商户完单要删除持久化记录
+						//直接让商户接单
+						cvOrderDao.updateCVOrderOrderStatus(uoid);
 					}
 				}
 				// 2.异步推送消息给商户
-
+				orderTask.handleCVOrderPushShop(uoid);
+				Map<String, Object> addressAndOrderSn = cvOrderDao.getAddressAndOrderSn(uoid);
+				String orderSn = (String) addressAndOrderSn.get("order_sn");
+				Integer addressId = (Integer) addressAndOrderSn.get("addressid");
 				// 3.记录积分使用
+				integralVipDao.addIntegralLog(uid, integralPrice.multiply(new BigDecimal(100)).intValue(), 0, currentTime);
 				// 4.生成地址
+				OrderAddressBean addressBean = addressDao.getAddressById(addressId);
+				OrderAddressOrderBean addressOrderBean = new OrderAddressOrderBean();
+				BeanUtils.copyProperties(addressBean, addressOrderBean);
+				addressOrderBean.setCtime(currentTime);
+				addressOrderBean.setRiderSn(orderSn);
+				addressDao.addOrderAddress(addressOrderBean);
 				// 5.异步设置用户默认地址
+				addressTask.setAddressTask(addressId, uid);
 			}
 			return true;
 		} else {

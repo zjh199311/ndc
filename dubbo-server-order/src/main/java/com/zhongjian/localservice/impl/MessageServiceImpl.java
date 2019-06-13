@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.zhongjian.common.constant.FinalDatas;
 import com.zhongjian.commoncomponent.PropUtil;
+import com.zhongjian.dao.jdbctemplate.CVOrderDao;
 import com.zhongjian.dao.jdbctemplate.OrderDao;
 import com.zhongjian.dao.jdbctemplate.UserDao;
 import com.zhongjian.dto.message.query.MessageReqDTO;
@@ -33,6 +34,9 @@ public class MessageServiceImpl implements MessageService {
 
 	@Autowired
 	private UserDao userDao;
+	
+	@Autowired
+	private CVOrderDao cvOrderDao;
 
 	@Override
 	public void messagePush(Integer orderId) {
@@ -136,6 +140,28 @@ public class MessageServiceImpl implements MessageService {
 		} catch (Exception e) {
 			LogUtil.info(e, "出现异常");
 		}
+	}
+
+	@Override
+	public void messagePushCVShop(Integer uoid) {
+		Map<String, Object> sOrder = cvOrderDao.getOrderDetailByUoid(uoid);
+		if (sOrder != null) {
+			String orderSn = (String) sOrder.get("order_sn");
+			Integer sid = (Integer) sOrder.get("sid");
+			String shopAccid = userDao.getShopAccidById(sid);
+			if (!"".equals(shopAccid)) {
+				pushMessageToSids(shopAccid,orderSn,0);
+			}
+		}
+	}
+
+	@Override
+	public void messagePushCVRider(Integer rid) {
+		String rAccid = userDao.getAccidById(rid);
+		if (!"".equals(rAccid)) {
+			pushMessageToRider(rAccid);
+		}
+		
 	}
 
 }

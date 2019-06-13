@@ -10,7 +10,7 @@ public interface OrderService {
 	boolean changeDelieverModel(Integer uoid);
 	
 	
-	void distributeOrder(Integer uoid);
+	void distributeOrder(Integer uoid,boolean isFirst,int time);
 	
 	void lockDistributeOrder(Integer uoid);
 	

@@ -21,4 +21,22 @@ public class OrderTask extends TaskBase {
 			}
 		});
 	}
+	
+	public void handleCVOrderPushShop(Integer orderId) {
+		executeTask(new Runnable() {
+			@Override
+			public void run() {
+				messageService.messagePushCVShop(orderId);
+			}
+		});
+	}
+	
+	public void handleCVOrderPushRider(Integer rid) {
+		executeTask(new Runnable() {
+			@Override
+			public void run() {
+				messageService.messagePushCVRider(rid);
+			}
+		});
+	}
 }
