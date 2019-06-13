@@ -104,12 +104,12 @@ public class PayCommonUtil {
         String sign = null;
         if (0 == type) {
             //通知地址
-            parameterMap.put("notify_url", wxAppletsNotifyUrl);
+            parameterMap.put("notify_url", wxAppNotifyUrl);
             parameterMap.put("trade_type", "APP");
             sign = PayCommonUtil.createSign("UTF-8", parameterMap, wxAppKey);
         } else if (1 == type) {
             //通知地址
-            parameterMap.put("notify_url", wxAppNotifyUrl);
+            parameterMap.put("notify_url", wxAppletsNotifyUrl);
             parameterMap.put("trade_type", "JSAPI");
         }
         if (parameterMap.get("trade_type").equals("JSAPI")) {

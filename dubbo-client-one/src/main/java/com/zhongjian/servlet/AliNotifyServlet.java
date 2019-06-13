@@ -54,17 +54,22 @@ public class AliNotifyServlet extends HttpServlet {
 					// 校验四项
 					if ( !app_id.equals(propUtil.getAliAppid())) {
 						printWriter.print("failure");
+						return;
 					}
 					if (orderService.handleROrder(out_trade_no, total_amount)) {
 						printWriter.print("success");
+						return;
 					} else {
 						printWriter.print("failure");
+						return;
 					}
 				} else {
 					printWriter.print("failure");
+					return;
 				}
 			} else {
 				printWriter.print("failure");
+				return;
 			}
 		} catch (Exception e) {
 			log.error("支付宝异步通知发生异常，请注意处理 " + e );

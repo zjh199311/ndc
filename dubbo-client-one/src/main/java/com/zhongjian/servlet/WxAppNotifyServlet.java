@@ -33,6 +33,7 @@ public class WxAppNotifyServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		log.info("微信回调开始");
 		InputStream is = null;
 		try {
 			is = request.getInputStream();
@@ -45,6 +46,8 @@ public class WxAppNotifyServlet extends HttpServlet {
 				response.getWriter().write(
 						"<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[sign]]></return_msg></xml>");
 				log.error("wechat sign is wrong!");
+				return;
+				
 			}
 			String returnCode = notifyMap.get("return_code");
 			String resultCode = notifyMap.get("result_code");
@@ -56,17 +59,20 @@ public class WxAppNotifyServlet extends HttpServlet {
 				if (orderService.handleROrder(tradeNo, transTotalAmount)) {
 					response.getWriter().write(
 							"<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
+					return;
 				}else {
 					response.getWriter().write(
 							"<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[SEVERERR]]></return_msg></xml>");
+					return;
 				}
 				
 			} else {
 				response.getWriter().write(
 						"<xml><return_code><![CDATA[FAIL]]></return_code><return_msg><![CDATA[SEVERERR]]></return_msg></xml>");
+				return;
 			}
 		} catch (Exception e) {
-			log.error("支付宝异步通知发生异常，请注意处理 " + e);
+			log.error("微信异步通知发生异常，请注意处理 " + e);
 			response.getWriter().print("failure");
 		}
 
