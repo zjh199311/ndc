@@ -56,10 +56,6 @@ public class OrderDetailsResultDTO implements Serializable {
      */
     private Integer ctime;
 
-    /**
-     * 创建时间格式化
-     */
-    private String time;
 
     /**
      * 订单状态描述

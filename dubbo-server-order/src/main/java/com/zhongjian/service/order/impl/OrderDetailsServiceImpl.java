@@ -96,9 +96,6 @@ public class OrderDetailsServiceImpl extends HmBaseService<OrderCvUserOrderBean,
                 orderDetailsResultDTO.setShowMore(1);
             }
 
-            //转换时间格式
-            orderDetailsResultDTO.setTime(DateUtil.lastDayTime.format(orderDetailsResultDTO.getCtime()));
-
             //如果type状态为1则为便利店订单. 为0则为菜场订单
             if (FinalDatas.ONE == orderDetailsResultDTO.getType()) {
                 list = this.orderDetailBean.executeListMethod(orderDetailsResultDTO.getRoid(), "findCvOrderByOid", CartBasketResultDTO.class);

@@ -2,27 +2,46 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.zhongjian.dao.entity.order.shopown.OrderShopownBean">
 
-	<resultMap id="hmShopownStatusResult"
-		type="com.zhongjian.dao.entity.order.shopown.OrderShopownBean">
-		<id column="pid" property="pid" jdbcType="INTEGER" />
-		<result column="status" property="status" jdbcType="INTEGER" />
-		<result column="is_appointment" property="isAppointment"
-			jdbcType="INTEGER" />
-		<result column="marketid" property="marketid"
-			jdbcType="INTEGER" />	
-	</resultMap>
+    <resultMap id="hmShopownStatusResult"
+               type="com.zhongjian.dao.entity.order.shopown.OrderShopownBean">
+        <id column="pid" property="pid" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="is_appointment" property="isAppointment"
+                jdbcType="INTEGER"/>
+        <result column="marketid" property="marketid"
+                jdbcType="INTEGER"/>
+    </resultMap>
 
-	<select id="selectHmShopownStatusByPids" resultMap="hmShopownStatusResult"
-		parameterType="java.util.List">
-		select pid,`status`,is_appointment,marketid from hm_shopown where pid in
-		<foreach collection="pids" index="index" item="pid" open="("
-			separator="," close=")">
-			#{pid,jdbcType=INTEGER}
-		</foreach>
-	</select>
+    <select id="selectHmShopownStatusByPids" resultMap="hmShopownStatusResult"
+            parameterType="java.util.List">
+        select pid,`status`,is_appointment,marketid from hm_shopown where pid in
+        <foreach collection="pids" index="index" item="pid" open="("
+                 separator="," close=")">
+            #{pid,jdbcType=INTEGER}
+        </foreach>
+    </select>
 
-<select id="selectHmShopownStatusByPid" resultMap="hmShopownStatusResult">
+    <select id="selectHmShopownStatusByPid" resultMap="hmShopownStatusResult">
 		select pid,`status`,is_appointment,marketid from hm_shopown where pid = #{pid,jdbcType=INTEGER}
 	</select>
+
+    <resultMap id="BaseShopInfo" type="com.zhongjian.dto.order.order.result.OrderListResultDTO">
+        <id column="id" property="oid" jdbcType="INTEGER"/>
+        <result column="sname" property="sname" jdbcType="VARCHAR"/>
+        <result column="total" property="orderTotal" jdbcType="VARCHAR"/>
+        <result column="payment" property="orderPayment" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="findShopownByOid" resultMap="BaseShopInfo" parameterType="java.lang.Integer">
+       SELECT
+            o.payment,
+            o.id,
+            o.total,
+            s.sname
+        FROM
+            hm_order o
+        LEFT JOIN hm_shopown s ON o.pid = s.pid
+        where o.roid=#{id,jdbcType=INTEGER}
+    </select>
 
 </mapper>
