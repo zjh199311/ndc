@@ -56,7 +56,7 @@ public class AliNotifyServlet extends HttpServlet {
 						printWriter.print("failure");
 						return;
 					}
-					if (orderService.handleROrder(out_trade_no, total_amount)) {
+					if (orderService.handleROrder(out_trade_no, total_amount,"aliwap")) {
 						printWriter.print("success");
 						return;
 					} else {

@@ -24,11 +24,11 @@ public class AddressDao {
 		return orderAddress;
 	}
 	
-	public void addOrderAddress(OrderAddressOrderBean obj) {
+	public boolean addOrderAddress(OrderAddressOrderBean obj) {
 		String sql = "INSERT INTO `hm_order_address` (contacts,gender,phone,address,house_number,longitude,"
 				+ "latitude,uid,ctime,rider_sn) values (?,?,?,?,?,?,?,?,?,?)";
-		jdbcTemplate.update(sql, obj.getContacts(),obj.getGender(),obj.getPhone(),obj.getAddress(),obj.getHouseNumber(),
-				obj.getLongitude(),obj.getLatitude(),obj.getUid(),obj.getCtime(),obj.getRiderSn());
+		return jdbcTemplate.update(sql, obj.getContacts(),obj.getGender(),obj.getPhone(),obj.getAddress(),obj.getHouseNumber(),
+				obj.getLongitude(),obj.getLatitude(),obj.getUid(),obj.getCtime(),obj.getRiderSn()) > 0 ?true:false;
 	}
 	
 	public void updateDefaultAdress(Integer addressId,Integer uid)  {

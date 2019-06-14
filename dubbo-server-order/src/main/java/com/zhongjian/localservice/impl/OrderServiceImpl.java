@@ -68,7 +68,7 @@ public class OrderServiceImpl extends HmBaseService<OrderRiderOrderBean, Integer
 	public void distributeOrder(Integer uoid,boolean isFirst,int time) {
 		//派单的前置条件rid等于0
 		if (time > 8) {
-			//超过五次直接拒绝（菜场无骑手）
+			//超过八次直接拒绝（菜场无骑手）
 			return;
 		}
 		if (!isFirst) {

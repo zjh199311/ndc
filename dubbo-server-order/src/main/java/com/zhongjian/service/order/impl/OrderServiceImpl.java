@@ -569,7 +569,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				throw new NDCException.DeleteBasketExcpetion();
 			}
 			if (integralPay || needPay.compareTo(BigDecimal.ZERO) == 0) {
-				handleROrder(outTradeNo, needPayString);
+				handleROrder(outTradeNo, needPayString,"integral");
 				resMap.put("roid", roid);
 				resMap.put("status", 1);
 			} else {
@@ -825,11 +825,12 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 
 	@Override
 	@Transactional
-	public boolean handleROrder(String out_trade_no, String total_amount) {
+	public boolean handleROrder(String out_trade_no, String total_amount,String payType) {
 		int currentTime = (int) (System.currentTimeMillis() / 1000);
 		if (out_trade_no.startsWith("CV")) {
-			if (cvOrderDao.updateUCVOrderToS(out_trade_no, currentTime)) {
-			    Map<String, Object> cvUserorderDetail = cvOrderDao.getUidByOutTradeNo(out_trade_no);
+		    String  dataNo = out_trade_no.substring(8);
+			if (cvOrderDao.updateUCVOrderToS(dataNo, currentTime,payType,out_trade_no)) {
+			    Map<String, Object> cvUserorderDetail = cvOrderDao.getUidByOutTradeNo(dataNo);
 			    Integer uoid = (Integer) cvUserorderDetail.get("id");
 			    Integer uid = (Integer) cvUserorderDetail.get("uid");
 			    BigDecimal integralPrice = (BigDecimal) cvUserorderDetail.get("integralPrice");
@@ -863,16 +864,18 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 						// (宕机重启后查询持久化记录，遍历为2的重复1，2步骤，否则直接派单)
 					} else {
 						//直接让商户接单
-						cvOrderDao.updateCVOrderOrderStatus(uoid);
+						cvOrderDao.updateCVOrderOrderStatus(uoid,currentTime);
 					}
 				}
-				// 2.异步推送消息给商户
-				orderTask.handleCVOrderPushShop(uoid);
+				
 				Map<String, Object> addressAndOrderSn = cvOrderDao.getAddressAndOrderSn(uoid);
 				String orderSn = (String) addressAndOrderSn.get("order_sn");
 				Integer addressId = (Integer) addressAndOrderSn.get("addressid");
 				// 3.记录积分使用
-				integralVipDao.addIntegralLog(uid, integralPrice.multiply(new BigDecimal(100)).intValue(), 0, currentTime);
+				if (integralPrice.compareTo(BigDecimal.ZERO) > 0) {
+					Integer integral = integralPrice.multiply(new BigDecimal(100)).intValue();
+					integralVipDao.addIntegralLog(uid,integral , 0, currentTime);
+				}
 				// 4.生成地址
 				OrderAddressBean addressBean = addressDao.getAddressById(addressId);
 				OrderAddressOrderBean addressOrderBean = new OrderAddressOrderBean();
@@ -882,11 +885,14 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				addressDao.addOrderAddress(addressOrderBean);
 				// 5.异步设置用户默认地址
 				addressTask.setAddressTask(addressId, uid);
+				// 2.异步推送消息给商户
+				orderTask.handleCVOrderPushShop(uoid);
 			}
 			return true;
 		} else {
-			if (orderDao.updateROStatusToSuccess(out_trade_no, currentTime)) {
-				Map<String, Object> rorderDetail = orderDao.getROrderIdByOutTradeNo(out_trade_no);
+			String  dataNo = out_trade_no.substring(6);
+			if (orderDao.updateROStatusToSuccess(dataNo, currentTime,payType,out_trade_no)) {
+				Map<String, Object> rorderDetail = orderDao.getROrderIdByOutTradeNo(dataNo);
 				Integer rorderId = (Integer) rorderDetail.get("id");
 				Integer marketId = (Integer) rorderDetail.get("marketid");
 				Integer addressId = (Integer) rorderDetail.get("address_id");
@@ -907,14 +913,19 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				addressOrderBean.setRiderSn(riderSn);
 				addressDao.addOrderAddress(addressOrderBean);
 				// 增加积分
-				integralVipDao.updateUserIntegral(uid, "+", Double.valueOf(total_amount).intValue());
-				integralVipDao.addIntegralLog(uid, Double.valueOf(total_amount).intValue(), 4, currentTime);
+				Integer integralAdd = Double.valueOf(total_amount).intValue();
+				if (!integralAdd.equals(0)) {
+					integralVipDao.updateUserIntegral(uid, "+", integralAdd);
+					integralVipDao.addIntegralLog(uid, integralAdd, 4, currentTime);
+				}
 				// 记录
 				Map<String, Object> orderInfo = orderDao.getDetailByOrderId(rorderId);
 				Object integralObj = orderInfo.get("integral");
 				if (integralObj != null) {
 					Integer integral = (Integer) integralObj;
-					integralVipDao.addIntegralLog(uid, integral, 0, currentTime);
+					if (!integral.equals(0)) {
+						integralVipDao.addIntegralLog(uid, integral, 0, currentTime);
+					}
 				}
 				// 异步处理
 				addressTask.setAddressTask(addressId, uid);

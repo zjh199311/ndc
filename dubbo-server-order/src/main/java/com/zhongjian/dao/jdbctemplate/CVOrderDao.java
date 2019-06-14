@@ -244,9 +244,9 @@ public class CVOrderDao {
 		return resMap;
 	}
 	
-	public boolean updateUCVOrderToS(String outTradeNo, Integer unixTime){
-		String sql = "update hm_cvuser_order set pay_status = 1,pay_time = ? where out_trade_no = ? and pay_status = 0";
-		return jdbcTemplate.update(sql, unixTime, outTradeNo) > 0 ? true : false;
+	public boolean updateUCVOrderToS(String outTradeNo, Integer unixTime,String payType,String newOrderTradeNo){
+		String sql = "update hm_cvuser_order set pay_status = 1,pay_time = ?,type_pay = ?,out_trade_no = ? where out_trade_no = ? and pay_status = 0";
+		return jdbcTemplate.update(sql, unixTime,payType, newOrderTradeNo,outTradeNo) > 0 ? true : false;
 		
 	}
 	
@@ -260,9 +260,9 @@ public class CVOrderDao {
 		return jdbcTemplate.update(sql, UCVOrderId) > 0 ? true : false;
 	}
 	
-	public boolean updateCVOrderOrderStatus(Integer UCVOrderId){
-		String sql = "update hm_cvorder set order_status = 1 where uoid = ?";
-		return jdbcTemplate.update(sql, UCVOrderId) > 0 ? true : false;
+	public boolean updateCVOrderOrderStatus(Integer UCVOrderId,int unixTime){
+		String sql = "update hm_cvorder set order_status = 1, deliver_model = 1,ordertaking_time = ? where uoid = ?";
+		return jdbcTemplate.update(sql, unixTime,UCVOrderId) > 0 ? true : false;
 	}
 	
 	public boolean updateCVOrderToTimeout(Integer UCVOrderId){

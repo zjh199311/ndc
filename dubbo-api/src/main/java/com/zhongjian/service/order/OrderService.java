@@ -38,7 +38,7 @@ public interface OrderService {
 	 * @param total_amount
 	 * @return orderId
 	 */
-    boolean handleROrder(String out_trade_no,String total_amount);
+    boolean handleROrder(String out_trade_no,String total_amount,String payType);
     
     boolean cancelOrder(Integer orderId);
     

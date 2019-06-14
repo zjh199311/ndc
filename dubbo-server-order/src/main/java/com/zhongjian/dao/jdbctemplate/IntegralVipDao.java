@@ -56,9 +56,9 @@ public class IntegralVipDao extends MongoDBDaoBase{
 		jdbcTemplate.update(updateSql, newIntegral,uid);
 	}
 	
-	public void addIntegralLog(Integer uid, Integer integral , Integer type,Integer ctime) {
+	public boolean addIntegralLog(Integer uid, Integer integral , Integer type,Integer ctime) {
 		String sql = "INSERT INTO `hm_integral_log` (integral,uid,type,ctime) VALUES (?, ?, ?, ?)";
-		jdbcTemplate.update(sql,integral,uid,type,ctime);
+		return jdbcTemplate.update(sql,integral,uid,type,ctime) > 0?true:false;
 	}
 	
 	public Map<String, Object> getDefualtVipConfig() {

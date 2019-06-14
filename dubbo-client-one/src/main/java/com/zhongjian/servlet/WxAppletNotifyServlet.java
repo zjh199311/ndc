@@ -32,7 +32,6 @@ public class WxAppletNotifyServlet extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
 		InputStream is = null;
 		try {
 			is = request.getInputStream();
@@ -54,8 +53,8 @@ public class WxAppletNotifyServlet extends HttpServlet {
 				String tradeNo = notifyMap.get("out_trade_no");
 				String totalAmount = notifyMap.get("total_fee");
 				BigDecimal totalAmountBigDecimal = new BigDecimal(totalAmount);
-				String transTotalAmount = totalAmountBigDecimal.divide(new BigDecimal(100)).toString();
-				if (orderService.handleROrder(tradeNo, transTotalAmount)) {
+				String transTotalAmount = totalAmountBigDecimal.divide(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
+				if (orderService.handleROrder(tradeNo, transTotalAmount,"wechat")) {
 					response.getWriter().write(
 							"<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
 						return;

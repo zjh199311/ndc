@@ -291,9 +291,9 @@ public class OrderDao extends MongoDBDaoBase {
 		return resMap;
 	}
 
-	public boolean updateROStatusToSuccess(String outTradeNo, Integer unixTime) {
-		String sql = "update hm_rider_order set pay_status = 1,pay_time = ? where out_trade_no = ? and pay_status = 0";
-		return jdbcTemplate.update(sql, unixTime, outTradeNo) > 0 ? true : false;
+	public boolean updateROStatusToSuccess(String outTradeNo, Integer unixTime,String payType,String newOrderTradeNo) {
+		String sql = "update hm_rider_order set pay_status = 1,pay_time = ?,type_pay = ?,out_trade_no = ? where out_trade_no = ? and pay_status = 0";
+		return jdbcTemplate.update(sql, unixTime, payType,newOrderTradeNo,outTradeNo) > 0 ? true : false;
 	}
 
 	public boolean updateROStatusToTimeout(Integer orderId) {

@@ -565,7 +565,7 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 		Integer cVOrderId = cvOrderDao.addCVOrder(cvOrderMap);
 		cvOrderDao.addCVOrderDetail(goodMaps, cVOrderId);
 		if (needPay.compareTo(BigDecimal.ZERO) == 0) {
-			orderService.handleROrder(out_trade_no, needPay.setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+			orderService.handleROrder(out_trade_no, needPay.setScale(2, BigDecimal.ROUND_HALF_UP).toString(),"integral");
 			resMap.put("cvoid", cvUserOrderId);
 			resMap.put("status", 1);
 		} else {
