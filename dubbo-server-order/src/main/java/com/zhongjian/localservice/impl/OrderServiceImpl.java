@@ -92,6 +92,7 @@ public class OrderServiceImpl extends HmBaseService<OrderRiderOrderBean, Integer
 		if (rid != -1) {
 			cvOrderDao.updateRidOfHmCVOrder(rid, uoid);
 			cvOrderDao.deleteWaitdeliverOrder(uoid);
+			cvOrderDao.addOrUpdateRiderNum(rid);
 			orderTask.handleCVOrderPushRider(rid);
 		}else {
 		//重新派单

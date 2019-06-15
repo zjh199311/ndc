@@ -645,6 +645,11 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			if (ridOrginList.size() == 0) {
 				return -1;
 			}
+			//便利店骑手对应单数统计
+			for (Map<String, Object> map : ridOrginList) {
+				Integer rid = (Integer) map.get("rid");
+				map.put("sum",(Integer) map.get("sum") + cvOrderDao.getCVOrderNumOfRider(rid));
+			}
 			List<Map<String, Object>> ridList = orderDao.getRidOrderNumByMarketId(marketId,
 					(int) DateUtil.getTodayZeroTime());
 			if (ridList.size() == 0) {

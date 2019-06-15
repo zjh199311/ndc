@@ -131,7 +131,7 @@ public class CVOrderDao {
 	// hm_cvorder 新增记录
 	public Integer addCVOrder(Map<String, Object> map) {
 		final String sql = "INSERT INTO hm_cvorder (order_sn,sid,total,payment,ctime,ordertaking_time,"
-				+ "orderend_time,addressid,order_status,pay_status,deliver_fee,remark,uoid,rid,deliver_model,service_fee) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+				+ "orderend_time,addressid,order_status,pay_status,deliver_fee,remark,uoid,rid,deliver_model,service_fee,service_time) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
@@ -152,6 +152,7 @@ public class CVOrderDao {
 				ps.setInt(14, (Integer) map.get("rid"));
 				ps.setInt(15, (Integer) map.get("deliver_model"));
 				ps.setBigDecimal(16, (BigDecimal) map.get("service_fee"));
+				ps.setInt(17, (Integer) map.get("service_time"));
 				return ps;
 			}
 		}, keyHolder);
@@ -338,6 +339,26 @@ public class CVOrderDao {
 		} catch (EmptyResultDataAccessException e) {
 		}
 		return resMap;
+	}
+	
+	public Integer getCVOrderNumOfRider(Integer rid) {
+		String sql = "select num from rider_cvorder_num where rid = ?";
+		Integer num = 0;
+		try {
+			num = jdbcTemplate.queryForObject(sql, new Object[] { rid }, Integer.class);	
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return num;
+	}
+	
+	public void addOrUpdateRiderNum(Integer rid) {
+		String sql = "update rider_cvorder_num set num = num + 1 where rid = ?";
+		int update = jdbcTemplate.update(sql, rid);
+		if (update != 1) {
+			sql = "insert into rider_cvorder_num (rid,num) values (?,?)";
+			jdbcTemplate.update(sql, rid,1);
+		}
+		
 	}
 	
 }
