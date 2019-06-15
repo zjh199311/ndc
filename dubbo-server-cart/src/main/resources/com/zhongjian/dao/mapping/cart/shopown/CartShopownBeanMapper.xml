@@ -45,6 +45,7 @@
     <result column="vip_promotion_rewardget" property="vipPromotionRewardget" jdbcType="DECIMAL" />
     <result column="vip_promotion_rewardover" property="vipPromotionRewardover" jdbcType="DECIMAL" />
     <result column="public_openid" property="publicOpenid" jdbcType="VARCHAR" />
+    <result column="mode" property="mode" jdbcType="TINYINT" />
   </resultMap>
   <sql id="Base_Column_List" >
     pid, pic, phone, password, sname, real_name, scope_business, business_license, food_license, 
@@ -52,7 +53,7 @@
     token, device_number, cameraid, roomid, status, ctime, salt, is_since, printer_num, 
     printer_key, examine, is_show, type, is_appointment, recommend, examine_info, phoneType, 
     pushToken, unFavorable, login_token, yx_token, vip_promotion_reward, vip_promotion_rewardget, 
-    vip_promotion_rewardover, public_openid
+    vip_promotion_rewardover, public_openid, mode
   </sql>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
     select 
@@ -79,7 +80,8 @@
       examine_info, phoneType, pushToken, 
       unFavorable, login_token, yx_token, 
       vip_promotion_reward, vip_promotion_rewardget, 
-      vip_promotion_rewardover, public_openid)
+      vip_promotion_rewardover, public_openid, mode
+      )
     values (#{pid,jdbcType=INTEGER}, #{pic,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
       #{password,jdbcType=VARCHAR}, #{sname,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR}, 
       #{scopeBusiness,jdbcType=VARCHAR}, #{businessLicense,jdbcType=VARCHAR}, #{foodLicense,jdbcType=VARCHAR}, 
@@ -94,7 +96,8 @@
       #{examineInfo,jdbcType=VARCHAR}, #{phonetype,jdbcType=CHAR}, #{pushtoken,jdbcType=VARCHAR}, 
       #{unfavorable,jdbcType=INTEGER}, #{loginToken,jdbcType=VARCHAR}, #{yxToken,jdbcType=VARCHAR}, 
       #{vipPromotionReward,jdbcType=DECIMAL}, #{vipPromotionRewardget,jdbcType=DECIMAL}, 
-      #{vipPromotionRewardover,jdbcType=DECIMAL}, #{publicOpenid,jdbcType=VARCHAR})
+      #{vipPromotionRewardover,jdbcType=DECIMAL}, #{publicOpenid,jdbcType=VARCHAR}, #{mode,jdbcType=TINYINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.zhongjian.dao.entity.cart.shopown.CartShopownBean" >
     insert into hm_shopown
@@ -228,6 +231,9 @@
       <if test="publicOpenid != null" >
         public_openid,
       </if>
+      <if test="mode != null" >
+        mode,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="pid != null" >
@@ -358,6 +364,9 @@
       </if>
       <if test="publicOpenid != null" >
         #{publicOpenid,jdbcType=VARCHAR},
+      </if>
+      <if test="mode != null" >
+        #{mode,jdbcType=TINYINT},
       </if>
     </trim>
   </insert>
@@ -490,6 +499,9 @@
       <if test="publicOpenid != null" >
         public_openid = #{publicOpenid,jdbcType=VARCHAR},
       </if>
+      <if test="mode != null" >
+        mode = #{mode,jdbcType=TINYINT},
+      </if>
     </set>
     where pid = #{pid,jdbcType=INTEGER}
   </update>
@@ -536,7 +548,8 @@
       vip_promotion_reward = #{vipPromotionReward,jdbcType=DECIMAL},
       vip_promotion_rewardget = #{vipPromotionRewardget,jdbcType=DECIMAL},
       vip_promotion_rewardover = #{vipPromotionRewardover,jdbcType=DECIMAL},
-      public_openid = #{publicOpenid,jdbcType=VARCHAR}
+      public_openid = #{publicOpenid,jdbcType=VARCHAR},
+      mode = #{mode,jdbcType=TINYINT}
     where pid = #{pid,jdbcType=INTEGER}
   </update>
   <select id="searchByEntityCount" resultType="java.lang.Integer" parameterType="com.zhongjian.dao.entity.cart.shopown.CartShopownBean" >
@@ -670,6 +683,9 @@
      <if test="publicOpenid != null">
       AND public_openid=#{publicOpenid,jdbcType=VARCHAR}
      </if>
+     <if test="mode != null">
+      AND mode=#{mode,jdbcType=TINYINT}
+     </if>
     </where>
   </select>
   <select id="searchByEntity" resultMap="BaseResultMap" parameterType="com.zhongjian.dao.entity.cart.shopown.CartShopownBean" >
@@ -802,6 +818,9 @@
      </if>
      <if test="publicOpenid != null">
       AND public_openid=#{publicOpenid,jdbcType=VARCHAR}
+     </if>
+     <if test="mode != null">
+      AND mode=#{mode,jdbcType=TINYINT}
      </if>
     </where>
   </select>

@@ -1,3 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.zhongjian.dao.entity.order.cvstore.OrderCvOrderBean" />
+<mapper namespace="com.zhongjian.dao.entity.order.cvstore.OrderCvOrderBean">
+
+    <resultMap id="BaseCvOrderInfo" type="com.zhongjian.dto.order.order.result.OrderCvOrderResultDTO">
+        <result column="addressid" property="addressId" jdbcType="INTEGER"/>
+        <result column="deliver_fee" property="deliverFee" jdbcType="VARCHAR"/>
+        <result column="service_time" property="time" jdbcType="INTEGER"/>
+        <result column="order_status" property="riderStatus" jdbcType="INTEGER"/>
+        <result column="pay_status" property="payStatus" jdbcType="INTEGER"/>
+        <result column="payment" property="payment" jdbcType="VARCHAR"/>
+        <result column="total" property="total" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="findCvOrderByUoid" parameterType="java.lang.Integer" resultMap="BaseCvOrderInfo">
+        SELECT
+            addressid,
+            deliver_fee,
+            service_time,
+            order_status,
+            pay_status,
+            payment,
+            total
+        FROM
+            hm_cvorder
+        WHERE
+            uoid =#{id,jdbcType=INTEGER}
+
+    </select>
+
+
+</mapper>

@@ -41,7 +41,6 @@ public class OrderMarketDetailsServiceImpl extends HmBaseService<OrderBean, Inte
 
     private HmDAO<OrderShopownBean, Integer> orderShopownBean;
 
-    private HmDAO<OrderCouponBean, Integer> orderCouponBean;
 
     @Resource
     public void setOrderShopownBean(HmDAO<OrderShopownBean, Integer> orderShopownBean) {
@@ -60,12 +59,6 @@ public class OrderMarketDetailsServiceImpl extends HmBaseService<OrderBean, Inte
     public void setOrderAddressBean(HmDAO<OrderAddressBean, Integer> orderAddressBean) {
         this.orderAddressBean = orderAddressBean;
         this.orderAddressBean.setPerfix(OrderAddressBean.class.getName());
-    }
-
-    @Resource
-    public void setOrderCouponBean(HmDAO<OrderCouponBean, Integer> orderCouponBean) {
-        this.orderCouponBean = orderCouponBean;
-        this.orderCouponBean.setPerfix(OrderCouponBean.class.getName());
     }
 
 
@@ -113,24 +106,34 @@ public class OrderMarketDetailsServiceImpl extends HmBaseService<OrderBean, Inte
             findOrderItem.setCreateTime(DateUtil.lastDayTime.format(createTime));
             findOrderItem.setCtime(null);
             //积分优惠
-            if (null != findOrderItem.getIntegralPrice()) {
+            if (null != findOrderItem.getIntegralPrice() && new BigDecimal(findOrderItem.getIntegralPrice()).compareTo(BigDecimal.ZERO) != 0) {
                 findOrderItem.setIntegralPrice("-¥" + new BigDecimal(findOrderItem.getIntegralPrice()).divide(new BigDecimal(100).setScale(2, BigDecimal.ROUND_HALF_UP)).intValue());
+            } else {
+                findOrderItem.setIntegralPrice(null);
             }
             //菜场优惠
-            if (null != findOrderItem.getMarketActivityPrice()) {
+            if (null != findOrderItem.getMarketActivityPrice() && new BigDecimal(findOrderItem.getMarketActivityPrice()).compareTo(BigDecimal.ZERO) != 0) {
                 findOrderItem.setMarketActivityPrice("-¥" + new BigDecimal(findOrderItem.getMarketActivityPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).intValue());
+            } else {
+                findOrderItem.setMarketActivityPrice(null);
             }
             //优惠券优惠
-            if (null != findOrderItem.getCouponPrice()) {
+            if (null != findOrderItem.getCouponPrice() && new BigDecimal(findOrderItem.getCouponPrice()).compareTo(BigDecimal.ZERO) != 0) {
                 findOrderItem.setCouponPrice("-¥" + new BigDecimal(findOrderItem.getCouponPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).intValue());
+            } else {
+                findOrderItem.setCouponPrice(null);
             }
             //会员折扣
-            if (null != findOrderItem.getDelMemberPrice()) {
+            if (null != findOrderItem.getDelMemberPrice() && new BigDecimal(findOrderItem.getDelMemberPrice()).compareTo(BigDecimal.ZERO) != 0) {
                 findOrderItem.setDelMemberPrice("-¥" + new BigDecimal(findOrderItem.getDelMemberPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).intValue());
+            } else {
+                findOrderItem.setDelMemberPrice(null);
             }
             //配送费
-            if (null != findOrderItem.getDistributionFee()) {
+            if (null != findOrderItem.getDistributionFee() && new BigDecimal(findOrderItem.getDistributionFee()).compareTo(BigDecimal.ZERO) != 0) {
                 findOrderItem.setDistributionFee("¥" + new BigDecimal(findOrderItem.getDistributionFee()).setScale(2, BigDecimal.ROUND_HALF_UP).intValue());
+            } else {
+                findOrderItem.setDistributionFee(null);
             }
             //首先判断骑手状态和支付状态是否为0如果是则显示会员信息如果否则不显示
             if (FinalDatas.ZERO == findOrderItem.getPayStatus() && FinalDatas.ZERO == findOrderItem.getRiderStatus()) {
@@ -199,8 +202,6 @@ public class OrderMarketDetailsServiceImpl extends HmBaseService<OrderBean, Inte
             findOrderItem.setTotalPrice("¥" + new BigDecimal(findOrderItem.getTotalPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).intValue());
         }
 
-
-        System.out.println(JSONObject.toJSONString(findOrderItem));
-        return null;
+        return ResultUtil.getSuccess(findOrderItem);
     }
 }

@@ -97,4 +97,33 @@
         ORDER BY
             ctime desc
     </select>
+
+    <resultMap id="BaseCvUserOrderInfo" type="com.zhongjian.dto.order.order.result.OrderItemResultDTO">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="order_sn" property="riderSn" jdbcType="VARCHAR"/>
+        <result column="integralPrice" property="integralPrice" jdbcType="INTEGER"/>
+        <result column="coupon_price" property="couponPrice" jdbcType="VARCHAR"/>
+        <result column="ctime" property="ctime" jdbcType="INTEGER"/>
+        <result column="totalPrice" property="totalPrice" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="CvOrderDetail" resultMap="BaseCvUserOrderInfo"
+            parameterType="com.zhongjian.dto.order.order.result.OrderItemResultDTO">
+        SELECT
+            id,
+            order_sn,
+            coupon_price,
+            ctime,
+            deliver_fee,
+            integralPrice,
+            originalPrice,
+            totalPrice
+        FROM
+            hm_cvuser_order
+        WHERE
+            id = #{roid,jdbcType=INTEGER}
+        AND uid = #{uid,jdbcType=INTEGER}
+    </select>
+
+
 </mapper>

@@ -58,4 +58,11 @@
     </select>
 
 
+    <select id="findShopownModeById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+
+        select * from hm_shopown where pid =#{sid,jdbcType=INTEGER}
+
+    </select>
+
+
 </mapper>

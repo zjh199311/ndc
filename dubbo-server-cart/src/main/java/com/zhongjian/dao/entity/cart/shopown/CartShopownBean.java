@@ -219,6 +219,11 @@ public class CartShopownBean {
     private String publicOpenid;
 
     /**
+     * 商铺模式：0菜场商户1便利店商户
+     */
+    private Byte mode;
+
+    /**
      * 商户id
      * @return pid 商户id
      */
@@ -904,5 +909,21 @@ public class CartShopownBean {
      */
     public void setPublicOpenid(String publicOpenid) {
         this.publicOpenid = publicOpenid == null ? null : publicOpenid.trim();
+    }
+
+    /**
+     * 商铺模式：0菜场商户1便利店商户
+     * @return mode 商铺模式：0菜场商户1便利店商户
+     */
+    public Byte getMode() {
+        return mode;
+    }
+
+    /**
+     * 商铺模式：0菜场商户1便利店商户
+     * @param mode 商铺模式：0菜场商户1便利店商户
+     */
+    public void setMode(Byte mode) {
+        this.mode = mode;
     }
 }

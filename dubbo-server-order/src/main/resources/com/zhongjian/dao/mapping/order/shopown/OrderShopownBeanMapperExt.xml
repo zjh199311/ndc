@@ -44,4 +44,16 @@
         where o.roid=#{id,jdbcType=INTEGER}
     </select>
 
+    <select id="findShopownByUoid" resultMap="BaseShopInfo" parameterType="java.lang.Integer">
+        SELECT
+            o.payment,
+            o.id,
+            o.total,
+            s.sname
+        FROM
+            hm_cvorder o
+        LEFT JOIN hm_shopown s ON o.sid = s.pid
+        where o.uoid=#{id.jdbcType=INTEGER}
+
+    </select>
 </mapper>
