@@ -192,7 +192,7 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 			}
 		}
 
-		if ("2".equals(type) && todayCouponUse) {
+		else if ("2".equals(type) && todayCouponUse) {
 			Map<String, Object> couponInfo = orderDao.getCouponInfo(uid, extra);
 			if (couponInfo != null) {
 				BigDecimal payFullBigDecimal = (BigDecimal) couponInfo.get("pay_full");
@@ -205,11 +205,13 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 							couponPrice = priceForCoupon;
 							needPay = BigDecimal.ZERO;
 						}
-						needPay.add(deliverFeeB);
+						needPay = needPay.add(deliverFeeB);
 						couponContent = "-￥" + couponPrice.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 					}
 				}
 			}
+		}else {
+			needPay = needPay.add(deliverFeeB);
 		}
 		needPayString = needPay.setScale(2, BigDecimal.ROUND_HALF_UP).toString();
 		// 数据封装
@@ -453,6 +455,7 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 		BigDecimal deliverFeeB = new BigDecimal(deliverFee).setScale(2, BigDecimal.ROUND_HALF_UP);
 		BigDecimal priceForIntegral = needPay.add(deliverFeeB);
 		BigDecimal priceForCoupon = needPay;
+		boolean useCoupon = false;
 		if ("1".equals(type) && integral > 0) {
 			BigDecimal hundredBigDecimal = new BigDecimal(100);
 			// 使用积分
@@ -474,8 +477,8 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 
 			}
 		}
-		boolean useCoupon = false;
-		if ("2".equals(type) && todayCouponUse) {
+		
+		else if ("2".equals(type) && todayCouponUse) {
 			Map<String, Object> couponInfo = orderDao.getCouponInfo(uid, extra);
 			if (couponInfo != null) {
 				BigDecimal payFullBigDecimal = (BigDecimal) couponInfo.get("pay_full");
@@ -494,6 +497,8 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 					}
 				}
 			}
+		}else {
+			needPay = needPay.add(deliverFeeB);
 		}
 		// 删除便利店购物车
 		
@@ -511,6 +516,7 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 		cvOrderMap.put("remark", remarks.toString());
 		cvOrderMap.put("service_fee", BigDecimal.ZERO);
 		cvOrderMap.put("deliver_model", 0);
+		cvOrderMap.put("service_time", unixTime);
 		if ("1".equals(isSelfMention)) {
 			cvOrderMap.put("ordertaking_time", createTime);
 			cvOrderMap.put("order_status", 3);
