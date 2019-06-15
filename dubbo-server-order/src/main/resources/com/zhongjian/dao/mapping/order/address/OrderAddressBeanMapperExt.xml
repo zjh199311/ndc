@@ -2,14 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.zhongjian.dao.entity.order.address.OrderAddressBean">
 
-    <resultMap id="BaseResultMapExt" type="com.zhongjian.dto.cart.address.result.CartAddressResultDTO" >
-        <id column="id" property="id" jdbcType="INTEGER" />
-        <result column="contacts" property="contacts" jdbcType="VARCHAR" />
-        <result column="gender" property="gender" jdbcType="CHAR" />
-        <result column="phone" property="phone" jdbcType="VARCHAR" />
-        <result column="address" property="address" jdbcType="VARCHAR" />
-        <result column="house_number" property="houseNumber" jdbcType="VARCHAR" />
-        <result column="status" property="status" jdbcType="VARCHAR" />
+    <resultMap id="BaseResultMapExt" type="com.zhongjian.dto.cart.address.result.CartAddressResultDTO">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="contacts" property="contacts" jdbcType="VARCHAR"/>
+        <result column="gender" property="gender" jdbcType="CHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="house_number" property="houseNumber" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
     </resultMap>
 
     <select id="findAddressByUid" resultType="java.lang.Integer" resultMap="BaseResultMapExt">
@@ -23,7 +23,8 @@
         LIMIT 1;
     </select>
 
-    <select id="findAddressByid" resultType="com.zhongjian.dto.cart.address.query.CartAddressQueryDTO" resultMap="BaseResultMapExt">
+    <select id="findAddressByid" resultType="com.zhongjian.dto.cart.address.query.CartAddressQueryDTO"
+            resultMap="BaseResultMapExt">
         select
         <include refid="Base_Column_List"/>
         from hm_address
@@ -32,4 +33,28 @@
         and uid=#{uid,jdbcType=INTEGER}
         and is_delete =0
     </select>
+
+    <resultMap id="BaseAddressInfo" type="com.zhongjian.dto.cart.address.result.OrderAddressResultDTO">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="contacts" property="contacts" jdbcType="VARCHAR"/>
+        <result column="gender" property="gender" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="house_number" property="houseNumber" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectAddressById" resultMap="BaseAddressInfo" parameterType="java.lang.Integer">
+      SELECT
+        id,
+        contacts,
+        gender,
+        phone,
+        address,
+        house_number
+    FROM
+        hm_address
+    WHERE
+        id = #{addressId,jdbcType=INTEGER}
+    </select>
+
 </mapper>

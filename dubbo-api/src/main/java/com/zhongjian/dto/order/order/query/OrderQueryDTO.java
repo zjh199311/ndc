@@ -22,4 +22,8 @@ public class OrderQueryDTO implements Serializable {
      */
     private Integer uid;
 
+    /**
+     * 订单id
+     */
+    private Integer roid;
 }

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.order.order.OrderBean">
+
+    <resultMap id="BaseOrderInfo" type="com.zhongjian.dto.order.order.result.OrderItemResultDTO">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="marketid" property="marketid" jdbcType="INTEGER"/>
+        <result column="rider_sn" property="riderSn" jdbcType="VARCHAR"/>
+        <result column="integral" property="integralPrice" jdbcType="INTEGER"/>
+        <result column="coupon_price" property="couponPrice" jdbcType="VARCHAR"/>
+        <result column="market_activity_price" property="marketActivityPrice" jdbcType="VARCHAR"/>
+        <result column="service_time" property="time" jdbcType="INTEGER"/>
+        <result column="ctime" property="ctime" jdbcType="INTEGER"/>
+        <result column="totalPrice" property="totalPrice" jdbcType="VARCHAR"/>
+        <result column="pay_status" property="payStatus" jdbcType="INTEGER"/>
+        <result column="rider_status" property="riderStatus" jdbcType="INTEGER"/>
+        <result column="rider_pay" property="distributionFee" jdbcType="VARCHAR"/>
+        <result column="vip_relief" property="delMemberPrice" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="findOrderItem" resultMap="BaseOrderInfo"
+            parameterType="com.zhongjian.dto.order.order.query.OrderQueryDTO">
+         SELECT
+			r.id,
+            r.marketid,
+            r.rider_sn,
+            r.address_id as addressId,
+            r.coupon_price,
+            r.market_activity_price,
+            r.totalPrice,
+            r.integral,
+            r.vip_relief,
+            r.service_time,
+            r.pay_status,
+            r.rider_pay,
+            r.rider_status,
+            r.ctime
+        FROM
+            hm_rider_order r
+        WHERE
+            r.uid = #{uid,jdbcType=INTEGER}
+        AND r.id = #{roid,jdbcType=INTEGER}
+    </select>
+</mapper>
