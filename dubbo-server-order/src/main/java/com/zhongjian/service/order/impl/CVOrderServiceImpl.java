@@ -25,6 +25,7 @@ import com.zhongjian.service.order.CVOrderService;
 import com.zhongjian.service.order.OrderService;
 import com.zhongjian.shedule.OrderShedule;
 import com.zhongjian.util.DateUtil;
+import com.zhongjian.util.RandomUtil;
 
 @Service("cvOrderService")
 public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> implements CVOrderService {
@@ -572,7 +573,7 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 		Integer cVOrderId = cvOrderDao.addCVOrder(cvOrderMap);
 		cvOrderDao.addCVOrderDetail(goodMaps, cVOrderId);
 		if (needPay.compareTo(BigDecimal.ZERO) == 0) {
-			orderService.handleROrder(out_trade_no, needPay.setScale(2, BigDecimal.ROUND_HALF_UP).toString(),"integral");
+			orderService.handleROrder("CV" + RandomUtil.getRandom620(6) + out_trade_no, needPay.setScale(2, BigDecimal.ROUND_HALF_UP).toString(),"integral");
 			resMap.put("cvoid", cvUserOrderId);
 			resMap.put("status", 1);
 		} else {

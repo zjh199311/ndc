@@ -570,7 +570,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				throw new NDCException.DeleteBasketExcpetion();
 			}
 			if (integralPay || needPay.compareTo(BigDecimal.ZERO) == 0) {
-				handleROrder(outTradeNo, needPayString, "integral");
+				handleROrder(RandomUtil.getRandom620(6) + outTradeNo, needPayString, "integral");
 				resMap.put("roid", roid);
 				resMap.put("status", 1);
 			} else {
