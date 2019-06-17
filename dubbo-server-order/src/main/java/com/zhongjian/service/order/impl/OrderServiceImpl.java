@@ -837,7 +837,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		if (out_trade_no.startsWith("CV")) {
 			String dataNo = out_trade_no.substring(8);
 			if (cvOrderDao.updateUCVOrderToS(dataNo, currentTime, payType, out_trade_no)) {
-				Map<String, Object> cvUserorderDetail = cvOrderDao.getUidByOutTradeNo(dataNo);
+				Map<String, Object> cvUserorderDetail = cvOrderDao.getUidByOutTradeNo(out_trade_no);
 				Integer uoid = (Integer) cvUserorderDetail.get("id");
 				Integer uid = (Integer) cvUserorderDetail.get("uid");
 				BigDecimal integralPrice = (BigDecimal) cvUserorderDetail.get("integralPrice");
@@ -899,7 +899,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		} else {
 			String dataNo = out_trade_no.substring(6);
 			if (orderDao.updateROStatusToSuccess(dataNo, currentTime, payType, out_trade_no)) {
-				Map<String, Object> rorderDetail = orderDao.getROrderIdByOutTradeNo(dataNo);
+				Map<String, Object> rorderDetail = orderDao.getROrderIdByOutTradeNo(out_trade_no);
 				Integer rorderId = (Integer) rorderDetail.get("id");
 				Integer marketId = (Integer) rorderDetail.get("marketid");
 				Integer addressId = (Integer) rorderDetail.get("address_id");
