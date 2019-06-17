@@ -28,6 +28,7 @@ public enum CommonMessageEnum {
     ORDER_CHANGE("订单状态变化", 13001),
     ORDER_ALREADYCREATE("您已生成订单", 13002),
     ORDER_ALREADYCANCEL("订单已取消", 13003),
+    ORDER_ADDRESSFAIL("订单地址检验失败", 13004),
     SERVERERR("服务异常", 20000),
     NO_PERMISION("您没有权限执行此操作", 50000),
     ;

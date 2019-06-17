@@ -361,4 +361,30 @@ public class CVOrderDao {
 		
 	}
 	
+	public  Map<String, Object> getStoreAdressByOrderId(Integer orderId) {
+		String sql = "SELECT longitude,latitude from hm_store_address hsa,"
+				+ "hm_cvorder hc where hsa.sid=hc.sid and hc.uoid = ?";
+		Map<String, Object> resMap = null;
+		try {
+			resMap = jdbcTemplate.queryForMap(sql, orderId);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return resMap;
+	}
+	
+	//获取便利店订单用户地址
+	public  Map<String, Object> getCVOrderAddress(Integer orderId) {
+		String sql = "SELECT longitude,latitude from hm_address ha,"
+				+ "hm_cvorder hc where ha.id=hc.addressid and hc.uoid = ?";
+		Map<String, Object> resMap = null;
+		try {
+			resMap = jdbcTemplate.queryForMap(sql, orderId);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return resMap;
+	}
+	
+	
+
+	
 }

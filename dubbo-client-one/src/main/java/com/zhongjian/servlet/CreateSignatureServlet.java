@@ -70,13 +70,13 @@ public class CreateSignatureServlet extends HttpServlet {
 					String result =  GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.SERVERERR));
 					try {
 					Integer uid = (Integer) request.getAttribute("uid");
-					String busniess = formData.get("busniess");// 1.RIO（订单）
+					String business = formData.get("business");// 1.RIO（订单）
 					Integer orderid = Integer.valueOf(formData.get("orderid"));
 					// 0 支付宝 1微信 2微信小程序
 					Integer payType = Integer.valueOf(formData.get("paytype"));
 					String openId = formData.get("openid");
 					String realIp = this.getRealIp(request);
-					result = CreateSignatureServlet.this.handle(uid, busniess, orderid, payType, openId, realIp);
+					result = CreateSignatureServlet.this.handle(uid, business, orderid, payType, openId, realIp);
 					// 返回数据
 					
 						ResponseHandle.wrappedResponse(asyncContext.getResponse(), result);
@@ -100,12 +100,17 @@ public class CreateSignatureServlet extends HttpServlet {
 
 	}
 
-	private String handle(Integer uid, String busniess, Integer orderId, Integer payType, String openId,
+	private String handle(Integer uid, String business, Integer orderId, Integer payType, String openId,
 			String realIp) {
 		if (uid == 0) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.USER_IS_NULL));
 		}
-		Map<String, Object> orderDetail = orderService.getOutTradeNoAndAmount(uid, orderId, busniess);
+		//线上地址校验
+//		if (!orderService.orderCheck(orderId, business)) {
+//			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.ORDER_ADDRESSFAIL));
+//		}
+		
+		Map<String, Object> orderDetail = orderService.getOutTradeNoAndAmount(uid, orderId, business);
 		if (orderDetail == null) {
 			return GsonUtil.GsonString(ResultUtil.getFail(CommonMessageEnum.ORDER_CHANGE));
 		} else {
