@@ -8,11 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -582,7 +579,8 @@ public class CVOrderServiceImpl extends HmBaseService<OrderShopownBean, Integer>
 			resMap.put("cvoid", cvUserOrderId);
 			resMap.put("status", 0);
 		}
-
+		//订单检测
+		orderShedule.checkCVOrder(cvUserOrderId);
 		return resMap;
 	}
 

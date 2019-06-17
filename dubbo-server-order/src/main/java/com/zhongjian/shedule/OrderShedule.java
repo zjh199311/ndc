@@ -54,4 +54,16 @@ private OrderService orderService;
 		}
 		
 	}
+	
+	
+	//检查订单是否有金额错误
+	public void checkCVOrder(Integer orderId) {
+		// 延时60s把订单改为平台处理
+		executeDelayShedule(new Runnable() {
+			@Override
+			public void run() {
+				orderService.checkCVOrder(orderId);
+			}
+		},  5);
+	}
 }

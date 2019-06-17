@@ -1,10 +1,8 @@
 package com.zhongjian.service.order.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.zhongjian.common.constant.FinalDatas;
 import com.zhongjian.common.constant.enums.CvorderEnum;
 import com.zhongjian.dao.entity.order.address.OrderAddressBean;
-import com.zhongjian.dao.entity.order.coupon.OrderCouponBean;
 import com.zhongjian.dao.entity.order.order.OrderBean;
 import com.zhongjian.dao.entity.order.shopown.OrderShopownBean;
 import com.zhongjian.dao.entity.order.user.OrderUserBean;
