@@ -88,10 +88,8 @@ public class DistributedLock extends ConnectionWatcher {
 			}
 		}
 		if (minId) {
-			System.out.println(new Date() + Thread.currentThread().getName() + "我得到了分布锁，哈哈！ myId:" + myId);
 			return true;
 		} else {
-			System.out.println(new Date() + Thread.currentThread().getName() + "继续努力吧，  myId:" + myId);
 			return false;
 		}
 	}
@@ -140,12 +138,10 @@ public class DistributedLock extends ConnectionWatcher {
 		long headId = idList.get(i - 1);
 
 		String headPath = groupPath + "/lock-" + sessionMap.get(headId);
-		System.out.println(Thread.currentThread().getName() + "添加监听：" + headPath);
 		Stat stat = getZk().exists(headPath, new Watcher() {
 
 			@Override
 			public void process(WatchedEvent event) {
-				System.out.println(Thread.currentThread().getName() + "已经触发了" + event.getType() + "事件！");
 				try {
 					if (checkState(myName)) {
 						cLatch.countDown();

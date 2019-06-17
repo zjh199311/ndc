@@ -361,4 +361,48 @@ public class CVOrderDao {
 		
 	}
 	
+	public  Map<String, Object> getStoreAdressByOrderId(Integer orderId) {
+		String sql = "SELECT longitude,latitude from hm_store_address hsa,"
+				+ "hm_cvorder hc where hsa.sid=hc.sid and hc.uoid = ?";
+		Map<String, Object> resMap = null;
+		try {
+			resMap = jdbcTemplate.queryForMap(sql, orderId);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return resMap;
+	}
+	
+	//获取便利店订单用户地址
+	public  Map<String, Object> getCVOrderAddress(Integer orderId) {
+		String sql = "SELECT longitude,latitude from hm_address ha,"
+				+ "hm_cvorder hc where ha.id=hc.addressid and hc.uoid = ?";
+		Map<String, Object> resMap = null;
+		try {
+			resMap = jdbcTemplate.queryForMap(sql, orderId);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return resMap;
+	}
+	
+	//获取便利店用户订单的金额数据
+	public  Map<String, Object> getCVOrderDetail(Integer orderId) {
+		String sql = "SELECT integralPrice,vip_relief,coupon_price,originalPrice,totalPrice,deliver_fee from hm_cvuser_order "
+				+ " where id = ?";
+		Map<String, Object> resMap = null;
+		try {
+			resMap = jdbcTemplate.queryForMap(sql, orderId);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return resMap;
+	}
+	
+	
+	//获取便利店用户订单的金额数据
+	public void setCVOrderError(Integer orderId) {
+		String sql = "update hm_cvuser_order set checkfield = 1 where id = ?";
+		jdbcTemplate.update(sql,orderId);
+	}
+	
+
+	
 }

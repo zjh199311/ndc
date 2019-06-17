@@ -15,8 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service("localOrderService")
 public class OrderServiceImpl extends HmBaseService<OrderRiderOrderBean, Integer> implements OrderService {
@@ -136,5 +138,24 @@ public class OrderServiceImpl extends HmBaseService<OrderRiderOrderBean, Integer
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@Override
+	public void checkCVOrder(Integer orderId) {
+		//人工智能自行纠错
+		Map<String, Object> cvOrderDetail = cvOrderDao.getCVOrderDetail(orderId);
+		BigDecimal integralPrice = (BigDecimal) cvOrderDetail.get("integralPrice");
+		BigDecimal vipRelief = (BigDecimal) cvOrderDetail.get("vip_relief");
+		BigDecimal couponPrice = (BigDecimal) cvOrderDetail.get("coupon_price");
+		BigDecimal originalPrice = (BigDecimal) cvOrderDetail.get("originalPrice");
+		BigDecimal totalPrice = (BigDecimal) cvOrderDetail.get("totalPrice");
+		BigDecimal deliverFee = (BigDecimal) cvOrderDetail.get("deliver_fee");
+		BigDecimal checkTotalPrice = originalPrice.subtract(vipRelief).subtract(couponPrice).subtract(integralPrice).add(deliverFee).setScale(2, BigDecimal.ROUND_HALF_UP);
+		totalPrice = totalPrice.setScale(2, BigDecimal.ROUND_HALF_UP);
+		if (totalPrice.compareTo(checkTotalPrice) != 0) {
+			//有错误
+			cvOrderDao.setCVOrderError(orderId);
+		}
+		
 	}
 }

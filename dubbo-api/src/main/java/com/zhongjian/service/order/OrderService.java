@@ -44,4 +44,6 @@ public interface OrderService {
     
     public Integer getRidFormMarket(Integer marketId, String strategy);
     
+    boolean orderCheck(Integer orderId, String business);
+    
 }

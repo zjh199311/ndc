@@ -345,4 +345,28 @@ public class OrderDao extends MongoDBDaoBase {
 		Double num = jdbcTemplate.queryForObject(sql, new Object[] { uid, todayTimeZone }, Double.class);
 		return num;
 	}
+	
+	public  Map<String, Object> getMarketAdressByOrderId(Integer orderId) {
+		String sql = "SELECT longitude,latitude from hm_market hm,"
+				+ "hm_rider_order hro where hm.id=hro.marketid and hro.id = ?";
+		Map<String, Object> resMap = null;
+		try {
+			resMap = jdbcTemplate.queryForMap(sql, orderId);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return resMap;
+	}
+	
+	//获取菜场订单用户地址
+	public  Map<String, Object> getOrderAddress(Integer orderId) {
+		String sql = "SELECT longitude,latitude from hm_address ha,"
+				+ "hm_rider_order hro where ha.id=hro.address_id and hro.id = ?";
+		Map<String, Object> resMap = null;
+		try {
+			resMap = jdbcTemplate.queryForMap(sql, orderId);
+		} catch (EmptyResultDataAccessException e) {
+		}
+		return resMap;
+	}
+	
 }

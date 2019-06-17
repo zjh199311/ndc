@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import com.zhongjian.util.DateUtil;
+import com.zhongjian.util.DistanceUtils;
 import com.zhongjian.util.RandomUtil;
 
 import java.text.ParseException;
@@ -569,7 +570,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				throw new NDCException.DeleteBasketExcpetion();
 			}
 			if (integralPay || needPay.compareTo(BigDecimal.ZERO) == 0) {
-				handleROrder(outTradeNo, needPayString,"integral");
+				handleROrder(outTradeNo, needPayString, "integral");
 				resMap.put("roid", roid);
 				resMap.put("status", 1);
 			} else {
@@ -645,10 +646,10 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			if (ridOrginList.size() == 0) {
 				return -1;
 			}
-			//便利店骑手对应单数统计
+			// 便利店骑手对应单数统计
 			for (Map<String, Object> map : ridOrginList) {
 				Integer rid = (Integer) map.get("rid");
-				map.put("sum",(Integer) map.get("sum") + cvOrderDao.getCVOrderNumOfRider(rid));
+				map.put("sum", (Integer) map.get("sum") + cvOrderDao.getCVOrderNumOfRider(rid));
 			}
 			List<Map<String, Object>> ridList = orderDao.getRidOrderNumByMarketId(marketId,
 					(int) DateUtil.getTodayZeroTime());
@@ -810,7 +811,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		if (business.equals("RIO")) {
 			Map<String, Object> orderInfo = orderDao.getDetailByOrderId(uid, orderId);
 			if (orderInfo != null) {
-				orderInfo.put("out_trade_no",RandomUtil.getRandom620(6) + (String) orderInfo.get("out_trade_no"));
+				orderInfo.put("out_trade_no", RandomUtil.getRandom620(6) + (String) orderInfo.get("out_trade_no"));
 				orderInfo.put("body", "倪的菜商品订单支付");
 				orderInfo.put("subject", "订单总价");
 			}
@@ -818,7 +819,8 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		} else if (business.equals("CV")) {
 			Map<String, Object> orderInfo = cvOrderDao.getDetailByOrderId(uid, orderId);
 			if (orderInfo != null) {
-				orderInfo.put("out_trade_no","CV" + RandomUtil.getRandom620(6) + (String) orderInfo.get("out_trade_no"));
+				orderInfo.put("out_trade_no",
+						"CV" + RandomUtil.getRandom620(6) + (String) orderInfo.get("out_trade_no"));
 				orderInfo.put("body", "倪的菜商品订单支付");
 				orderInfo.put("subject", "订单总价");
 			}
@@ -830,15 +832,15 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 
 	@Override
 	@Transactional
-	public boolean handleROrder(String out_trade_no, String total_amount,String payType) {
+	public boolean handleROrder(String out_trade_no, String total_amount, String payType) {
 		int currentTime = (int) (System.currentTimeMillis() / 1000);
 		if (out_trade_no.startsWith("CV")) {
-		    String  dataNo = out_trade_no.substring(8);
-			if (cvOrderDao.updateUCVOrderToS(dataNo, currentTime,payType,out_trade_no)) {
-			    Map<String, Object> cvUserorderDetail = cvOrderDao.getUidByOutTradeNo(dataNo);
-			    Integer uoid = (Integer) cvUserorderDetail.get("id");
-			    Integer uid = (Integer) cvUserorderDetail.get("uid");
-			    BigDecimal integralPrice = (BigDecimal) cvUserorderDetail.get("integralPrice");
+			String dataNo = out_trade_no.substring(8);
+			if (cvOrderDao.updateUCVOrderToS(dataNo, currentTime, payType, out_trade_no)) {
+				Map<String, Object> cvUserorderDetail = cvOrderDao.getUidByOutTradeNo(dataNo);
+				Integer uoid = (Integer) cvUserorderDetail.get("id");
+				Integer uid = (Integer) cvUserorderDetail.get("uid");
+				BigDecimal integralPrice = (BigDecimal) cvUserorderDetail.get("integralPrice");
 				cvOrderDao.updateCVOrderToS(uoid);
 				// 把订单推送至rabbitmq处理，confirm即可
 				// 降级至本地处理
@@ -846,16 +848,16 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				// 1.把订单待接单持久化以免宕机未推给平台处理
 				if (cvOrderDao.getOrderStatusByUoid(uoid) != 3) {
 					SimpleDateFormat df = new SimpleDateFormat("HH:mm");// 设置日期格式
-							Date nowTime = null;
-							Date beginTime = null;
-							Date endTime = null;
-							try {
-								nowTime = df.parse(df.format(new Date()));
-								beginTime = df.parse("7:30");
-								endTime = df.parse("18:45");
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
+					Date nowTime = null;
+					Date beginTime = null;
+					Date endTime = null;
+					try {
+						nowTime = df.parse(df.format(new Date()));
+						beginTime = df.parse("7:30");
+						endTime = df.parse("18:45");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 					if (DateUtil.belongCalendar(nowTime, beginTime, endTime)) {
 						Map<String, Object> waitDeliver = new HashMap<String, Object>();
 						waitDeliver.put("id", UUID.randomUUID().toString().replaceAll("\\-", ""));
@@ -868,18 +870,18 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 						// 2.派单删除持久化记录，并推送消息给骑手
 						// (宕机重启后查询持久化记录，遍历为2的重复1，2步骤，否则直接派单)
 					} else {
-						//直接让商户接单
-						cvOrderDao.updateCVOrderOrderStatus(uoid,currentTime);
+						// 直接让商户接单
+						cvOrderDao.updateCVOrderOrderStatus(uoid, currentTime);
 					}
 				}
-				
+
 				Map<String, Object> addressAndOrderSn = cvOrderDao.getAddressAndOrderSn(uoid);
 				String orderSn = (String) addressAndOrderSn.get("order_sn");
 				Integer addressId = (Integer) addressAndOrderSn.get("addressid");
 				// 3.记录积分使用
 				if (integralPrice.compareTo(BigDecimal.ZERO) > 0) {
 					Integer integral = integralPrice.multiply(new BigDecimal(100)).intValue();
-					integralVipDao.addIntegralLog(uid,integral , 0, currentTime);
+					integralVipDao.addIntegralLog(uid, integral, 0, currentTime);
 				}
 				// 4.生成地址
 				OrderAddressBean addressBean = addressDao.getAddressById(addressId);
@@ -895,8 +897,8 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			}
 			return true;
 		} else {
-			String  dataNo = out_trade_no.substring(6);
-			if (orderDao.updateROStatusToSuccess(dataNo, currentTime,payType,out_trade_no)) {
+			String dataNo = out_trade_no.substring(6);
+			if (orderDao.updateROStatusToSuccess(dataNo, currentTime, payType, out_trade_no)) {
 				Map<String, Object> rorderDetail = orderDao.getROrderIdByOutTradeNo(dataNo);
 				Integer rorderId = (Integer) rorderDetail.get("id");
 				Integer marketId = (Integer) rorderDetail.get("marketid");
@@ -1007,6 +1009,44 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		}
 		result.append("折");
 		return result.toString();
+	}
+
+	@Override
+	public boolean orderCheck(Integer orderId, String business) {
+		if ("CV".equals(business)) {
+			// 便利店地址
+			Map<String, Object> storeAdress = cvOrderDao.getStoreAdressByOrderId(orderId);
+			// 订单地址（如果为空不通过）
+			Map<String, Object> cvOrderAddress = cvOrderDao.getCVOrderAddress(orderId);
+			double longitude = Double.parseDouble((String) storeAdress.get("longitude"));
+			double latitude = Double.parseDouble((String) storeAdress.get("latitude"));
+			double longitude1 = Double.parseDouble((String) cvOrderAddress.get("longitude"));
+			double latitude1 = Double.parseDouble((String) cvOrderAddress.get("latitude"));
+			double distance = DistanceUtils.getDistance(longitude, latitude, longitude1, latitude1);
+			if (distance <= 3.6) {
+				return true;
+			} else {
+				return false;
+			}
+		} else if ("RIO".equals(business)) {
+			// 菜场地址
+			Map<String, Object> marketAdress = orderDao.getMarketAdressByOrderId(orderId);
+			// 订单地址（如果为空不通过）
+			Map<String, Object> orderAddress = orderDao.getOrderAddress(orderId);
+
+			double longitude = Double.parseDouble((String) marketAdress.get("longitude"));
+			double latitude = Double.parseDouble((String) marketAdress.get("latitude"));
+			double longitude1 = Double.parseDouble((String) orderAddress.get("longitude"));
+			double latitude1 = Double.parseDouble((String) orderAddress.get("latitude"));
+			double distance = DistanceUtils.getDistance(longitude, latitude, longitude1, latitude1);
+			if (distance <= 0.6) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 
 }
