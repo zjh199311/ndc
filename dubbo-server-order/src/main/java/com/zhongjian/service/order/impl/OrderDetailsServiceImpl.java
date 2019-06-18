@@ -18,6 +18,7 @@ import com.zhongjian.dto.common.ResultUtil;
 import com.zhongjian.dto.order.order.query.OrderQueryDTO;
 import com.zhongjian.dto.order.order.result.OrderDetailsResultDTO;
 import com.zhongjian.service.order.OrderDetailsService;
+import com.zhongjian.util.DateUtil;
 import com.zhongjian.util.StringUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -89,20 +90,32 @@ public class OrderDetailsServiceImpl extends HmBaseService<OrderCvUserOrderBean,
         List<OrderDetailsResultDTO> orderDetailsResultDTOS = this.dao.executeListMethod(orderQueryDTO.getUid(), "queryList", page, "queryListCount", OrderDetailsResultDTO.class);
         for (OrderDetailsResultDTO orderDetailsResultDTO : orderDetailsResultDTOS) {
 
+            orderDetailsResultDTO.setPrice("¥" + orderDetailsResultDTO.getPrice());
+
             if (FinalDatas.ZERO == orderDetailsResultDTOS.size()) {
                 orderDetailsResultDTO.setShowMore(0);
-            }else{
+            } else {
                 orderDetailsResultDTO.setShowMore(1);
             }
+
+            //创建时间
+            long createTime = orderDetailsResultDTO.getCtime() * 1000L;
+            orderDetailsResultDTO.setTime(DateUtil.lastDayTime.format(createTime));
+            orderDetailsResultDTO.setCtime(null);
+
 
             //如果type状态为1则为便利店订单. 为0则为菜场订单
             if (FinalDatas.ONE == orderDetailsResultDTO.getType()) {
                 list = this.orderDetailBean.executeListMethod(orderDetailsResultDTO.getRoid(), "findCvOrderByOid", CartBasketResultDTO.class);
+                for (CartBasketResultDTO cartBasketResultDTO : list) {
+                    cartBasketResultDTO.setPrice("¥" + cartBasketResultDTO.getPrice());
+                }
                 orderDetailsResultDTO.setList(list);
             } else {
                 list = this.orderCartBean.executeListMethod(orderDetailsResultDTO.getRoid(), "findCartOrderByOid", CartBasketResultDTO.class);
                 for (CartBasketResultDTO cartBasketResultDTO : list) {
                     if (StringUtil.isBlank(cartBasketResultDTO.getGname())) {
+                        cartBasketResultDTO.setPrice("¥" + cartBasketResultDTO.getPrice());
                         OrderGoodsBean orderGoodsBean = this.orderGoodsBean.selectByPrimaryKey(cartBasketResultDTO.getId());
                         cartBasketResultDTO.setGname(orderGoodsBean.getGname());
                     }
