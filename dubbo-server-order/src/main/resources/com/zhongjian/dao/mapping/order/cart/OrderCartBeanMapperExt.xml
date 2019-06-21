@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.zhongjian.dao.entity.order.cart.OrderCartBean" >
+<mapper namespace="com.zhongjian.dao.entity.order.cart.OrderCartBean">
 
     <resultMap id="BaseResultInfo" type="com.zhongjian.dto.cart.basket.result.CartBasketResultDTO">
         <id column="id" property="id" jdbcType="INTEGER"/>
@@ -25,4 +25,13 @@
         AND o.id=#{id,jdbcType=INTEGER}
     </select>
 
+    <select id="findGidByOid" resultType="com.zhongjian.dto.cart.basket.result.CartBasketResultDTO"
+            parameterType="java.lang.Integer">
+        SELECT
+            amount,gid
+        FROM
+            hm_cart
+        WHERE
+            oid = #{Id,jdbcType=INTEGER}
+    </select>
 </mapper>

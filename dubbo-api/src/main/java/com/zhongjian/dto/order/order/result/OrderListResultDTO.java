@@ -1,8 +1,10 @@
 package com.zhongjian.dto.order.order.result;
 
+import com.zhongjian.dto.cart.basket.result.CartBasketResultDTO;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @Author: ldd
@@ -33,7 +35,19 @@ public class OrderListResultDTO implements Serializable{
     private String orderTotal;
 
     /**
+     * 数量
+     */
+    private String amountMsg;
+
+    /**
      * 商品订单实际价格
      */
     private String orderPayment;
+
+    /**
+     * 食品列表
+     */
+    private List<CartBasketResultDTO> cartList;
+
+
 }

@@ -1,6 +1,7 @@
 package com.zhongjian.dto.order.order.result;
 
 import com.zhongjian.dto.cart.address.result.OrderAddressResultDTO;
+import com.zhongjian.dto.cart.basket.result.CartBasketResultDTO;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -23,6 +24,11 @@ public class OrderItemResultDTO implements Serializable {
      * 菜场id
      */
     private Integer marketid;
+
+    /**
+     * 骑手id
+     */
+    private Integer rid;
 
     /**
      * 订单编号
@@ -48,6 +54,16 @@ public class OrderItemResultDTO implements Serializable {
      * 骑手状态
      */
     private Integer riderStatus;
+
+    /**
+     * 骑手名字
+     */
+    private String riderUserName;
+
+    /**
+     * 骑手手机号码
+     */
+    private String riderPhone;
 
     /**
      * 0配送 3自提
@@ -96,12 +112,32 @@ public class OrderItemResultDTO implements Serializable {
     private Integer time;
 
     /**
-     *创建时间时间戳
+     * 下单时间戳
+     */
+    private Integer ptime;
+
+    /**
+     * 下单时间
+     */
+    private String payTime;
+
+    /**
+     * 送达时间时间戳
+     */
+    private Integer finishTime;
+
+    /**
+     * 送达时间
+     */
+    private String serviceTime;
+
+    /**
+     * 创建时间戳
      */
     private Integer ctime;
 
     /**
-     *创建时间
+     * 创建时间
      */
     private String createTime;
 
@@ -118,8 +154,7 @@ public class OrderItemResultDTO implements Serializable {
     private String integralPrice;
 
     /**
-     *菜场优惠
-     *
+     * 菜场优惠
      */
     private String marketActivityPrice;
 
@@ -152,7 +187,7 @@ public class OrderItemResultDTO implements Serializable {
     /**
      * 订单
      */
-    private List<OrderListResultDTO> orderList;
+    private List<OrderListResultDTO> storeList;
 
 
 

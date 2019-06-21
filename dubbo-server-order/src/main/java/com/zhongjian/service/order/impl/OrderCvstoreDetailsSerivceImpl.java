@@ -88,10 +88,12 @@ public class OrderCvstoreDetailsSerivceImpl extends HmBaseService<OrderCvUserOrd
             LogUtil.info("订单为空", "cvOrderDetail" + cvOrderDetail);
             return ResultUtil.getSuccess(null);
         } else {
-            //创建时间转换
-            long createTime = cvOrderDetail.getCtime() * 1000L;
-            cvOrderDetail.setCreateTime(DateUtil.lastDayTime.format(createTime));
-            cvOrderDetail.setCtime(null);
+            //下单时间转换
+            if(null!=cvOrderDetail.getPtime()){
+                long createTime = cvOrderDetail.getPtime() * 1000L;
+                cvOrderDetail.setPayTime(DateUtil.lastDayTime.format(createTime));
+                cvOrderDetail.setPtime(null);
+            }
 
             //积分优惠
             if (null != cvOrderDetail.getIntegralPrice() && new BigDecimal(cvOrderDetail.getIntegralPrice()).compareTo(BigDecimal.ZERO) != 0) {
@@ -111,6 +113,8 @@ public class OrderCvstoreDetailsSerivceImpl extends HmBaseService<OrderCvUserOrd
             if (null == findCvOrderByUoid) {
                 LogUtil.info("根据订单id查询为空", "findCvOrderByUoid" + findCvOrderByUoid);
             } else {
+                cvOrderDetail.setRiderStatus(findCvOrderByUoid.getRiderStatus());
+                cvOrderDetail.setPayStatus(findCvOrderByUoid.getPayStatus());
                 cvOrderDetail.setAddressId(findCvOrderByUoid.getAddressId());
                 //配送费
                 if (null != findCvOrderByUoid.getDeliverFee() && new BigDecimal(findCvOrderByUoid.getDeliverFee()).compareTo(BigDecimal.ZERO) != 0) {
@@ -205,7 +209,7 @@ public class OrderCvstoreDetailsSerivceImpl extends HmBaseService<OrderCvUserOrd
 
                         orderListResultDTO.setOrderPayment("¥" + new BigDecimal(orderListResultDTO.getOrderPayment()).setScale(2, BigDecimal.ROUND_HALF_UP).intValue());
                     }
-                    cvOrderDetail.setOrderList(findShopownByOid);
+                    cvOrderDetail.setStoreList(findShopownByOid);
                 }
             }
             cvOrderDetail.setFoodPrice("¥" + new BigDecimal(String.valueOf(totalPrice)).setScale(2, BigDecimal.ROUND_HALF_UP).intValue());

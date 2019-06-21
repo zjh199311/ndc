@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhongjian.dao.entity.order.rider.OrderRiderUserBean" >
+  <resultMap id="BaseResultMap" type="com.zhongjian.dao.entity.order.rider.OrderRiderUserBean" >
+    <id column="rid" property="rid" jdbcType="INTEGER" />
+    <result column="marketid" property="marketid" jdbcType="INTEGER" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="longitude" property="longitude" jdbcType="VARCHAR" />
+    <result column="latitude" property="latitude" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="TINYINT" />
+    <result column="ctime" property="ctime" jdbcType="INTEGER" />
+    <result column="salt" property="salt" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="is_order" property="isOrder" jdbcType="TINYINT" />
+    <result column="device_number" property="deviceNumber" jdbcType="VARCHAR" />
+    <result column="accid" property="accid" jdbcType="VARCHAR" />
+    <result column="token" property="token" jdbcType="VARCHAR" />
+    <result column="test_user" property="testUser" jdbcType="INTEGER" />
+    <result column="login_token" property="loginToken" jdbcType="VARCHAR" />
+    <result column="vip_promotion_reward" property="vipPromotionReward" jdbcType="DECIMAL" />
+    <result column="vip_promotion_rewardget" property="vipPromotionRewardget" jdbcType="DECIMAL" />
+    <result column="vip_promotion_rewardover" property="vipPromotionRewardover" jdbcType="DECIMAL" />
+    <result column="public_openid" property="publicOpenid" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    rid, marketid, phone, name, code, password, longitude, latitude, state, ctime, salt, 
+    status, is_order, device_number, accid, token, test_user, login_token, vip_promotion_reward, 
+    vip_promotion_rewardget, vip_promotion_rewardover, public_openid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from hm_rider_user
+    where rid = #{rid,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from hm_rider_user
+    where rid = #{rid,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.zhongjian.dao.entity.order.rider.OrderRiderUserBean" >
+    insert into hm_rider_user (rid, marketid, phone, 
+      name, code, password, 
+      longitude, latitude, state, 
+      ctime, salt, status, 
+      is_order, device_number, accid, 
+      token, test_user, login_token, 
+      vip_promotion_reward, vip_promotion_rewardget, 
+      vip_promotion_rewardover, public_openid)
+    values (#{rid,jdbcType=INTEGER}, #{marketid,jdbcType=INTEGER}, #{phone,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{longitude,jdbcType=VARCHAR}, #{latitude,jdbcType=VARCHAR}, #{state,jdbcType=TINYINT}, 
+      #{ctime,jdbcType=INTEGER}, #{salt,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
+      #{isOrder,jdbcType=TINYINT}, #{deviceNumber,jdbcType=VARCHAR}, #{accid,jdbcType=VARCHAR}, 
+      #{token,jdbcType=VARCHAR}, #{testUser,jdbcType=INTEGER}, #{loginToken,jdbcType=VARCHAR}, 
+      #{vipPromotionReward,jdbcType=DECIMAL}, #{vipPromotionRewardget,jdbcType=DECIMAL}, 
+      #{vipPromotionRewardover,jdbcType=DECIMAL}, #{publicOpenid,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhongjian.dao.entity.order.rider.OrderRiderUserBean" >
+    insert into hm_rider_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="rid != null" >
+        rid,
+      </if>
+      <if test="marketid != null" >
+        marketid,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="code != null" >
+        code,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="longitude != null" >
+        longitude,
+      </if>
+      <if test="latitude != null" >
+        latitude,
+      </if>
+      <if test="state != null" >
+        state,
+      </if>
+      <if test="ctime != null" >
+        ctime,
+      </if>
+      <if test="salt != null" >
+        salt,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="isOrder != null" >
+        is_order,
+      </if>
+      <if test="deviceNumber != null" >
+        device_number,
+      </if>
+      <if test="accid != null" >
+        accid,
+      </if>
+      <if test="token != null" >
+        token,
+      </if>
+      <if test="testUser != null" >
+        test_user,
+      </if>
+      <if test="loginToken != null" >
+        login_token,
+      </if>
+      <if test="vipPromotionReward != null" >
+        vip_promotion_reward,
+      </if>
+      <if test="vipPromotionRewardget != null" >
+        vip_promotion_rewardget,
+      </if>
+      <if test="vipPromotionRewardover != null" >
+        vip_promotion_rewardover,
+      </if>
+      <if test="publicOpenid != null" >
+        public_openid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="rid != null" >
+        #{rid,jdbcType=INTEGER},
+      </if>
+      <if test="marketid != null" >
+        #{marketid,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="longitude != null" >
+        #{longitude,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null" >
+        #{latitude,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="ctime != null" >
+        #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="salt != null" >
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="isOrder != null" >
+        #{isOrder,jdbcType=TINYINT},
+      </if>
+      <if test="deviceNumber != null" >
+        #{deviceNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="accid != null" >
+        #{accid,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="testUser != null" >
+        #{testUser,jdbcType=INTEGER},
+      </if>
+      <if test="loginToken != null" >
+        #{loginToken,jdbcType=VARCHAR},
+      </if>
+      <if test="vipPromotionReward != null" >
+        #{vipPromotionReward,jdbcType=DECIMAL},
+      </if>
+      <if test="vipPromotionRewardget != null" >
+        #{vipPromotionRewardget,jdbcType=DECIMAL},
+      </if>
+      <if test="vipPromotionRewardover != null" >
+        #{vipPromotionRewardover,jdbcType=DECIMAL},
+      </if>
+      <if test="publicOpenid != null" >
+        #{publicOpenid,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhongjian.dao.entity.order.rider.OrderRiderUserBean" >
+    update hm_rider_user
+    <set >
+      <if test="marketid != null" >
+        marketid = #{marketid,jdbcType=INTEGER},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="code != null" >
+        code = #{code,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="longitude != null" >
+        longitude = #{longitude,jdbcType=VARCHAR},
+      </if>
+      <if test="latitude != null" >
+        latitude = #{latitude,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="ctime != null" >
+        ctime = #{ctime,jdbcType=INTEGER},
+      </if>
+      <if test="salt != null" >
+        salt = #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="isOrder != null" >
+        is_order = #{isOrder,jdbcType=TINYINT},
+      </if>
+      <if test="deviceNumber != null" >
+        device_number = #{deviceNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="accid != null" >
+        accid = #{accid,jdbcType=VARCHAR},
+      </if>
+      <if test="token != null" >
+        token = #{token,jdbcType=VARCHAR},
+      </if>
+      <if test="testUser != null" >
+        test_user = #{testUser,jdbcType=INTEGER},
+      </if>
+      <if test="loginToken != null" >
+        login_token = #{loginToken,jdbcType=VARCHAR},
+      </if>
+      <if test="vipPromotionReward != null" >
+        vip_promotion_reward = #{vipPromotionReward,jdbcType=DECIMAL},
+      </if>
+      <if test="vipPromotionRewardget != null" >
+        vip_promotion_rewardget = #{vipPromotionRewardget,jdbcType=DECIMAL},
+      </if>
+      <if test="vipPromotionRewardover != null" >
+        vip_promotion_rewardover = #{vipPromotionRewardover,jdbcType=DECIMAL},
+      </if>
+      <if test="publicOpenid != null" >
+        public_openid = #{publicOpenid,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where rid = #{rid,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhongjian.dao.entity.order.rider.OrderRiderUserBean" >
+    update hm_rider_user
+    set marketid = #{marketid,jdbcType=INTEGER},
+      phone = #{phone,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      code = #{code,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      longitude = #{longitude,jdbcType=VARCHAR},
+      latitude = #{latitude,jdbcType=VARCHAR},
+      state = #{state,jdbcType=TINYINT},
+      ctime = #{ctime,jdbcType=INTEGER},
+      salt = #{salt,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      is_order = #{isOrder,jdbcType=TINYINT},
+      device_number = #{deviceNumber,jdbcType=VARCHAR},
+      accid = #{accid,jdbcType=VARCHAR},
+      token = #{token,jdbcType=VARCHAR},
+      test_user = #{testUser,jdbcType=INTEGER},
+      login_token = #{loginToken,jdbcType=VARCHAR},
+      vip_promotion_reward = #{vipPromotionReward,jdbcType=DECIMAL},
+      vip_promotion_rewardget = #{vipPromotionRewardget,jdbcType=DECIMAL},
+      vip_promotion_rewardover = #{vipPromotionRewardover,jdbcType=DECIMAL},
+      public_openid = #{publicOpenid,jdbcType=VARCHAR}
+    where rid = #{rid,jdbcType=INTEGER}
+  </update>
+  <select id="searchByEntityCount" resultType="java.lang.Integer" parameterType="com.zhongjian.dao.entity.order.rider.OrderRiderUserBean" >
+    select
+    count(*)
+    from hm_rider_user
+    <where>
+     <if test="marketid != null">
+      marketid=#{marketid,jdbcType=INTEGER}
+     </if>
+     <if test="phone != null">
+      AND phone=#{phone,jdbcType=VARCHAR}
+     </if>
+     <if test="name != null">
+      AND name=#{name,jdbcType=VARCHAR}
+     </if>
+     <if test="code != null">
+      AND code=#{code,jdbcType=VARCHAR}
+     </if>
+     <if test="password != null">
+      AND password=#{password,jdbcType=VARCHAR}
+     </if>
+     <if test="longitude != null">
+      AND longitude=#{longitude,jdbcType=VARCHAR}
+     </if>
+     <if test="latitude != null">
+      AND latitude=#{latitude,jdbcType=VARCHAR}
+     </if>
+     <if test="state != null">
+      AND state=#{state,jdbcType=TINYINT}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+     <if test="salt != null">
+      AND salt=#{salt,jdbcType=VARCHAR}
+     </if>
+     <if test="status != null">
+      AND status=#{status,jdbcType=TINYINT}
+     </if>
+     <if test="isOrder != null">
+      AND is_order=#{isOrder,jdbcType=TINYINT}
+     </if>
+     <if test="deviceNumber != null">
+      AND device_number=#{deviceNumber,jdbcType=VARCHAR}
+     </if>
+     <if test="accid != null">
+      AND accid=#{accid,jdbcType=VARCHAR}
+     </if>
+     <if test="token != null">
+      AND token=#{token,jdbcType=VARCHAR}
+     </if>
+     <if test="testUser != null">
+      AND test_user=#{testUser,jdbcType=INTEGER}
+     </if>
+     <if test="loginToken != null">
+      AND login_token=#{loginToken,jdbcType=VARCHAR}
+     </if>
+     <if test="vipPromotionReward != null">
+      AND vip_promotion_reward=#{vipPromotionReward,jdbcType=DECIMAL}
+     </if>
+     <if test="vipPromotionRewardget != null">
+      AND vip_promotion_rewardget=#{vipPromotionRewardget,jdbcType=DECIMAL}
+     </if>
+     <if test="vipPromotionRewardover != null">
+      AND vip_promotion_rewardover=#{vipPromotionRewardover,jdbcType=DECIMAL}
+     </if>
+     <if test="publicOpenid != null">
+      AND public_openid=#{publicOpenid,jdbcType=VARCHAR}
+     </if>
+    </where>
+  </select>
+  <select id="searchByEntity" resultMap="BaseResultMap" parameterType="com.zhongjian.dao.entity.order.rider.OrderRiderUserBean" >
+    select
+    <include refid="Base_Column_List"/>
+    from hm_rider_user
+    <where>
+     <if test="marketid != null">
+      marketid=#{marketid,jdbcType=INTEGER}
+     </if>
+     <if test="phone != null">
+      AND phone=#{phone,jdbcType=VARCHAR}
+     </if>
+     <if test="name != null">
+      AND name=#{name,jdbcType=VARCHAR}
+     </if>
+     <if test="code != null">
+      AND code=#{code,jdbcType=VARCHAR}
+     </if>
+     <if test="password != null">
+      AND password=#{password,jdbcType=VARCHAR}
+     </if>
+     <if test="longitude != null">
+      AND longitude=#{longitude,jdbcType=VARCHAR}
+     </if>
+     <if test="latitude != null">
+      AND latitude=#{latitude,jdbcType=VARCHAR}
+     </if>
+     <if test="state != null">
+      AND state=#{state,jdbcType=TINYINT}
+     </if>
+     <if test="ctime != null">
+      AND ctime=#{ctime,jdbcType=INTEGER}
+     </if>
+     <if test="salt != null">
+      AND salt=#{salt,jdbcType=VARCHAR}
+     </if>
+     <if test="status != null">
+      AND status=#{status,jdbcType=TINYINT}
+     </if>
+     <if test="isOrder != null">
+      AND is_order=#{isOrder,jdbcType=TINYINT}
+     </if>
+     <if test="deviceNumber != null">
+      AND device_number=#{deviceNumber,jdbcType=VARCHAR}
+     </if>
+     <if test="accid != null">
+      AND accid=#{accid,jdbcType=VARCHAR}
+     </if>
+     <if test="token != null">
+      AND token=#{token,jdbcType=VARCHAR}
+     </if>
+     <if test="testUser != null">
+      AND test_user=#{testUser,jdbcType=INTEGER}
+     </if>
+     <if test="loginToken != null">
+      AND login_token=#{loginToken,jdbcType=VARCHAR}
+     </if>
+     <if test="vipPromotionReward != null">
+      AND vip_promotion_reward=#{vipPromotionReward,jdbcType=DECIMAL}
+     </if>
+     <if test="vipPromotionRewardget != null">
+      AND vip_promotion_rewardget=#{vipPromotionRewardget,jdbcType=DECIMAL}
+     </if>
+     <if test="vipPromotionRewardover != null">
+      AND vip_promotion_rewardover=#{vipPromotionRewardover,jdbcType=DECIMAL}
+     </if>
+     <if test="publicOpenid != null">
+      AND public_openid=#{publicOpenid,jdbcType=VARCHAR}
+     </if>
+    </where>
+  </select>
+</mapper>

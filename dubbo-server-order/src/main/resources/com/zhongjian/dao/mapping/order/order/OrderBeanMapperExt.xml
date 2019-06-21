@@ -5,11 +5,14 @@
     <resultMap id="BaseOrderInfo" type="com.zhongjian.dto.order.order.result.OrderItemResultDTO">
         <id column="id" property="id" jdbcType="INTEGER"/>
         <result column="marketid" property="marketid" jdbcType="INTEGER"/>
+        <result column="rid" property="rid" jdbcType="INTEGER"/>
         <result column="rider_sn" property="riderSn" jdbcType="VARCHAR"/>
         <result column="integral" property="integralPrice" jdbcType="INTEGER"/>
         <result column="coupon_price" property="couponPrice" jdbcType="VARCHAR"/>
         <result column="market_activity_price" property="marketActivityPrice" jdbcType="VARCHAR"/>
         <result column="service_time" property="time" jdbcType="INTEGER"/>
+        <result column="pay_time" property="ptime" jdbcType="INTEGER"/>
+        <result column="finish_time" property="finishTime" jdbcType="VARCHAR"/>
         <result column="ctime" property="ctime" jdbcType="INTEGER"/>
         <result column="totalPrice" property="totalPrice" jdbcType="VARCHAR"/>
         <result column="pay_status" property="payStatus" jdbcType="INTEGER"/>
@@ -23,6 +26,7 @@
          SELECT
 			r.id,
             r.marketid,
+            r.rid,
             r.rider_sn,
             r.address_id as addressId,
             r.coupon_price,
@@ -34,6 +38,8 @@
             r.pay_status,
             r.rider_pay,
             r.rider_status,
+            r.pay_time,
+            r.finish_time,
             r.ctime
         FROM
             hm_rider_order r

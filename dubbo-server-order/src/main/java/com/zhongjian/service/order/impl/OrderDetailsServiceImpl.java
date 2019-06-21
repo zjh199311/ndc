@@ -8,6 +8,7 @@ import com.zhongjian.dao.entity.order.cvstore.OrderCvOrderBean;
 import com.zhongjian.dao.entity.order.cvstore.OrderCvUserOrderBean;
 import com.zhongjian.dao.entity.order.goods.OrderGoodsBean;
 import com.zhongjian.dao.entity.order.rider.OrderRiderOrderBean;
+import com.zhongjian.dao.entity.order.rider.OrderRiderUserBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
 import com.zhongjian.dao.framework.inf.HmDAO;
 import com.zhongjian.dto.Page;
@@ -33,10 +34,6 @@ import java.util.List;
 @Service("orderDetailsService")
 public class OrderDetailsServiceImpl extends HmBaseService<OrderCvUserOrderBean, Integer> implements OrderDetailsService {
 
-    private HmDAO<OrderCvOrderBean, Integer> orderCvOrderBean;
-
-    private HmDAO<OrderRiderOrderBean, Integer> orderRiderOrderBean;
-
     private HmDAO<OrderCvOrderDetailBean, Integer> orderDetailBean;
 
     private HmDAO<OrderCartBean, Integer> orderCartBean;
@@ -60,19 +57,6 @@ public class OrderDetailsServiceImpl extends HmBaseService<OrderCvUserOrderBean,
         this.orderCartBean = orderCartBean;
         orderCartBean.setPerfix(OrderCartBean.class.getName());
     }
-
-    @Resource
-    private void setOrderRiderOrderBean(HmDAO<OrderRiderOrderBean, Integer> orderRiderOrderBean) {
-        this.orderRiderOrderBean = orderRiderOrderBean;
-        orderRiderOrderBean.setPerfix(OrderRiderOrderBean.class.getName());
-    }
-
-    @Resource
-    public void setOrderCvOrderBean(HmDAO<OrderCvOrderBean, Integer> orderCvOrderBean) {
-        this.orderCvOrderBean = orderCvOrderBean;
-        orderCvOrderBean.setPerfix(OrderCvOrderBean.class.getName());
-    }
-
 
     @Override
     public ResultDTO<Object> queryList(OrderQueryDTO orderQueryDTO, Page page) {
