@@ -22,4 +22,14 @@
     AND hc.id = #{id,jdbcType=INTEGER}
 </select>
 
+    <select id="findCvGidByOid" resultType="com.zhongjian.dto.cart.basket.result.CartBasketResultDTO"
+            parameterType="java.lang.Integer">
+        SELECT
+        amount,gid
+        FROM
+        hm_cvorder_detail
+        WHERE
+        oid = #{Id,jdbcType=INTEGER}
+    </select>
+
 </mapper>

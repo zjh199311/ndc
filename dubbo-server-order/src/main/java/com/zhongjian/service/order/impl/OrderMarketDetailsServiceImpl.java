@@ -171,7 +171,10 @@ public class OrderMarketDetailsServiceImpl extends HmBaseService<OrderBean, Inte
                 }
             }
             //装换时间戳(预约时间)
-            long serverTime = findOrderItem.getTime() * 1000L;
+            long serverTime = 0;
+            if (null != findOrderItem.getTime()) {
+                serverTime = findOrderItem.getTime() * 1000L;
+            }
 
             if (FinalDatas.ONE == findOrderItem.getPayStatus()) {
                 switch (findOrderItem.getRiderStatus()) {
@@ -207,29 +210,34 @@ public class OrderMarketDetailsServiceImpl extends HmBaseService<OrderBean, Inte
                         findOrderItem.setTime(null);
                     }
                 } else {
-                    String format = DateUtil.datetime_format.format(serverTime);
-                    findOrderItem.setServerTime(format);
-                    findOrderItem.setTime(null);
-                    findOrderItem.setFinishTime(null);
+                    if (FinalDatas.ZERO != serverTime) {
+                        String format = DateUtil.datetime_format.format(serverTime);
+                        findOrderItem.setServerTime(format);
+                        findOrderItem.setTime(null);
+                        findOrderItem.setFinishTime(null);
+                    }
                 }
             } else {
-                String format = DateUtil.lastDayTime.format(serverTime);
-                try {
-                    //判断天是否与当天一样如果不一样则加上字符串明天.如果一样则不变
-                    Calendar calendar = Calendar.getInstance();
-                    calendar.setTime(DateUtil.lastDayTime.parse(format));
-                    int day = calendar.get(Calendar.DAY_OF_MONTH);
-                    Calendar calendayNow = Calendar.getInstance();
-                    int nowDay = calendayNow.get(Calendar.DAY_OF_MONTH);
-                    if (day == nowDay) {
-                        findOrderItem.setServerTime(format);
-                    } else {
-                        findOrderItem.setServerTime("明天" + format);
+                if (FinalDatas.ZERO != serverTime) {
+                    String format = DateUtil.lastDayTime.format(serverTime);
+                    try {
+                        //判断天是否与当天一样如果不一样则加上字符串明天.如果一样则不变
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(DateUtil.lastDayTime.parse(format));
+                        int day = calendar.get(Calendar.DAY_OF_MONTH);
+                        Calendar calendayNow = Calendar.getInstance();
+                        int nowDay = calendayNow.get(Calendar.DAY_OF_MONTH);
+                        if (day == nowDay) {
+                            findOrderItem.setServerTime(format);
+                        } else {
+                            findOrderItem.setServerTime("明天" + format);
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                    findOrderItem.setTime(null);
                 }
-                findOrderItem.setTime(null);
+
             }
             //骑手
             if (FinalDatas.ONE == findOrderItem.getPayStatus()) {

@@ -1,15 +1,20 @@
 package com.zhongjian.service.order.impl;
 
+import com.sun.istack.internal.FinalArrayList;
 import com.zhongjian.common.constant.FinalDatas;
 import com.zhongjian.common.constant.enums.CvorderEnum;
 import com.zhongjian.dao.entity.order.address.OrderAddressBean;
+import com.zhongjian.dao.entity.order.cvorder.OrderCvOrderDetailBean;
 import com.zhongjian.dao.entity.order.cvstore.OrderCvOrderBean;
 import com.zhongjian.dao.entity.order.cvstore.OrderCvUserOrderBean;
+import com.zhongjian.dao.entity.order.goods.OrderGoodsBean;
+import com.zhongjian.dao.entity.order.rider.OrderRiderUserBean;
 import com.zhongjian.dao.entity.order.shopown.OrderShopownBean;
 import com.zhongjian.dao.entity.order.user.OrderUserBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
 import com.zhongjian.dao.framework.inf.HmDAO;
 import com.zhongjian.dto.cart.address.result.OrderAddressResultDTO;
+import com.zhongjian.dto.cart.basket.result.CartBasketResultDTO;
 import com.zhongjian.dto.common.CommonMessageEnum;
 import com.zhongjian.dto.common.ResultDTO;
 import com.zhongjian.dto.common.ResultUtil;
@@ -26,6 +31,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -43,6 +49,29 @@ public class OrderCvstoreDetailsSerivceImpl extends HmBaseService<OrderCvUserOrd
 
     private HmDAO<OrderCvOrderBean, Integer> orderCvOrderBean;
 
+    private HmDAO<OrderRiderUserBean, Integer> orderRiderUserBean;
+
+    private HmDAO<OrderCvOrderDetailBean, Integer> orderDetailBean;
+
+    private HmDAO<OrderGoodsBean, Integer> orderGoodsBean;
+
+    @Resource
+    public void setOrderGoodsBean(HmDAO<OrderGoodsBean, Integer> orderGoodsBean) {
+        this.orderGoodsBean = orderGoodsBean;
+        this.orderGoodsBean.setPerfix(OrderGoodsBean.class.getName());
+    }
+
+    @Resource
+    public void setOrderDetailBean(HmDAO<OrderCvOrderDetailBean, Integer> orderDetailBean) {
+        this.orderDetailBean = orderDetailBean;
+        this.orderDetailBean.setPerfix(OrderCvOrderDetailBean.class.getName());
+    }
+
+    @Resource
+    public void setOrderRiderUserBean(HmDAO<OrderRiderUserBean, Integer> orderRiderUserBean) {
+        this.orderRiderUserBean = orderRiderUserBean;
+        this.orderRiderUserBean.setPerfix(OrderRiderUserBean.class.getName());
+    }
 
     @Resource
     public void setOrderShopownBean(HmDAO<OrderShopownBean, Integer> orderShopownBean) {
@@ -89,10 +118,16 @@ public class OrderCvstoreDetailsSerivceImpl extends HmBaseService<OrderCvUserOrd
             return ResultUtil.getSuccess(null);
         } else {
             //下单时间转换
-            if(null!=cvOrderDetail.getPtime()){
+            if (null != cvOrderDetail.getPtime()) {
                 long createTime = cvOrderDetail.getPtime() * 1000L;
-                cvOrderDetail.setPayTime(DateUtil.lastDayTime.format(createTime));
+                cvOrderDetail.setPayTime(DateUtil.datetime_format.format(createTime));
                 cvOrderDetail.setPtime(null);
+            }
+            //装换时间戳
+            if (null != cvOrderDetail.getCtime()) {
+                long createTime = cvOrderDetail.getCtime() * 1000L;
+                cvOrderDetail.setCreateTime(DateUtil.datetime_format.format(createTime));
+                cvOrderDetail.setCtime(null);
             }
 
             //积分优惠
@@ -122,31 +157,11 @@ public class OrderCvstoreDetailsSerivceImpl extends HmBaseService<OrderCvUserOrd
                 } else {
                     cvOrderDetail.setDistributionFee(null);
                 }
-                //装换时间戳(预约时间)
-                if (null != findCvOrderByUoid.getTime()) {
-                    long serverTime = findCvOrderByUoid.getTime() * 1000L;
-                    String format = DateUtil.lastDayTime.format(serverTime);
-                    try {
-                        //判断天是否与当天一样如果不一样则加上字符串明天.如果一样则不变
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(DateUtil.lastDayTime.parse(format));
-                        int day = calendar.get(Calendar.DAY_OF_MONTH);
-                        Calendar calendayNow = Calendar.getInstance();
-                        int nowDay = calendayNow.get(Calendar.DAY_OF_MONTH);
-                        if (day == nowDay) {
-                            cvOrderDetail.setServerTime(format);
-                        } else {
-                            cvOrderDetail.setServerTime("明天" + format);
-                        }
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
 
-
             //首先判断骑手状态和支付状态是否为0如果是则显示会员信息如果否则不显示
-            if (FinalDatas.ZERO == findCvOrderByUoid.getPayStatus() && FinalDatas.ZERO == findCvOrderByUoid.getRiderStatus()) {
+            if ((FinalDatas.ZERO == findCvOrderByUoid.getPayStatus() && FinalDatas.ZERO == findCvOrderByUoid.getRiderStatus()) ||
+                    (FinalDatas.ZERO == findCvOrderByUoid.getPayStatus() && FinalDatas.THREE == findCvOrderByUoid.getRiderStatus())) {
                 cvOrderDetail.setRiderSn(null);
                 //判断是否为会员
                 if (FinalDatas.ONE == orderUserBean.getVipStatus()) {
@@ -160,7 +175,14 @@ public class OrderCvstoreDetailsSerivceImpl extends HmBaseService<OrderCvUserOrd
                 if (FinalDatas.ZERO == findCvOrderByUoid.getPayStatus() && FinalDatas.THREE == findCvOrderByUoid.getRiderStatus()) {
                     cvOrderDetail.setStatus(3);
                 }
-            } else if (FinalDatas.ONE == cvOrderDetail.getPayStatus()) {
+            }
+            //装换时间戳(预约时间)
+            long serverTime = 0;
+            if (null != findCvOrderByUoid.getTime()) {
+                serverTime = findCvOrderByUoid.getTime() * 1000L;
+            }
+
+            if (FinalDatas.ONE == cvOrderDetail.getPayStatus()) {
 
                 switch (findCvOrderByUoid.getRiderStatus()) {
                     case 0:
@@ -185,6 +207,54 @@ public class OrderCvstoreDetailsSerivceImpl extends HmBaseService<OrderCvUserOrd
                         break;
                     default:
                 }
+
+                //如果是完成订单的话显示送达时间其他则显示预计送达时间
+                if (FinalDatas.TWO == cvOrderDetail.getStatus() || FinalDatas.FOUR == cvOrderDetail.getStatus()) {
+                    //装换时间戳
+                    if (null != findCvOrderByUoid.getOrderedTime()) {
+                        long finishTime = findCvOrderByUoid.getOrderedTime()* 1000L;
+                        cvOrderDetail.setServiceTime(DateUtil.datetime_format.format(finishTime));
+                        cvOrderDetail.setFinishTime(null);
+                        cvOrderDetail.setTime(null);
+                    }
+                } else {
+                    if(FinalDatas.ZERO!=serverTime){
+                        String format = DateUtil.datetime_format.format(serverTime);
+                        cvOrderDetail.setServerTime(format);
+                        cvOrderDetail.setTime(null);
+                        cvOrderDetail.setFinishTime(null);
+                    }
+                }
+            } else {
+                if(FinalDatas.ZERO!=null){
+                    String format = DateUtil.lastDayTime.format(serverTime);
+                    try {
+                        //判断天是否与当天一样如果不一样则加上字符串明天.如果一样则不变
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTime(DateUtil.lastDayTime.parse(format));
+                        int day = calendar.get(Calendar.DAY_OF_MONTH);
+                        Calendar calendayNow = Calendar.getInstance();
+                        int nowDay = calendayNow.get(Calendar.DAY_OF_MONTH);
+                        if (day == nowDay) {
+                            cvOrderDetail.setServerTime(format);
+                        } else {
+                            cvOrderDetail.setServerTime("明天" + format);
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    cvOrderDetail.setTime(null);
+                }
+
+            }
+
+            //骑手
+            if (FinalDatas.ONE == cvOrderDetail.getPayStatus()) {
+                if (null != findCvOrderByUoid.getRid()) {
+                    OrderRiderUserBean orderRiderUserBean = this.orderRiderUserBean.selectByPrimaryKey(findCvOrderByUoid.getRid());
+                    cvOrderDetail.setRiderUserName(orderRiderUserBean.getName());
+                    cvOrderDetail.setRiderPhone(orderRiderUserBean.getPhone());
+                }
             }
 
             //家庭住址
@@ -196,7 +266,7 @@ public class OrderCvstoreDetailsSerivceImpl extends HmBaseService<OrderCvUserOrd
             //订单
             if (null != cvOrderDetail.getId()) {
                 List<OrderListResultDTO> findShopownByOid = this.orderShopownBean.executeListMethod(cvOrderDetail.getId(), "findShopownByUoid", OrderListResultDTO.class);
-                if(!CollectionUtils.isEmpty(findShopownByOid)){
+                if (!CollectionUtils.isEmpty(findShopownByOid)) {
                     for (OrderListResultDTO orderListResultDTO : findShopownByOid) {
                         //商品订单原价，当实际价格与原价相同，显示为空
                         if (new BigDecimal(orderListResultDTO.getOrderTotal()).setScale(2, BigDecimal.ROUND_HALF_UP).compareTo(new BigDecimal(orderListResultDTO.getOrderPayment()).setScale(2, BigDecimal.ROUND_HALF_UP)) == 0) {
@@ -208,6 +278,20 @@ public class OrderCvstoreDetailsSerivceImpl extends HmBaseService<OrderCvUserOrd
                         totalPrice = totalPrice.add(new BigDecimal(orderListResultDTO.getOrderPayment()));
 
                         orderListResultDTO.setOrderPayment("¥" + new BigDecimal(orderListResultDTO.getOrderPayment()).setScale(2, BigDecimal.ROUND_HALF_UP).intValue());
+
+                        //订单显示的食品信息
+                        List<CartBasketResultDTO> findGidByOid = this.orderDetailBean.executeListMethod(orderListResultDTO.getOid(), "findCvGidByOid", CartBasketResultDTO.class);
+                        //根据gid获取食品名称
+                        List<CartBasketResultDTO> list = new ArrayList<CartBasketResultDTO>();
+                        for (CartBasketResultDTO cartBasketResultBean : findGidByOid) {
+                            CartBasketResultDTO cartBasketResultDTO = new CartBasketResultDTO();
+                            OrderGoodsBean orderGoodsBean = this.orderGoodsBean.selectByPrimaryKey(cartBasketResultBean.getGid());
+                            cartBasketResultDTO.setGname(orderGoodsBean.getGname() + "(" + cartBasketResultBean.getAmount() + orderGoodsBean.getUnit() + ")");
+                            cartBasketResultDTO.setPrice("¥" + orderGoodsBean.getPrice().toString());
+                            list.add(cartBasketResultDTO);
+                        }
+                        orderListResultDTO.setCartList(list);
+                        orderListResultDTO.setAmountMsg("共" + findGidByOid.size() + "种");
                     }
                     cvOrderDetail.setStoreList(findShopownByOid);
                 }

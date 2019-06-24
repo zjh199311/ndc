@@ -103,6 +103,7 @@
         <result column="order_sn" property="riderSn" jdbcType="VARCHAR"/>
         <result column="integralPrice" property="integralPrice" jdbcType="INTEGER"/>
         <result column="coupon_price" property="couponPrice" jdbcType="VARCHAR"/>
+        <result column="ctime" property="ctime" jdbcType="INTEGER"/>
         <result column="pay_time" property="ptime" jdbcType="INTEGER"/>
         <result column="totalPrice" property="totalPrice" jdbcType="VARCHAR"/>
     </resultMap>
@@ -114,6 +115,7 @@
             order_sn,
             coupon_price,
             pay_time,
+            ctime,
             deliver_fee,
             integralPrice,
             originalPrice,

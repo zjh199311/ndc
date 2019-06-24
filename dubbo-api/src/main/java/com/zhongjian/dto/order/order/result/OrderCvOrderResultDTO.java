@@ -18,6 +18,11 @@ public class OrderCvOrderResultDTO implements Serializable {
     private Integer addressId;
 
     /**
+     * 骑手id
+     */
+    private Integer rid;
+
+    /**
      * 配送费
      */
     private String deliverFee;
@@ -31,6 +36,16 @@ public class OrderCvOrderResultDTO implements Serializable {
      * 预约时间
      */
     private String serviceTime;
+
+    /**
+     * 完成时间时间戳
+     */
+    private Integer orderedTime;
+
+    /**
+     * 完成时间
+     */
+    private String finishTime;
 
     /**
      * 订单状态
