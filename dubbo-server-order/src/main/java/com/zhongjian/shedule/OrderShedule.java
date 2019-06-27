@@ -47,11 +47,11 @@ private OrderService orderService;
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		this.orderShedule();
-		List<Integer> orderList = orderService.queryWaitdeliverOrderList();
-		for (Iterator iterator = orderList.iterator(); iterator.hasNext();) {
-			Integer orderId = (Integer) iterator.next();
-			delayHandleCVOrder(orderId, 60);
-		}
+//		List<Integer> orderList = orderService.queryWaitdeliverOrderList();
+//		for (Iterator iterator = orderList.iterator(); iterator.hasNext();) {
+//			Integer orderId = (Integer) iterator.next();
+//			delayHandleCVOrder(orderId, 60);
+//		}
 		
 	}
 	
