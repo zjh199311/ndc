@@ -19,7 +19,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.TreeMap;
 
-@WebServlet(value = "/v1/notify/wxapp", asyncSupported = true)
+@WebServlet(value = "/v1/notify/wxapp", asyncSupported = false)
 public class WxAppNotifyServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
