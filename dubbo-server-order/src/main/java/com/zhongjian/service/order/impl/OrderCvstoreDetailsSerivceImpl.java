@@ -1,6 +1,5 @@
 package com.zhongjian.service.order.impl;
 
-import com.sun.istack.internal.FinalArrayList;
 import com.zhongjian.common.constant.FinalDatas;
 import com.zhongjian.common.constant.enums.CvorderEnum;
 import com.zhongjian.dao.entity.order.address.OrderAddressBean;
