@@ -1,7 +1,5 @@
 package com.zhongjian.shedule;
 
-import java.util.Iterator;
-import java.util.List;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,12 +45,6 @@ private OrderService orderService;
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		this.orderShedule();
-//		List<Integer> orderList = orderService.queryWaitdeliverOrderList();
-//		for (Iterator iterator = orderList.iterator(); iterator.hasNext();) {
-//			Integer orderId = (Integer) iterator.next();
-//			delayHandleCVOrder(orderId, 60);
-//		}
-		
 	}
 	
 	
