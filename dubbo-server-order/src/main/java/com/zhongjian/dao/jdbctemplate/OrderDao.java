@@ -149,6 +149,12 @@ public class OrderDao extends MongoDBDaoBase {
 			Document document = iterator.next();
 			resMap.put("pay_full", new BigDecimal((Double) document.get("payFull")));
 			resMap.put("type", document.get("type"));
+			Object ext = document.get("ext");
+			if (ext == null) {
+				resMap.put("ext", 0);
+			}else {
+				resMap.put("ext", 1);
+			}
 			break;
 		}
 		return resMap;
@@ -369,4 +375,123 @@ public class OrderDao extends MongoDBDaoBase {
 		return resMap;
 	}
 	
+////-----------------------------------------------------------------------------------------------
+//	public List<Integer> selectOrder1() {
+//		String sql = " SELECT hr.id from hm_rider_order hr,hm_order ho"
+//				+ " where hr.id = ho.roid and hr.ctime < 1546272000 and hr.pay_status =1 AND hr.totalPrice != 0 AND (hr.integral IS  NULL OR hr.integral = 0)";
+//		
+//		return jdbcTemplate.queryForList(sql, Integer.class);
+//	}
+//	
+//	public Map<String, Object> TotalPriceAndRiderPay(Integer roid) {
+//		String sql = "SELECT totalPrice,rider_pay from hm_rider_order where id = ?";
+//		Map<String, Object> resMap = null;
+//		try {
+//			resMap = jdbcTemplate.queryForMap(sql, roid);
+//		} catch (EmptyResultDataAccessException e) {
+//		}
+//		return resMap;
+//	}
+//	
+//	public Map<String, Object> getPayment(Integer roid) {
+//		Map<String, Object> resMap = null;
+//		String sql = "SELECT SUM(payment) payment,SUM(total) total from hm_order where roid = ?";
+//		try {
+//			resMap = jdbcTemplate.queryForMap(sql, roid);
+//		} catch (EmptyResultDataAccessException e) {
+//		}
+//		return resMap;
+//	}
+//	
+//	public void updateMarketAPrice(Integer roid,BigDecimal marketAprice) {
+//		String sql = "update hm_rider_order set market_activity_price = ? where id = ?";
+//		jdbcTemplate.update(sql, marketAprice,roid);
+//	}
+//	
+//	
+//	
+//	//查询totalprice为null的订单
+//	public List<Integer> selectOrder2() {
+//		String sql = "SELECT id from hm_rider_order hr where  hr.totalPrice IS NULL and hr.ctime < 1546272000";
+//		return jdbcTemplate.queryForList(sql, Integer.class);
+//	}
+//	
+//	//查询totalprice为null的订单
+//	public List<Integer> selectOrder3() {
+//		String sql = "SELECT id from hm_rider_order where uid in(SELECT uid from hm_rider_order GROUP BY uid HAVING  COUNT(1) > 2) and ctime < 1560096000";
+//		return jdbcTemplate.queryForList(sql, Integer.class);
+//	}
+//	
+//	public void updateRiderOrder(Integer roid,Integer type) {
+//		String sql = "";
+//		if (type == 0) {
+//			sql = "update hm_rider_order set id = id * 1000000 ,pay_time = pay_time + 2592000,service_time = service_time + 2592000,order_time= order_time + 2592000,finish_time =finish_time + 2592000,ctime = ctime + 2592000  where id =?";
+//		}else {
+//			sql = "delete from hm_rider_order where id =?";
+//		}
+//		 
+//		jdbcTemplate.update(sql,roid);
+//	}
+//	
+//	public void updateOrder(Integer roid ,Integer type) {
+//		String sql = "";
+//		if(type == 0) {
+//		sql = "update hm_order set ctime = ctime + 2592000,roid=roid*1000000,id=id*1000000 where roid = ?";	
+//		}else {
+//			sql = "delete from hm_order where roid = ?";
+//		}
+//		
+//		jdbcTemplate.update(sql,roid);
+//	}
+//	
+//	public void updateCart(Integer oid ,Integer type) {
+//		String sql = "";
+//		if(type == 0) {
+//		sql = "update hm_cart set cid = cid * 1000000,oid = oid * 1000000 where oid = ?";	
+//		}else {
+//			sql = "delete from hm_cart where oid = ?";
+//		}
+//		
+//		jdbcTemplate.update(sql,oid);
+//	}
+//	
+//	public List<Integer> getOidOfRoid(Integer roid) {
+//		String sql = "SELECT id FROM hm_order where roid = ?";
+//		return jdbcTemplate.queryForList(sql, Integer.class,roid);
+//	}
+//	
+//	public List<Integer> getAllRiderOrder() {
+//		String sql = "SELECT id from hm_rider_order";
+//		return jdbcTemplate.queryForList(sql, Integer.class);
+//	}
+//	
+//	public List<Integer> getAllOrder() {
+//		String sql = "SELECT id from hm_order";
+//		return jdbcTemplate.queryForList(sql, Integer.class);
+//	}
+//	
+//	public List<Integer> getAllCart() {
+//		String sql = "SELECT cid from hm_cart";
+//		return jdbcTemplate.queryForList(sql, Integer.class);
+//	}
+//	
+//	public List<Integer> getCidByOid(Integer oid) {
+//		String sql = "SELECT cid from hm_cart where oid = ?";
+//		return jdbcTemplate.queryForList(sql, Integer.class,oid);
+//	}
+//	
+//	public void deleteCarts(String carts) {
+//		String sql = "delete from hm_cart where cid in " + carts;
+//		jdbcTemplate.update(sql);
+//	}
+//	
+//	public void deleteOrders(String orders) {
+//		String sql = "delete from hm_order where id in " + orders;
+//		jdbcTemplate.update(sql);
+//	}
+//	
+//	public void deleteROrders(String rorders) {
+//		String sql = "delete from hm_rider_order where id in " + rorders;
+//		jdbcTemplate.update(sql);
+//	}
 }
