@@ -628,7 +628,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				endtime = startAndEnd.get("endtime");
 			}
 			if (starttime == null || endtime == null) {
-				resMap.put("marketTime", "07:00-18:30");
+				resMap.put("marketTime", "06:00-23:30");
 			} else {
 				resMap.put("marketTime", starttime + "-" + endtime);
 			}
