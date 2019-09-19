@@ -189,9 +189,9 @@ public class OrderDao extends MongoDBDaoBase {
 
 	// hm_order添加
 	public Integer addHmOrder(Map<String, Object> map) {
-		String sql = "INSERT INTO `hm_order` (order_sn,pid,uid,marketid,total,payment,integral,"
+		String sql = "INSERT INTO `hm_order` (order_sn,pid,uid,marketid,total,payment,actual_achieve,integral,"
 				+ "pay_status,order_status,ctime,is_appointment,roid,type,couponid,pay_time,cartids,remark,test) "
-				+ "VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?,  ?, ?, ?,null,null,null,null,null,null)";
+				+ "VALUES (?, ?, ?, ?, ?, ?,?, 0, ?, ?,  ?, ?, ?,null,null,null,null,null,null)";
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
@@ -202,11 +202,12 @@ public class OrderDao extends MongoDBDaoBase {
 				ps.setInt(4, (int) map.get("marketid"));
 				ps.setBigDecimal(5, (BigDecimal) map.get("total"));
 				ps.setBigDecimal(6, (BigDecimal) map.get("payment"));
-				ps.setInt(7, (Integer) map.get("pay_status"));
-				ps.setInt(8, (Integer) map.get("order_status"));
-				ps.setInt(9, (int) map.get("ctime"));
-				ps.setInt(10, (int) map.get("is_appointment"));
-				ps.setInt(11, (int) map.get("roid"));
+				ps.setBigDecimal(7, (BigDecimal) map.get("actual_achieve"));
+				ps.setInt(8, (Integer) map.get("pay_status"));
+				ps.setInt(9, (Integer) map.get("order_status"));
+				ps.setInt(10, (int) map.get("ctime"));
+				ps.setInt(11, (int) map.get("is_appointment"));
+				ps.setInt(12, (int) map.get("roid"));
 				return ps;
 			}
 		}, keyHolder);
@@ -374,6 +375,46 @@ public class OrderDao extends MongoDBDaoBase {
 		}
 		return resMap;
 	}
+	
+	
+	//获取商户品类收佣比率
+	public BigDecimal getSratio(Integer pid) {
+		String sql = "SELECT hm_household_category.ratio FROM hm_household_category,hm_shopown WHERE hm_household_category.id =  hm_shopown.household_category AND hm_shopown.pid = ?";
+		return jdbcTemplate.queryForObject(sql, new Object[] { pid }, BigDecimal.class);
+	}
+	
+	//查看是否是free
+	public Boolean isFree(Integer pid) {
+		String sql = "SELECT is_free from hm_shopown where pid = ?";
+		Integer isFree = jdbcTemplate.queryForObject(sql, new Object[] { pid }, Integer.class);
+		return isFree == 0?false:true;
+	}
+	//查询自由比率
+	public BigDecimal getFSratio(Integer pid) {
+		String sql = "SELECT free_ratio from hm_shopown where pid = ?";
+		return jdbcTemplate.queryForObject(sql, new Object[] { pid }, BigDecimal.class);
+	}
+	
+	
+	//获取菜场比率(默认为1，后期翻倍亦可)
+	public BigDecimal getMratio(Integer pid) {
+		String sql = "SELECT hm_market.ratio from hm_market ,hm_shopown WHERE hm_market.id = hm_shopown.marketid AND hm_shopown.pid = ? AND hm_market.is_ratio_start = 1";
+		BigDecimal mRatio = null;
+		try {
+			mRatio = jdbcTemplate.queryForObject(sql, new Object[] { pid }, BigDecimal.class);
+		} catch (Exception e) {
+		}
+		return mRatio;
+	}
+	
+	//获取菜场比率(默认为1，后期翻倍亦可)
+	public BigDecimal getRatio() {
+		String sql = "SELECT ratio from hm_ratio";
+		BigDecimal ratio = jdbcTemplate.queryForObject(sql,  BigDecimal.class);
+		return ratio;
+	}
+	
+	
 	
 ////-----------------------------------------------------------------------------------------------
 //	public List<Integer> selectOrder1() {

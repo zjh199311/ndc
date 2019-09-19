@@ -82,6 +82,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 	public Map<String, Object> previewOrCreateOrder(Integer uid, Integer[] sids, String type, Integer extra,
 			String isSelfMention, boolean toCreateOrder, Integer addressId, Integer unixTime, Integer isAppointment)
 			throws NDCException {
+
 		Integer isVIp = 0;
 		String vipFavour = "";
 
@@ -250,12 +251,30 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				} else {
 					orderJoint.append("|").append(smallOrderSn);
 				}
+
+				Integer pid = Integer.valueOf(sid);
+				BigDecimal mRatio = orderDao.getMratio(pid);
+				BigDecimal finalRatio = BigDecimal.ZERO;
+				if (mRatio != null) {
+					BigDecimal ratio = orderDao.getRatio();
+					BigDecimal sratio = null;
+					if (orderDao.isFree(pid)) {
+						sratio = orderDao.getFSratio(pid);
+					} else {
+						sratio = orderDao.getSratio(pid);
+					}
+					finalRatio = ratio.multiply(sratio).multiply(mRatio).setScale(4, BigDecimal.ROUND_HALF_UP);
+				}
+				BigDecimal computeRatio = new BigDecimal("1").subtract(finalRatio).setScale(4,
+						BigDecimal.ROUND_HALF_UP);
+				BigDecimal actualStoreAmountBigDecimalTake = computeRatio.multiply(actualStoreAmountBigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP);
 				storeOrderInfo.put("pid", Integer.valueOf(sid));
 				storeOrderInfo.put("order_sn", smallOrderSn);
 				storeOrderInfo.put("uid", uid);
 				storeOrderInfo.put("marketid", marketId);
 				storeOrderInfo.put("total", storeAmountBigDecimal);
 				storeOrderInfo.put("payment", actualStoreAmountBigDecimal);
+				storeOrderInfo.put("actual_achieve",actualStoreAmountBigDecimalTake);
 				storeOrderInfo.put("ctime", createTime);
 				storeOrderInfo.put("is_appointment", isAppointment);
 				storeOrderInfo.put("roid", 0);
