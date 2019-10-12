@@ -206,7 +206,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					String gname = (String) map.get("gname");
 					String unit = (String) map.get("unit");
 					String remark = (String) map.get("remark");
-					orderRemark = orderRemark +  "[" + gname + "]" + remark + "\n"; 
+					orderRemark = orderRemark +  "[" + gname == null? "其他" : gname + "]" + remark + " "; 
 					hmCart.put("gid", gid);
 					hmCart.put("gname", gname == null ? "其他" : gname);
 					hmCart.put("unit", unit == null ? "个" : unit);
