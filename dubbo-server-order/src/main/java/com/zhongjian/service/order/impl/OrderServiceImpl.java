@@ -209,7 +209,11 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					if (gname == null) {
 						gname = "其他";
 					}
-					orderRemark = orderRemark +  "[" +  gname + "]" + remark + " "; 
+					if (remark == null || "".equals(remark)) {
+						//备注为空时什么都不做
+					}else {
+						orderRemark = orderRemark +  "[" +  gname + "]" + remark + " "; 
+					}
 					hmCart.put("gid", gid);
 					hmCart.put("gname", gname);
 					hmCart.put("unit", unit == null ? "个" : unit);
