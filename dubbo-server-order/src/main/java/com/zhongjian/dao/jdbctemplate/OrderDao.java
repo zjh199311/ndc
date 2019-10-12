@@ -191,7 +191,7 @@ public class OrderDao extends MongoDBDaoBase {
 	public Integer addHmOrder(Map<String, Object> map) {
 		String sql = "INSERT INTO `hm_order` (order_sn,pid,uid,marketid,total,payment,actual_achieve,integral,"
 				+ "pay_status,order_status,ctime,is_appointment,roid,type,couponid,pay_time,cartids,remark,test) "
-				+ "VALUES (?, ?, ?, ?, ?, ?,?, 0, ?, ?,  ?, ?, ?,null,null,null,null,null,null)";
+				+ "VALUES (?, ?, ?, ?, ?, ?,?, 0, ?, ?,  ?, ?, ?,null,null,null,null,?,null)";
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
@@ -208,6 +208,7 @@ public class OrderDao extends MongoDBDaoBase {
 				ps.setInt(10, (int) map.get("ctime"));
 				ps.setInt(11, (int) map.get("is_appointment"));
 				ps.setInt(12, (int) map.get("roid"));
+				ps.setString(13, (String) map.get("remark"));
 				return ps;
 			}
 		}, keyHolder);
@@ -218,7 +219,7 @@ public class OrderDao extends MongoDBDaoBase {
 	public Integer addHmRiderOrder(Map<String, Object> map) {
 		final String sql = "INSERT INTO hm_rider_order (rider_sn,order_sn,uid,marketid,rid,pay_status,address_id,rider_pay,"
 				+ "couponid,type_pay,totalPrice,pay_time,service_time,order_time,finish_time,ctime,integral,is_appointment,end_time,"
-				+ "original_price,out_trade_no,coupon_price,market_activity_price,store_activity_price,vip_relief,remark,test,rider_status) VALUES (?,?,?,"
+				+ "original_price,out_trade_no,coupon_price,market_activity_price,store_activity_price,vip_relief,remark,test,rider_status,self_sufficiency) VALUES (?,?,?,"
 				+ "?,?,?,?,?,?,null,?,?,?,null,null,?,?,?,null,?,?,?,?,?,?,null,null,?)";
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
@@ -246,6 +247,7 @@ public class OrderDao extends MongoDBDaoBase {
 				ps.setBigDecimal(20, (BigDecimal) map.get("store_activity_price"));
 				ps.setBigDecimal(21, (BigDecimal) map.get("vip_relief"));
 				ps.setInt(22, (Integer) map.get("rider_status"));
+				ps.setInt(23, (Integer) map.get("self_sufficiency"));
 				return ps;
 			}
 		}, keyHolder);

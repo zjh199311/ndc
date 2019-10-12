@@ -142,6 +142,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		if (toCreateOrder) {
 			storeOrders = new HashMap<String, Object>();
 			storeOrders.put("rider_status", 0);
+			storeOrders.put("self_sufficiency", 0);
 			storeIds = new ArrayList<String>();
 		}
 
@@ -165,6 +166,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 			int unFavorable = 0;// 默认参与市场优惠
 			String sname = "";
 			String sid = "";
+			String orderRemark = "";
 			if (singleStoreInfoList.size() == 0) {
 				continue;
 			}
@@ -204,6 +206,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 					String gname = (String) map.get("gname");
 					String unit = (String) map.get("unit");
 					String remark = (String) map.get("remark");
+					orderRemark = orderRemark +  "[" + gname + "]" + remark + "\n"; 
 					hmCart.put("gid", gid);
 					hmCart.put("gname", gname == null ? "其他" : gname);
 					hmCart.put("unit", unit == null ? "个" : unit);
@@ -275,6 +278,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				storeOrderInfo.put("total", storeAmountBigDecimal);
 				storeOrderInfo.put("payment", actualStoreAmountBigDecimal);
 				storeOrderInfo.put("actual_achieve",actualStoreAmountBigDecimalTake);
+				storeOrderInfo.put("remark",orderRemark);
 				storeOrderInfo.put("ctime", createTime);
 				storeOrderInfo.put("is_appointment", isAppointment);
 				storeOrderInfo.put("roid", 0);
@@ -421,6 +425,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				deliverfeeBigDecimal = new BigDecimal(memberSelfMentionDeliverfee);
 				if (toCreateOrder) {
 					storeOrders.put("rider_status", 3);
+					storeOrders.put("self_sufficiency", 1);
 				}
 			}
 		}
