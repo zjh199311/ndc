@@ -220,7 +220,7 @@ public class OrderDao extends MongoDBDaoBase {
 		final String sql = "INSERT INTO hm_rider_order (rider_sn,order_sn,uid,marketid,rid,pay_status,address_id,rider_pay,"
 				+ "couponid,type_pay,totalPrice,pay_time,service_time,order_time,finish_time,ctime,integral,is_appointment,end_time,"
 				+ "original_price,out_trade_no,coupon_price,market_activity_price,store_activity_price,vip_relief,remark,test,rider_status,self_sufficiency) VALUES (?,?,?,"
-				+ "?,?,?,?,?,?,null,?,?,?,null,null,?,?,?,null,?,?,?,?,?,?,null,null,?)";
+				+ "?,?,?,?,?,?,null,?,?,?,null,null,?,?,?,null,?,?,?,?,?,?,null,null,?,?)";
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(new PreparedStatementCreator() {
 			public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
