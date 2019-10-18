@@ -210,9 +210,9 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 						gname = "其他";
 					}
 					if (remark == null || "".equals(remark)) {
-						//备注为空时什么都不做
-					}else {
-						orderRemark = orderRemark +  "[" +  gname + "]" + remark + " "; 
+						// 备注为空时什么都不做
+					} else {
+						orderRemark = orderRemark + "[" + gname + "]" + remark + " ";
 					}
 					hmCart.put("gid", gid);
 					hmCart.put("gname", gname);
@@ -277,15 +277,16 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 				}
 				BigDecimal computeRatio = new BigDecimal("1").subtract(finalRatio).setScale(4,
 						BigDecimal.ROUND_HALF_UP);
-				BigDecimal actualStoreAmountBigDecimalTake = computeRatio.multiply(actualStoreAmountBigDecimal).setScale(2, BigDecimal.ROUND_HALF_UP);
+				BigDecimal actualStoreAmountBigDecimalTake = computeRatio.multiply(actualStoreAmountBigDecimal)
+						.setScale(2, BigDecimal.ROUND_HALF_UP);
 				storeOrderInfo.put("pid", Integer.valueOf(sid));
 				storeOrderInfo.put("order_sn", smallOrderSn);
 				storeOrderInfo.put("uid", uid);
 				storeOrderInfo.put("marketid", marketId);
 				storeOrderInfo.put("total", storeAmountBigDecimal);
 				storeOrderInfo.put("payment", actualStoreAmountBigDecimal);
-				storeOrderInfo.put("actual_achieve",actualStoreAmountBigDecimalTake);
-				storeOrderInfo.put("remark",orderRemark);
+				storeOrderInfo.put("actual_achieve", actualStoreAmountBigDecimalTake);
+				storeOrderInfo.put("remark", orderRemark);
 				storeOrderInfo.put("ctime", createTime);
 				storeOrderInfo.put("is_appointment", isAppointment);
 				storeOrderInfo.put("roid", 0);
@@ -1084,6 +1085,144 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public boolean isCommission(Integer sid) {
+		return false;
+	}
+	@Override
+	@Transactional
+	public void createFalseRorder(Integer marketid, Integer uid, Integer addressid) {
+		// 获取当前时间
+		int createTime = (int) (System.currentTimeMillis() / 1000) - 10;
+		// 随机获取商户id
+		List<Integer> sids = orderDao.getStore(marketid);
+		int sidsIndex = (int) (Math.random() * sids.size());
+		Integer sid = sids.get(sidsIndex);
+		// 随机获取商品
+		List<Map<String, Object>> goods = orderDao.getGoods(sid);
+		Integer gid = 0;
+		String gname = "其他";
+		String unit = "个";
+		BigDecimal amount = new BigDecimal("1");
+		BigDecimal price = BigDecimal.ZERO;
+		if (goods == null || goods.size() == 0) {
+			price = new BigDecimal(50 + Math.random() * 30);
+		} else {
+			int goodsIndex = (int) (Math.random() * goods.size());
+			Map<String, Object> map = goods.get(goodsIndex);
+			gid = (Integer) map.get("id");
+			gname = (String) map.get("gname");
+			unit = (String) map.get("unit");
+			// 如何去买
+			if ("斤".equals(unit)) {
+				double amountD = 1 + Math.random();
+				amount = new BigDecimal(amountD).setScale(2, BigDecimal.ROUND_HALF_UP);
+			}
+			price = (BigDecimal) map.get("price");
+		}
+		BigDecimal priceAmount = price.multiply(amount).setScale(2, BigDecimal.ROUND_HALF_UP);
+		List<Map<String, Object>> hmCartList = new ArrayList<Map<String, Object>>();
+		Map<String, Object> hmCart = new HashMap<String, Object>();
+		// 订单详情构造
+		hmCart.put("gid", gid);
+		hmCart.put("gname", gname);
+		hmCart.put("unit", unit);
+		hmCart.put("uid", uid);
+		hmCart.put("price", priceAmount);
+		hmCart.put("amount", amount);
+		hmCart.put("sid", sid);
+		hmCart.put("status", 10005);
+		hmCart.put("ctime", createTime);
+		hmCart.put("remark", "");
+		hmCart.put("oid", 0);
+		hmCartList.add(hmCart);
+		Map<String, Object> storeOrderInfo = new HashMap<String, Object>();
+		storeOrderInfo.put("pid", sid);
+		String smallOrderSn = "HM" + idWorkers.getOrderIdWork().nextId();
+		storeOrderInfo.put("order_sn", smallOrderSn);
+		storeOrderInfo.put("uid", uid);
+		storeOrderInfo.put("marketid", marketid);
+		storeOrderInfo.put("total", priceAmount);
+		storeOrderInfo.put("payment", priceAmount);
+		BigDecimal mRatio = orderDao.getMratio(sid);
+		BigDecimal finalRatio = BigDecimal.ZERO;
+		if (mRatio != null) {
+			BigDecimal ratio = orderDao.getRatio();
+			BigDecimal sratio = null;
+			if (orderDao.isFree(sid)) {
+				sratio = orderDao.getFSratio(sid);
+			} else {
+				sratio = orderDao.getSratio(sid);
+			}
+			finalRatio = ratio.multiply(sratio).multiply(mRatio).setScale(4, BigDecimal.ROUND_HALF_UP);
+		}
+		BigDecimal computeRatio = new BigDecimal("1").subtract(finalRatio).setScale(4, BigDecimal.ROUND_HALF_UP);
+		BigDecimal actualStoreAmountBigDecimalTake = computeRatio.multiply(priceAmount).setScale(2,
+				BigDecimal.ROUND_HALF_UP);
+		storeOrderInfo.put("actual_achieve", actualStoreAmountBigDecimalTake);
+		storeOrderInfo.put("remark", "");
+		storeOrderInfo.put("ctime", createTime);
+		storeOrderInfo.put("is_appointment", 0);
+		storeOrderInfo.put("roid", 0);
+		storeOrderInfo.put("cartList", hmCartList);
+		// 制造大订单
+		Map<String, Object> storeOrders = new HashMap<String, Object>();
+		storeOrders.put("rider_status", 1);
+		storeOrders.put("self_sufficiency", 0);
+		storeOrders.put(String.valueOf(sid), storeOrderInfo);
+		String riderSn = "RI" + idWorkers.getRiderOrderIdWork().nextId();
+		storeOrders.put("rider_sn", riderSn);
+		storeOrders.put("order_sn", smallOrderSn);
+		storeOrders.put("uid", uid);
+		storeOrders.put("marketid", marketid);
+		BigDecimal riderPay = new BigDecimal("6");
+		storeOrders.put("rider_pay", riderPay);
+		storeOrders.put("address_id", addressid);
+		storeOrders.put("integral", 0);
+		storeOrders.put("totalPrice", riderPay.add(priceAmount));
+		storeOrders.put("ctime", createTime);
+		storeOrders.put("service_time", createTime + 48 * 60);
+		storeOrders.put("is_appointment", 0);
+		storeOrders.put("original_price", priceAmount);
+		String outTradeNo = String.valueOf(idWorkers.getOutTradeIdWork().nextId());
+		storeOrders.put("out_trade_no", outTradeNo);// 生成订单的时候三方号同时生成
+		storeOrders.put("market_activity_price", null);
+		storeOrders.put("store_activity_price", BigDecimal.ZERO);
+		storeOrders.put("vip_relief", BigDecimal.ZERO);
+		storeOrders.put("pay_status", 0);
+		Integer roid = orderDao.addHmRiderOrder(storeOrders);
+		Object sobj = storeOrders.get(String.valueOf(sid));
+		if (sobj != null) {
+			Map<String, Object> sInfo = (Map<String, Object>) sobj;
+			sInfo.put("roid", roid);
+			sInfo.put("pay_status", storeOrders.get("pay_status"));
+			sInfo.put("order_status", storeOrders.get("rider_status"));
+			Integer oid = orderDao.addHmOrder(sInfo);
+			List<Map<String, Object>> cartList = (List<Map<String, Object>>) sInfo.get("cartList");
+			for (Map<String, Object> cart : cartList) {
+				cart.put("oid", oid);
+				orderDao.addHmCart(cart);
+				orderDao.addOrderDetail(cart, (String) sInfo.get("order_sn"));
+			}
+		}
+		orderDao.updateROStatusToSuccess(riderSn, createTime + 5, "aliwap", riderSn);
+		List<Integer> orderIds = orderDao.getOrderIdsByRoid(roid);
+		orderDao.updateOStatus(orderIds, 1, createTime + 5);
+		Integer rid = getRidFormMarket(marketid, "least");
+		if (rid != -1) {
+			// 生成骑手
+			orderDao.updateroRider(rid, roid);
+		}
+		orderDao.updateROOrderTime(outTradeNo, createTime + 10, roid);
+		// 生成地址
+		OrderAddressBean addressBean = addressDao.getAddressById(addressid);
+		OrderAddressOrderBean addressOrderBean = new OrderAddressOrderBean();
+		BeanUtils.copyProperties(addressBean, addressOrderBean);
+		addressOrderBean.setCtime(createTime + 5);
+		addressOrderBean.setRiderSn(riderSn);
+		addressDao.addOrderAddress(addressOrderBean);
 	}
 
 }

@@ -20,6 +20,7 @@ public class PropUtil {
 		setAliAppid((String) propComponent.getMap().get("client.pay.ali.appid"));
 		setWxAppKey((String) propComponent.getMap().get("client.pay.wxApp.key"));
 		setWxAppletKey((String) propComponent.getMap().get("client.pay.wxApp.appletsKey"));
+		setCreateOrderSwitch((String) propComponent.getMap().get("client.pay.wxApp.appletsKey"));
 	}
 
 	private String appkey;
@@ -31,6 +32,8 @@ public class PropUtil {
 	private String aliAppid;
 	private String wxAppKey;
 	private String wxAppletKey;
+	private String createOrderSwitch;
+	
 	
 	public String getAppkey() {
 		return appkey;
@@ -102,6 +105,14 @@ public class PropUtil {
 
 	public void setWxAppletKey(String wxAppletKey) {
 		this.wxAppletKey = wxAppletKey;
+	}
+
+	public String getCreateOrderSwitch() {
+		return createOrderSwitch;
+	}
+
+	public void setCreateOrderSwitch(String createOrderSwitch) {
+		this.createOrderSwitch = createOrderSwitch;
 	}
 
 	

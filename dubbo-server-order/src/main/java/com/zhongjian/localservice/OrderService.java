@@ -23,4 +23,5 @@ public interface OrderService {
 	List<Integer> queryWaitdeliverOrderList();
 	
 	void checkCVOrder(Integer orderId);
+	
 }

@@ -90,33 +90,31 @@ public class OrderDao extends MongoDBDaoBase {
 				Integer.class);
 		return num > 0 ? true : false;
 	}
-	
+
 	public Integer checkFirstToPayOrderByUid(Integer uid) {
 		String sql = "SELECT id FROM hm_rider_order where uid = ? AND ctime  > ? AND  pay_status = 0";
 		Integer orderId = null;
 		try {
-			 orderId = jdbcTemplate.queryForObject(sql, new Object[] { uid, DateUtil.getTodayZeroTime() },
-						Integer.class);
+			orderId = jdbcTemplate.queryForObject(sql, new Object[] { uid, DateUtil.getTodayZeroTime() },
+					Integer.class);
 		} catch (Exception e) {
 		}
 		return orderId;
 	}
-	
+
 	public Integer checkToPayNum(Integer uid) {
 		String sql = "SELECT COUNT(1) FROM hm_rider_order where uid = ? AND ctime  > ? AND  pay_status = 0";
 		Integer num = jdbcTemplate.queryForObject(sql, new Object[] { uid, DateUtil.getTodayZeroTime() },
 				Integer.class);
-		return num ;
+		return num;
 	}
-	
-	
+
 	public boolean checkCouponOrderByUid(Integer uid) {
 		String sql = "SELECT COUNT(1) FROM hm_rider_order where uid = ? AND ctime > ? AND (pay_status = 0 or pay_status = 1) AND couponid is not null";
 		Integer num = jdbcTemplate.queryForObject(sql, new Object[] { uid, DateUtil.getTodayZeroTime() },
 				Integer.class);
 		return num > 0 ? false : true;
 	}
-
 
 	// 查看优惠券数量
 	public Integer getCouponsNumCanUse(Integer uid) {
@@ -152,7 +150,7 @@ public class OrderDao extends MongoDBDaoBase {
 			Object ext = document.get("ext");
 			if (ext == null) {
 				resMap.put("ext", 0);
-			}else {
+			} else {
 				resMap.put("ext", 1);
 			}
 			break;
@@ -300,9 +298,10 @@ public class OrderDao extends MongoDBDaoBase {
 		return resMap;
 	}
 
-	public boolean updateROStatusToSuccess(String outTradeNo, Integer unixTime,String payType,String newOrderTradeNo) {
+	public boolean updateROStatusToSuccess(String outTradeNo, Integer unixTime, String payType,
+			String newOrderTradeNo) {
 		String sql = "update hm_rider_order set pay_status = 1,pay_time = ?,type_pay = ?,out_trade_no = ? where out_trade_no = ? and pay_status = 0";
-		return jdbcTemplate.update(sql, unixTime, payType,newOrderTradeNo,outTradeNo) > 0 ? true : false;
+		return jdbcTemplate.update(sql, unixTime, payType, newOrderTradeNo, outTradeNo) > 0 ? true : false;
 	}
 
 	public boolean updateROStatusToTimeout(Integer orderId) {
@@ -354,8 +353,8 @@ public class OrderDao extends MongoDBDaoBase {
 		Double num = jdbcTemplate.queryForObject(sql, new Object[] { uid, todayTimeZone }, Double.class);
 		return num;
 	}
-	
-	public  Map<String, Object> getMarketAdressByOrderId(Integer orderId) {
+
+	public Map<String, Object> getMarketAdressByOrderId(Integer orderId) {
 		String sql = "SELECT longitude,latitude from hm_market hm,"
 				+ "hm_rider_order hro where hm.id=hro.marketid and hro.id = ?";
 		Map<String, Object> resMap = null;
@@ -365,9 +364,9 @@ public class OrderDao extends MongoDBDaoBase {
 		}
 		return resMap;
 	}
-	
-	//获取菜场订单用户地址
-	public  Map<String, Object> getOrderAddress(Integer orderId) {
+
+	// 获取菜场订单用户地址
+	public Map<String, Object> getOrderAddress(Integer orderId) {
 		String sql = "SELECT longitude,latitude from hm_address ha,"
 				+ "hm_rider_order hro where ha.id=hro.address_id and hro.id = ?";
 		Map<String, Object> resMap = null;
@@ -377,28 +376,27 @@ public class OrderDao extends MongoDBDaoBase {
 		}
 		return resMap;
 	}
-	
-	
-	//获取商户品类收佣比率
+
+	// 获取商户品类收佣比率
 	public BigDecimal getSratio(Integer pid) {
 		String sql = "SELECT hm_household_category.ratio FROM hm_household_category,hm_shopown WHERE hm_household_category.id =  hm_shopown.household_category AND hm_shopown.pid = ?";
 		return jdbcTemplate.queryForObject(sql, new Object[] { pid }, BigDecimal.class);
 	}
-	
-	//查看是否是free
+
+	// 查看是否是free
 	public Boolean isFree(Integer pid) {
 		String sql = "SELECT is_free from hm_shopown where pid = ?";
 		Integer isFree = jdbcTemplate.queryForObject(sql, new Object[] { pid }, Integer.class);
-		return isFree == 0?false:true;
+		return isFree == 0 ? false : true;
 	}
-	//查询自由比率
+
+	// 查询自由比率
 	public BigDecimal getFSratio(Integer pid) {
 		String sql = "SELECT free_ratio from hm_shopown where pid = ?";
 		return jdbcTemplate.queryForObject(sql, new Object[] { pid }, BigDecimal.class);
 	}
-	
-	
-	//获取菜场比率(默认为1，后期翻倍亦可)
+
+	// 获取菜场比率(默认为1，后期翻倍亦可)
 	public BigDecimal getMratio(Integer pid) {
 		String sql = "SELECT hm_market.ratio from hm_market ,hm_shopown WHERE hm_market.id = hm_shopown.marketid AND hm_shopown.pid = ? AND hm_market.is_ratio_start = 1";
 		BigDecimal mRatio = null;
@@ -408,16 +406,14 @@ public class OrderDao extends MongoDBDaoBase {
 		}
 		return mRatio;
 	}
-	
-	//获取菜场比率(默认为1，后期翻倍亦可)
+
+	// 获取菜场比率(默认为1，后期翻倍亦可)
 	public BigDecimal getRatio() {
 		String sql = "SELECT ratio from hm_ratio";
-		BigDecimal ratio = jdbcTemplate.queryForObject(sql,  BigDecimal.class);
+		BigDecimal ratio = jdbcTemplate.queryForObject(sql, BigDecimal.class);
 		return ratio;
 	}
-	
-	
-	
+
 ////-----------------------------------------------------------------------------------------------
 //	public List<Integer> selectOrder1() {
 //		String sql = " SELECT hr.id from hm_rider_order hr,hm_order ho"
@@ -537,4 +533,19 @@ public class OrderDao extends MongoDBDaoBase {
 //		String sql = "delete from hm_rider_order where id in " + rorders;
 //		jdbcTemplate.update(sql);
 //	}
+
+	public List<Integer> getStore(Integer marketid) {
+		String sql = "select pid from hm_shopown where marketid = ? and type = 0 and examine = 1 and is_show = 1";
+		return jdbcTemplate.queryForList(sql, Integer.class, marketid);
+	}
+
+	public List<Map<String, Object>> getGoods(Integer sid) {
+		String sql = "select id,gname,price,unit from hm_goods where state = 0 and is_delete = 0 and pid = ? and price BETWEEN 30 AND 60";
+		List<Map<String, Object>> res = jdbcTemplate.queryForList(sql,sid);
+		return res;
+	}
+	public boolean updateROOrderTime(String outTradeNo, Integer unixTime,Integer roid) {
+		String sql = "update hm_rider_order set order_time = ?,is_delete = 1 where id = ?";
+		return jdbcTemplate.update(sql, unixTime,roid) > 0 ? true : false;
+	}
 }

@@ -46,4 +46,11 @@ public interface OrderService {
     
     boolean orderCheck(Integer orderId, String business);
     
+    /**
+             * 菜场收佣判断
+     */
+    boolean isCommission(Integer sid);
+    
+    
+    void createFalseRorder(Integer marketid, Integer uid, Integer addressid);
 }
