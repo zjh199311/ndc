@@ -76,6 +76,7 @@
                 hm_user_coupon uc
             WHERE
                 uc.state = 0
+            AND uc.is_active = 1
             AND uc.uid = #{uid,jdbcType=INTEGER}
             AND uc.model = 1
             order by uc.end_time asc,uc.price desc
