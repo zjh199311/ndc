@@ -544,8 +544,30 @@ public class OrderDao extends MongoDBDaoBase {
 		List<Map<String, Object>> res = jdbcTemplate.queryForList(sql,sid);
 		return res;
 	}
-	public boolean updateROOrderTime(String outTradeNo, Integer unixTime,Integer roid) {
-		String sql = "update hm_rider_order set order_time = ?,is_delete = 1 where id = ?";
-		return jdbcTemplate.update(sql, unixTime,roid) > 0 ? true : false;
+	public boolean updateROrderTime(Integer unixTime, Integer roid) {
+		String sql = "update hm_rider_order set order_time = ?,rider_status = 1 where id = ?";
+		return jdbcTemplate.update(sql,unixTime,roid) > 0 ? true : false;
 	}
+	
+	public boolean updateROrderDelete( Integer roid) {
+		String sql = "update hm_rider_order set is_delete = 1 where id = ?";
+		return jdbcTemplate.update(sql,roid) > 0 ? true : false;
+	}
+	
+	public Integer getMarketId(Integer sid) {
+		String sql = "select marketid from hm_shopown where pid = ?";
+		return jdbcTemplate.queryForObject(sql, Integer.class,sid);
+	}
+	
+	public List<Integer> getRids(Integer marketId) {
+		String sql = "SELECT rid  FROM hm_rider_user where marketid = ?";
+		List<Integer> res = jdbcTemplate.queryForList(sql,Integer.class, marketId);
+		return res;
+	}
+	
+	public String getLoginTokenByRid(Integer rid) {
+		String sql = "SELECT login_token FROM hm_rider_user where rid = ?";
+		return jdbcTemplate.queryForObject(sql, String.class,rid);
+	}
+	
 }

@@ -51,6 +51,12 @@ public interface OrderService {
      */
     boolean isCommission(Integer sid);
     
+    /**
+    *获取菜场id
+   */
+    Integer getMarketIdByPid(Integer sid);
     
     void createFalseRorder(Integer marketid, Integer uid, Integer addressid);
+    
+    void createRorderShedule(Integer marketid, Integer uid, Integer addressid);
 }

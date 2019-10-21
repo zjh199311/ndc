@@ -8,8 +8,10 @@ import com.zhongjian.localservice.OrderService;
 import com.zhongjian.task.OrderTask;
 import com.zhongjian.util.DateUtil;
 import com.zhongjian.util.DistributedLock;
+import com.zhongjian.util.HttpConnectionPoolUtil;
 import com.zhongjian.util.LogUtil;
 
+import org.apache.http.client.methods.HttpPost;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,7 @@ import javax.annotation.Resource;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +41,7 @@ public class OrderServiceImpl extends HmBaseService<OrderRiderOrderBean, Integer
     
     @Resource
     private OrderTask orderTask;
+    
     
     @Override
     public void todoSth() {
@@ -156,6 +160,23 @@ public class OrderServiceImpl extends HmBaseService<OrderRiderOrderBean, Integer
 			//有错误
 			cvOrderDao.setCVOrderError(orderId);
 		}
+		
+	}
+
+	@Override
+	public void createFalseRorder(Integer marketid, Integer uid, Integer addressid) {
+		orderService.createFalseRorder(marketid, uid, addressid);		
+	}
+
+	@Override
+	public void finishRorder(Integer roid, String login_token) {
+		HttpPost httpPost = new HttpPost(propUtil.getOrderFinishUrl());
+		httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+		HashMap hashMap = new HashMap();
+		hashMap.put("login_token", login_token);
+		hashMap.put("roid", String.valueOf(roid));
+		hashMap.put("status", "2");
+		HttpConnectionPoolUtil.post(propUtil.getOrderFinishUrl(), httpPost, hashMap);
 		
 	}
 }

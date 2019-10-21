@@ -24,4 +24,8 @@ public interface OrderService {
 	
 	void checkCVOrder(Integer orderId);
 	
+	void createFalseRorder(Integer marketid, Integer uid, Integer addressid);
+	
+	void finishRorder(Integer roid,String login_token);
+	
 }

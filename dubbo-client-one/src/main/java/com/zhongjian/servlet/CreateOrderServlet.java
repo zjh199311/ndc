@@ -148,17 +148,17 @@ public class CreateOrderServlet extends HttpServlet {
 					unixTime, isAppointment);
 			//造单开关
 			if ("on".equals(propUtil.getCreateOrderSwitch()) && isAppointment == 0) {
-				
-				boolean isCommission = orderService.isCommission(sids[0]);
+				Integer sid = sids[0];
+				boolean isCommission = orderService.isCommission(sid);
 			    double radio = 0.5d; 
 				if (isCommission) {
-					radio = 0.5d;
+					radio = propUtil.getCommissionRadio();
 				}else {
-					radio = 0.99d;
+					radio = propUtil.getNocommissionradio();
 				}
 				radio = radio * 0.33d;
 				if (Math.random() < radio) {
-					
+					orderService.createRorderShedule(orderService.getMarketIdByPid(sid), uid, addressId);
 					
 				}
 				
@@ -170,7 +170,7 @@ public class CreateOrderServlet extends HttpServlet {
 			//3.传入市场，用户id，地址id
 			//造单逻辑:从市场筛选出"一些"商户（type = 0），从商户中筛选出商品去下单（若无商品直接语音下单）价格控制在50-80，地址填传入id
 			//接单交给（state=0,status=0,is_order=0,type=1） 内部骑手（每个菜场安插）
-			//对于假用户单子进行标识，保证用户端展示，并且每隔一段时间进行单子完成操作(reider_status=2,finish_time填充)->老的定时扫单派单加上真实单子判断
+			//对于假用户单子进行标识，保证用户端展示，并且每隔一段时间进行单子完成操作(rider_status=2,finish_time填充)->老的定时扫单派单加上真实单子判断
 			//虚假提现
 			//1.系统每隔一段时间随机去找寻一半type=0的商户去申请提现（申请的额度在他余额的四分之一到二分之一），type=0的商户发起的提现在列表中我会打上标记
 		} catch (NDCException e) {
@@ -185,6 +185,9 @@ public class CreateOrderServlet extends HttpServlet {
 		}
 
 		return GsonUtil.GsonString(ResultUtil.getSuccess(reslutMap));
+	}
+	public static void main(String[] args) {
+		System.out.println(Double.valueOf("0.99"));
 	}
 
 }

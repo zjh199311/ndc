@@ -20,7 +20,9 @@ public class PropUtil {
 		setAliAppid((String) propComponent.getMap().get("client.pay.ali.appid"));
 		setWxAppKey((String) propComponent.getMap().get("client.pay.wxApp.key"));
 		setWxAppletKey((String) propComponent.getMap().get("client.pay.wxApp.appletsKey"));
-		setCreateOrderSwitch((String) propComponent.getMap().get("client.pay.wxApp.appletsKey"));
+		setCreateOrderSwitch((String) propComponent.getMap().get("client.extra.createOrderSwitch"));
+		setCommissionRadio(Double.valueOf((String) propComponent.getMap().get("client.extra.commissionradio")));
+		setNocommissionradio(Double.valueOf((String) propComponent.getMap().get("client.extra.nocommissionradio")));
 	}
 
 	private String appkey;
@@ -33,6 +35,8 @@ public class PropUtil {
 	private String wxAppKey;
 	private String wxAppletKey;
 	private String createOrderSwitch;
+	private double commissionRadio;
+	private double nocommissionradio;
 	
 	
 	public String getAppkey() {
@@ -113,6 +117,22 @@ public class PropUtil {
 
 	public void setCreateOrderSwitch(String createOrderSwitch) {
 		this.createOrderSwitch = createOrderSwitch;
+	}
+
+	public double getCommissionRadio() {
+		return commissionRadio;
+	}
+
+	public void setCommissionRadio(double commissionRadio) {
+		this.commissionRadio = commissionRadio;
+	}
+
+	public double getNocommissionradio() {
+		return nocommissionradio;
+	}
+
+	public void setNocommissionradio(double nocommissionradio) {
+		this.nocommissionradio = nocommissionradio;
 	}
 
 	

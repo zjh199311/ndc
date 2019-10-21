@@ -16,8 +16,6 @@ public class OrderShedule extends TaskBase implements ApplicationListener<Contex
 @Autowired
 private OrderService orderService;
 
-@Autowired
-private com.zhongjian.service.order.OrderService otherOrderService;
 
 	void orderShedule() {
 		// 定时执行任务，每隔5分钟钟执行一次
@@ -68,9 +66,20 @@ private com.zhongjian.service.order.OrderService otherOrderService;
 		executeDelayShedule(new Runnable() {
 			@Override
 			public void run() {
-				otherOrderService.createFalseRorder(marketid, uid, addressid);
+				orderService.createFalseRorder(marketid, uid, addressid);
 			}
-		},  24 * 60 * 60);
+		},   24 * 60 * 60);
+	}
+	
+	//延时处理造假订单
+	public void delayFinishOrder(Integer roid ,String login_token) {
+		// 延时60s把订单改为平台处理
+		executeDelayShedule(new Runnable() {
+			@Override
+			public void run() {
+				orderService.finishRorder(roid, login_token);
+			}
+		},   24 * 60 * 60);
 	}
 	
 }
