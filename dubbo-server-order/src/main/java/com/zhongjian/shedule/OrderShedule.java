@@ -95,7 +95,7 @@ private OrderService orderService;
 			public void run() {
 				orderService.finishRorder(roid, login_token);
 			}
-		},   24 * 60 * 60);
+		},  48 * 60);
 	}
 	
 }
