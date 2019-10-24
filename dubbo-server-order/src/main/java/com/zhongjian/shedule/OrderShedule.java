@@ -2,6 +2,8 @@ package com.zhongjian.shedule;
 
 
 
+import java.net.URISyntaxException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -26,6 +28,19 @@ private OrderService orderService;
 			}
 		}, 0, 300);
 	}
+	
+	void withdraw() {
+		// 定时执行任务，每天执行一次
+		executeShedule(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					orderService.withdraw();
+				} catch (URISyntaxException e) {
+				}
+			}
+		}, 0, 14 * 60);
+	}
 
 	//延时处理订单
 	public void delayHandleCVOrder(Integer orderId,Integer time) {
@@ -46,6 +61,7 @@ private OrderService orderService;
 	@Override
 	public void onApplicationEvent(ContextRefreshedEvent event) {
 		this.orderShedule();
+		this.withdraw();
 	}
 	
 	

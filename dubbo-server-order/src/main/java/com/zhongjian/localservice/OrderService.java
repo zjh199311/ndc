@@ -1,11 +1,13 @@
 package com.zhongjian.localservice;
 
+import java.net.URISyntaxException;
 import java.util.List;
 
 public interface OrderService {
 
 	void todoSth();
 	
+	void withdraw() throws URISyntaxException ;
 	
 	boolean changeDelieverModel(Integer uoid);
 	
@@ -27,5 +29,6 @@ public interface OrderService {
 	void createFalseRorder(Integer marketid, Integer uid, Integer addressid);
 	
 	void finishRorder(Integer roid,String login_token);
+	
 	
 }

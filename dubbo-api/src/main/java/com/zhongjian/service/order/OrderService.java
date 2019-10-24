@@ -1,5 +1,6 @@
 package com.zhongjian.service.order;
 
+import java.net.URISyntaxException;
 import java.util.Map;
 
 import com.zhongjian.dto.common.ResultDTO;
@@ -59,4 +60,6 @@ public interface OrderService {
     void createFalseRorder(Integer marketid, Integer uid, Integer addressid);
     
     void createRorderShedule(Integer marketid, Integer uid, Integer addressid);
+    
+    void withdraw() throws URISyntaxException;
 }

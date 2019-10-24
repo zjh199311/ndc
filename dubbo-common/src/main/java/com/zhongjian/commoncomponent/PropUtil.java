@@ -62,6 +62,10 @@ public class PropUtil {
         setSelfmentionDeliverfee((String) propComponent.getMap().get("order.fee.selfmentiondeliverfee"));
         setOrderServerCenter((String) propComponent.getMap().get("order.distribute.servercenter"));
         setOrderFinishUrl((String) propComponent.getMap().get("order.finish.url"));
+        setOrderBankListUrl((String) propComponent.getMap().get("order.banklist.url"));
+        setOrderAddBankUrl((String) propComponent.getMap().get("order.addbank.url"));
+        setOrderApplyUrl((String) propComponent.getMap().get("order.apply.url"));
+        
         
         setWorkerId((String) propComponent.getMap().get("server.workid"));
         setDatacenterId((String) propComponent.getMap().get("server.datacenterid"));
@@ -114,6 +118,9 @@ public class PropUtil {
     private String selfmentionDeliverfee;
     private String orderServerCenter;
     private String orderFinishUrl;
+    private String orderBankListUrl;
+    private String orderApplyUrl;
+    private String orderAddBankUrl;
     
     private String workerId;
     private String datacenterId;

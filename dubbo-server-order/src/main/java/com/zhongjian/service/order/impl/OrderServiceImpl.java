@@ -1,5 +1,6 @@
 package com.zhongjian.service.order.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.zhongjian.common.IdWorkers;
 import com.zhongjian.common.constant.FinalDatas;
 import com.zhongjian.commoncomponent.PropUtil;
@@ -21,18 +22,22 @@ import com.zhongjian.shedule.OrderShedule;
 import com.zhongjian.task.AddressTask;
 import com.zhongjian.task.OrderTask;
 
+import org.apache.http.client.methods.HttpPost;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import com.zhongjian.util.DateUtil;
 import com.zhongjian.util.DistanceUtils;
+import com.zhongjian.util.HttpConnectionPoolUtil;
 import com.zhongjian.util.RandomUtil;
 
 import java.text.ParseException;
@@ -1229,6 +1234,7 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 						sInfo.put("pay_status", storeOrders.get("pay_status"));
 						sInfo.put("order_status", storeOrders.get("rider_status"));
 						Integer oid = orderDao.addHmOrder(sInfo);
+						orderDao.updateOrderDelete(oid);
 						List<Map<String, Object>> cartList = (List<Map<String, Object>>) sInfo.get("cartList");
 						for (Map<String, Object> cart : cartList) {
 							cart.put("oid", oid);
@@ -1270,6 +1276,64 @@ public class OrderServiceImpl extends HmBaseService<OrderShopownBean, Integer> i
 	public void createRorderShedule(Integer marketid, Integer uid, Integer addressid) {
 		orderShedule.delayCreateOrder(marketid, uid, addressid);
 	}
+
+	public Integer getBankId(Integer pid,String phone) throws URISyntaxException {
+		HttpPost httpPost = new HttpPost(propUtil.getOrderBankListUrl());
+		httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+		HashMap hashMap = new HashMap();
+		hashMap.put("sid", String.valueOf(pid));
+		String respose =  HttpConnectionPoolUtil.post(propUtil.getOrderBankListUrl(), httpPost, hashMap);
+		Map dataMap = (Map)JSON.parse(respose);
+		Map data = (Map) dataMap.get("data");
+		List<Object> list = (List<Object>) data.get("info");
+		Map one =null;
+		if (list.size() == 0) {
+			httpPost.setURI(new URI(propUtil.getOrderAddBankUrl()));
+			hashMap.clear();
+			hashMap.put("sid", String.valueOf(pid));
+			hashMap.put("real_name","支付宝");
+			hashMap.put("bank",phone);
+			hashMap.put("state","0");
+			hashMap.put("type","2");
+			respose = HttpConnectionPoolUtil.post(propUtil.getOrderAddBankUrl(), httpPost, hashMap);
+			dataMap = (Map)JSON.parse(respose);
+			data = (Map) dataMap.get("data");
+			one = (Map) data.get("info");
+			return Integer.valueOf((String) one.get("id"));
+		}else {
+			one = (Map) list.get(0);
+			return Integer.valueOf((String) one.get("id"));
+		}
+		
+	}
 	
+	
+	public void toWithdraw(String login_token,Integer bankid,String money)  {
+		HttpPost httpPost = new HttpPost(propUtil.getOrderApplyUrl());
+		httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+		HashMap hashMap = new HashMap();
+		hashMap.put("login_token", login_token);
+		hashMap.put("bankid", String.valueOf(bankid));
+		hashMap.put("money", money);
+	    HttpConnectionPoolUtil.post(propUtil.getOrderApplyUrl(), httpPost, hashMap);
+		
+	}
+	
+	@Override
+	public void withdraw() throws URISyntaxException {
+		List<Integer> sids = orderDao.getStore();
+		if (sids == null || sids.size() == 0) {
+			return;
+		}
+		int sidsIndex = (int) (Math.random() * sids.size());
+		Integer sid = sids.get(sidsIndex);
+		String login_token = orderDao.getStoreToken(sid);
+		String phone = orderDao.getPhone(sid);
+		BigDecimal balance = orderDao.getBalanceByPid(sid);
+		BigDecimal moneyDecimal = balance.divide(new BigDecimal("3"));
+		String money = String.valueOf(moneyDecimal.intValue());
+		Integer bankId = getBankId(sid, phone);
+		toWithdraw(login_token, bankId, money);
+	}
 
 }

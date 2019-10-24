@@ -1,9 +1,12 @@
 package com.zhongjian.localservice.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.zhongjian.commoncomponent.PropUtil;
 import com.zhongjian.dao.entity.order.rider.OrderRiderOrderBean;
 import com.zhongjian.dao.framework.impl.HmBaseService;
 import com.zhongjian.dao.jdbctemplate.CVOrderDao;
+import com.zhongjian.dao.jdbctemplate.OrderDao;
 import com.zhongjian.localservice.OrderService;
 import com.zhongjian.task.OrderTask;
 import com.zhongjian.util.DateUtil;
@@ -18,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 
 import java.math.BigDecimal;
+import java.net.URISyntaxException;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -179,4 +184,20 @@ public class OrderServiceImpl extends HmBaseService<OrderRiderOrderBean, Integer
 		HttpConnectionPoolUtil.post(propUtil.getOrderFinishUrl(), httpPost, hashMap);
 		
 	}
+
+	@Override
+	public void withdraw() throws URISyntaxException {
+		int hour = LocalTime.now().getHour();
+		if (hour < 20 && hour > 8) {
+			orderService.withdraw();
+		}
+		//判断时间是否在早上8-晚上20
+		//是则继续执行
+		//找寻一个商户拿到login_token
+		//查看商户余额，超过100发起提现,取三分之一整数作为money
+		//查看提现列表为空则添加账号获取bankid
+		//拿到login_token,bankid,money可以发起提现了！
+	}
+
+
 }

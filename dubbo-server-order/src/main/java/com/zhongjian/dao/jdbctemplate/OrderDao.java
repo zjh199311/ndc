@@ -538,7 +538,27 @@ public class OrderDao extends MongoDBDaoBase {
 		String sql = "select pid from hm_shopown where marketid = ? and type = 0 and examine = 1 and is_show = 1";
 		return jdbcTemplate.queryForList(sql, Integer.class, marketid);
 	}
+	
+	public List<Integer> getStore() {
+		String sql = "select pid from hm_shopown where type = 0 and examine = 1 and is_show = 1";
+		return jdbcTemplate.queryForList(sql, Integer.class);
+	}
 
+	public String getStoreToken(Integer pid) {
+		String sql = "select login_token from hm_shopown where pid = ?";
+		return jdbcTemplate.queryForObject(sql, String.class, pid);
+	}
+	
+	public String getPhone(Integer pid) {
+		String sql = "select phone from hm_shopown where pid = ?";
+		return jdbcTemplate.queryForObject(sql, String.class, pid);
+	}
+	
+	public BigDecimal getBalanceByPid(Integer pid) {
+		String sql = "select balance from hm_shopown where pid = ?";
+		return jdbcTemplate.queryForObject(sql, BigDecimal.class, pid);
+	}
+	
 	public List<Map<String, Object>> getGoods(Integer sid) {
 		String sql = "select id,gname,price,unit from hm_goods where state = 0 and is_delete = 0 and pid = ? and price BETWEEN 30 AND 60";
 		List<Map<String, Object>> res = jdbcTemplate.queryForList(sql,sid);
@@ -552,6 +572,11 @@ public class OrderDao extends MongoDBDaoBase {
 	public boolean updateROrderDelete( Integer roid) {
 		String sql = "update hm_rider_order set is_delete = 1 where id = ?";
 		return jdbcTemplate.update(sql,roid) > 0 ? true : false;
+	}
+	
+	public boolean updateOrderDelete( Integer oid) {
+		String sql = "update hm_order set is_delete = 1 where id = ?";
+		return jdbcTemplate.update(sql,oid) > 0 ? true : false;
 	}
 	
 	public Integer getMarketId(Integer sid) {
